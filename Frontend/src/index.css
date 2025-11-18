@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input::placeholder,
+textarea::placeholder {
+  direction: rtl;
+  text-align: right;
+}
+@layer utilities {
+  .clip-top-curve {
+    clip-path: ellipse(75% 60% at 50% 100%);
+  }
+  .clip-bottom-curve {
+    clip-path: ellipse(75% 60% at 50% 0%);
+  }
+}
