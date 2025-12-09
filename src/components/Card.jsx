@@ -1,19 +1,29 @@
-export default function Card({ img, title }) {
+export default function Card({ title, style, fontSize = "21px", onClick }) {
   return (
     <div
       style={{
-        height: "130px",
+        width: "130px",
+        height: "131.73px",
         background: "#C90BBC",
-        borderRadius: "20px",
-        boxShadow: "0px 2px 6px rgba(0,0,0,0.15)",
+        borderRadius: "12px",
+        boxShadow: "10px 10px 10px 2px #00000040",
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
-        paddingTop: "15px",
+        justifyContent: "center",
+        boxSizing: "border-box",
+        cursor: onClick ? "pointer" : "default", // اگه کلیک داشت pointer باشه
+        ...style,
       }}
+      onClick={onClick}
     >
-      <img src={img} style={{ width: "60px", marginBottom: "10px" }} />
-      <p style={{ color: "white", fontWeight: "bold", fontSize: "16px" }}>
+      <p
+        style={{
+          color: "white",
+          fontWeight: "bold",
+          fontSize: fontSize,
+          textAlign: "center",
+        }}
+      >
         {title}
       </p>
     </div>

@@ -6,13 +6,13 @@ export default function BottomWave() {
 
       {/* موج سفید در بالا */}
       <svg
-        viewBox="0 0 1440 70"
+        viewBox="0 10 1440 70"
         preserveAspectRatio="none"
-        className="absolute top-0 w-full h-[70px]"
+        className="absolute top-0 w-full h-[200px]"
       >
         <path
-          d="M0,70 C480,-10 960,110 1440,20 L1440,0 L0,0 Z"
-          fill="#fff"
+          d="M0,70 C480,-10 960,100 1440,35 L1440,0 L0,0 Z"
+          fill="#FEF9FE"
         />
       </svg>
     </div>

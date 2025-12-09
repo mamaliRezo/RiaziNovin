@@ -1,88 +1,166 @@
 import { useState, useEffect } from "react";
 import LogoRiaziNovin from "../assets/logoRiazinovin.svg";
 import Guy from "../assets/Guy.svg";
+import TopWave from "../components/TopWave.jsx";
+import BottomWave from "../components/BottomWave.jsx";
+import ErrorBox from "../components/ErrorBox.jsx"; // ← اضافه شد
 
-export default function OTP() {
-  const [timeLeft, setTimeLeft] = useState(120); // 2 دقیقه
+export default function OTP({ phone_email, role, onVerified }) {
+  const [timeLeft, setTimeLeft] = useState(120);
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  const BACKEND = "http://localhost:8000";
+
+  // -------------------------------------------
+  //  تایمر
+  // -------------------------------------------
   useEffect(() => {
     if (timeLeft <= 0) return;
     const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      setTimeLeft((p) => p - 1);
     }, 1000);
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  const formatTime = (seconds) => {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec < 10 ? "0" : ""}${sec}`;
+  const formatTime = (s) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${sec < 10 ? "0" : ""}${sec}`;
   };
 
-  const handleChange = (e, idx) => {
-    const val = e.target.value.replace(/[^0-9]/g, "");
-    if (!val) return;
-    const newOtp = [...otpValues];
-    newOtp[idx] = val[0];
-    setOtpValues(newOtp);
+  const otpComplete = otpValues.every((v) => v !== "");
+  const otpCode = otpValues.join("");
 
-    // رفتن خودکار کرسر به باکس بعدی
-    if (idx < 4) {
-      const nextInput = document.getElementById(`otp-${idx + 1}`);
-      if (nextInput) nextInput.focus();
+  // -------------------------------------------
+  //  ارسال OTP
+  // -------------------------------------------
+  async function submitOTP() {
+    if (!otpComplete) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`${BACKEND}/api/verify-otp/`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone_email,
+          otp: otpCode,
+          action: "login",
+          role: role || "student",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "کد اشتباه است");
+        setLoading(false);
+        return;
+      }
+
+      onVerified();
+    } catch {
+      setError("مشکل در اتصال به سرور");
     }
-  };
 
-  const isOtpComplete = otpValues.every((v) => v !== "");
+    setLoading(false);
+  }
 
+  // -------------------------------------------
+  // ارسال مجدد
+  // -------------------------------------------
+  async function resendOTP() {
+    setTimeLeft(120);
+    setError(null);
+
+    await fetch(`${BACKEND}/api/resend-otp/`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phone_email,
+        role: role || "student",
+      }),
+    });
+  }
+
+  // -------------------------------------------
+  // رندر UI
+  // -------------------------------------------
   return (
-    <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden bg-[#FEF9FE] font-[IRANYekan]">
+    <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden bg-[#FEF9FE] font-[BYekan]">
+
+      {/* 🔔 باکس خطا بالای صفحه */}
+      {error && <ErrorBox message={error} onClose={() => setError(null)} />}
+
+      <TopWave />
+
       {/* لوگو */}
       <img
         src={LogoRiaziNovin}
         alt="logo"
-        className="absolute left-[105px] top-[177px] w-[202px] h-[140px] opacity-100"
+        className="absolute left-[105px] top-[177px] w-[202px] h-[140px]"
       />
 
       {/* تیتر */}
-      <h2 className="absolute left-[32px] top-[313px] w-[348px] h-[68px] font-[IRANYekan] font-bold text-[26px] text-[#080609] text-center leading-[100%]">
-        کد فعال سازی را وارد کنید.
+      <h2 className="absolute left-[32px] top-[313px] w-[348px] text-center font-bold text-[26px] text-[#080609]">
+        کد فعال سازی را وارد کنید
       </h2>
 
-      {/* متن توضیحی */}
-      <p className="absolute left-[32px] top-[377px] w-[347px] h-[56px] text-center text-[#545454] text-[16px] leading-[24px]">
-        کدتایید ارسال شده را وارد کنید.
+      {/* متن */}
+      <p className="absolute left-[32px] top-[377px] w-[347px] text-center text-[#545454] text-[16px]">
+        کدتایید ارسال شده را وارد کنید
       </p>
 
-      {/* باکس‌های OTP */}
-      <div
-        className="absolute left-[32px] top-[433px] w-[348px] h-[52px] flex justify-between items-center px-2"
-        style={{ opacity: 1 }}
-      >
+      {/* OTP INPUTS */}
+      <div className="absolute left-[32px] top-[433px] w-[348px] flex justify-between">
         {otpValues.map((val, idx) => (
           <input
             key={idx}
             id={`otp-${idx}`}
-            type="text"
             maxLength={1}
             value={val}
-            onChange={(e) => handleChange(e, idx)}
-            className="w-[57px] h-[52px] text-center text-[24px] font-[IRANYekan] bg-[#F5C6F0] rounded-[19px] border-none focus:outline-none"
+            type="text"
+            onChange={(e) => {
+              const v = e.target.value.replace(/[^0-9]/g, "");
+              const newOtp = [...otpValues];
+
+              if (v) {
+                newOtp[idx] = v[0];
+                setOtpValues(newOtp);
+                if (idx < 4) document.getElementById(`otp-${idx + 1}`)?.focus();
+              } else {
+                newOtp[idx] = "";
+                setOtpValues(newOtp);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Backspace" && !otpValues[idx] && idx > 0) {
+                const newOtp = [...otpValues];
+                newOtp[idx - 1] = "";
+                setOtpValues(newOtp);
+                document.getElementById(`otp-${idx - 1}`)?.focus();
+              }
+            }}
+            className="w-[57px] h-[52px] text-center text-[24px] bg-[#F5C6F0] rounded-[19px] focus:outline-none"
           />
         ))}
       </div>
 
-      {/* تایمر یا ارسال مجدد */}
+      {/* تایمر */}
       {timeLeft > 0 ? (
-        <div className="absolute left-[105px] top-[497px] w-[202px] h-[20px] flex items-center justify-center text-[13px] text-[#2C0528] font-[IRANYekan] font-normal leading-[100%]">
-          <span className="mr-2">تا دریافت مجدد کد</span>
-          <span>{formatTime(timeLeft)}</span>
+        <div className="absolute left-[105px] top-[497px] w-[202px] text-center text-[13px] text-[#2C0528]">
+          تا دریافت مجدد کد {formatTime(timeLeft)}
         </div>
       ) : (
         <div
-          className="absolute left-[105px] top-[497px] w-[202px] h-[20px] text-[13px] text-[#00C0D9] font-[IRANYekan] font-normal leading-[100%] text-center cursor-pointer hover:underline"
-          onClick={() => setTimeLeft(120)}
+          onClick={resendOTP}
+          className="absolute left-[105px] top-[497px] w-[202px] text-center text-[#00C0D9] text-[13px] cursor-pointer hover:underline"
         >
           ارسال مجدد کد
         </div>
@@ -90,31 +168,27 @@ export default function OTP() {
 
       {/* دکمه ورود */}
       <button
-        disabled={!isOtpComplete}
-        className={`absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-[18224px] bg-gradient-to-r from-yellow-400 to-yellow-600 font-bold text-black text-[16px] leading-[100%] text-center ${
-          !isOtpComplete ? "opacity-50 cursor-not-allowed" : "opacity-100"
-        }`}
+        onClick={submitOTP}
+        disabled={!otpComplete || loading}
+        className="absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-full font-bold text-[16px] bg-gradient-to-r from-yellow-400 to-yellow-600"
+        style={{
+          opacity: !otpComplete ? 0.5 : 1,
+          cursor: !otpComplete ? "not-allowed" : "pointer",
+        }}
       >
-        ورود
+        {loading ? "در حال بررسی..." : "ورود"}
       </button>
 
-      {/* لینک ورود با رمز عبور > */}
-      <div className="absolute left-[250px] top-[585px] w-[130px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
-        <p
-          className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline"
-          style={{ direction: "rtl" }}
-          onClick={() => (window.location.href = "/login")}
-        >
-          ورود با رمز عبور &gt;
-        </p>
-      </div>
-
-      {/* تصویر Guy */}
+      {/* تصویر */}
       <img
         src={Guy}
         alt="Guy"
-        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] z-20 object-contain pointer-events-none"
+        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] z-20"
       />
+
+      <div className="absolute top-[715px] bottom-0 left-0 w-full">
+        <BottomWave />
+      </div>
     </div>
   );
 }

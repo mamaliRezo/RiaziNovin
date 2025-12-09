@@ -1,33 +1,31 @@
-export default function SearchBox() {
+export default function SearchBox({ style }) {
   return (
     <input
       type="text"
       placeholder="جستجو..."
-      className="absolute rounded-full text-center placeholder-[#C90BBCC9]"
+      className="search-box"
       style={{
+        direction: "rtl",
         width: "348px",
         height: "36px",
-        top: "297px",
-        left: "30px",
         backgroundColor: "#FEF9FE",
-        fontFamily: "IRANYekan, Roboto, sans-serif",
+        fontFamily: "BYekan",
         fontWeight: 400,
         fontSize: "12px",
-        textAlign: "center",
-        color: "#000000",  // رنگ متن تایپ کاربر
+        textAlign: "right",
         border: "1px solid #00C0D9",
         borderRadius: "9999px",
         padding: "0 12px",
         boxSizing: "border-box",
         outline: "none",
         transition: "all 0.2s ease",
+        ...style, 
       }}
       onFocus={(e) => {
-        e.currentTarget.style.border = "2px solid #00C0D9"; // رنگ فیگما و ضخیم‌تر
+        e.currentTarget.style.border = "2px solid #00C0D9";
       }}
       onBlur={(e) => {
-        e.currentTarget.style.border = "1px solid #00C0D9"; // بازگشت به حالت عادی
-        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.border = "1px solid #00C0D9";
       }}
     />
   );

@@ -15,3 +15,34 @@ textarea::placeholder {
     clip-path: ellipse(75% 60% at 50% 0%);
   }
 }
+@font-face {
+  font-family: "BYekan";
+  src: url("./assets/fonts/BYekan/BYekan+.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "BYekan";
+  src: url("./assets/fonts/BYekan/BYekan+\ Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: bold;
+}
+/* در فایل index.css یا styles.css */
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    /* ابتدا باکس کاملاً در بالا (خارج از دید) قرار داره */
+    transform: translate(-50%, -100%); 
+  }
+  100% {
+    opacity: 1;
+    /* سپس به موقعیت نهایی خودش سر می‌خوره */
+    transform: translate(-50%, 0); 
+  }
+}
+
+.animate-slideDown {
+  /* اعمال انیمیشن: مدت زمان 0.4 ثانیه با شتاب ease-out */
+  animation: slideDown 0.4s ease-out forwards;
+}

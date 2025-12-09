@@ -1,5 +1,5 @@
 import React from "react";
-import Calculator from "../assets/Calculator.svg";
+// import Calculator from "../assets/Calculator.svg";
 
 export default function TopWave() {
   return (
@@ -32,11 +32,11 @@ export default function TopWave() {
       </svg>
 
       {/* آیکون ماشین حساب کوچکتر و بالاتر */}
-      <img
+      {/* <img
         src={Calculator}
         alt="Calculator"
         className="absolute top-3 left-0 w-[120px] h-[122px]"
-      />
+      /> */}
     </div>
   );
 }

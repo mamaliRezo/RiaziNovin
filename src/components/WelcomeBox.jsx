@@ -18,12 +18,13 @@ export default function WelcomeBox() {
       {/* متن خوش آمد */}
       <p
         style={{
+          direction:"rtl",
           width: "129px",
           height: "36px",
           position: "absolute",
           top: "93px",
           left: "178px",
-          fontFamily: "Poppins, IRANYekan",
+          fontFamily: "BYekan",
           fontWeight: 700,
           fontSize: "13px",
           lineHeight: "100%",
@@ -31,7 +32,7 @@ export default function WelcomeBox() {
         }}
       >
         سلام محمد<br/>
-        خوش اومدی
+        خوش اومدی!
       </p>
     </div>
   );
