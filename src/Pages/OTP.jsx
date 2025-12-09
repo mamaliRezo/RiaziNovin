@@ -3,7 +3,7 @@ import LogoRiaziNovin from "../assets/logoRiazinovin.svg";
 import Guy from "../assets/Guy.svg";
 import TopWave from "../components/TopWave.jsx";
 import BottomWave from "../components/BottomWave.jsx";
-import ErrorBox from "../components/ErrorBox.jsx"; // ← اضافه شد
+import ErrorBox from "../components/ErrorBox.jsx";
 
 export default function OTP({ phone_email, role, onVerified }) {
   const [timeLeft, setTimeLeft] = useState(120);
@@ -146,6 +146,10 @@ export default function OTP({ phone_email, role, onVerified }) {
                 setOtpValues(newOtp);
                 document.getElementById(`otp-${idx - 1}`)?.focus();
               }
+
+            }}
+            style={{
+                border: "none",
             }}
             className="w-[57px] h-[52px] text-center text-[24px] bg-[#F5C6F0] rounded-[19px] focus:outline-none"
           />
@@ -166,18 +170,20 @@ export default function OTP({ phone_email, role, onVerified }) {
         </div>
       )}
 
-      {/* دکمه ورود */}
       <button
         onClick={submitOTP}
         disabled={!otpComplete || loading}
-        className="absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-full font-bold text-[16px] bg-gradient-to-r from-yellow-400 to-yellow-600"
+        className="absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-[16px]"
         style={{
-          opacity: !otpComplete ? 0.5 : 1,
+          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+          border: "none",   
+          opacity: !otpComplete ? 0.5 : 1, 
           cursor: !otpComplete ? "not-allowed" : "pointer",
         }}
       >
         {loading ? "در حال بررسی..." : "ورود"}
       </button>
+
 
       {/* تصویر */}
       <img
