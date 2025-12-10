@@ -6,16 +6,13 @@ import TopWave from "../components/TopWave.jsx";
 import BottomWave from "../components/BottomWave.jsx";
 import ErrorBox from "../components/ErrorBox.jsx";
 
-export default function Login({ onNext, onPassword }) {
+export default function Login({ onOTP, onPassword, onSignup}) {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const BACKEND = "http://localhost:8000";
 
-  // ----------------------------
-  // ورود با رمز یکبار مصرف
-  // ----------------------------
   async function handleOTPLogin() {
     setError(null);
 
@@ -29,24 +26,21 @@ export default function Login({ onNext, onPassword }) {
       const res = await fetch(`${BACKEND}/api/check-user/`, {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone_email: phone,
-          role: "student",
+          role: "student"
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "خطا در ارتباط با سرور");
+        setError(data.message || "خطا");
         setLoading(false);
         return;
       }
-
-      onNext({
+      onOTP({
         phone_email: phone,
         role: "student",
         data,
@@ -58,9 +52,6 @@ export default function Login({ onNext, onPassword }) {
     setLoading(false);
   }
 
-  // ----------------------------
-  // رفتن به صفحه رمز عبور
-  // ----------------------------
   function goToPasswordLogin() {
     setError(null);
 
@@ -75,74 +66,89 @@ export default function Login({ onNext, onPassword }) {
     });
   }
 
-  // ----------------------------
-  // UI اصلی
-  // ----------------------------
+  function goToSignUpLogin(){
+    setError(null);
+    if (!phone.trim()) {
+    setError("اول شماره تلفن را وارد کنید");
+    return;
+    }
+    onSignup({
+      phone_email: phone,
+      role: "student",
+
+    });
+
+  }
+
   return (
     <div className="relative w-[412px] h-[917px] mx-auto bg-[#FEF9FE] font-[BYekan]">
       <TopWave />
-      {/* -------------------- باکس خطا -------------------- */}
       {error && <ErrorBox message={error} onClose={() => setError(null)} />}
-      {/* لوگو */}
       <img
         src={LogoRiaziNovin}
         alt="logo"
-        className="absolute left-[105px] top-[177px] w-[202px] h-[140px]"
+        className="absolute left-[105px] top-[145px] w-[202px] h-[140px]"
       />
 
-      {/* تیتر */}
-      <h2 className="absolute left-[105px] top-[313px] w-[202px] h-[69px] font-bold text-[31px] text-[#080609] text-center leading-[100%]">
-        ورود / ثبت نام
+      <h2 className="absolute left-[105px] top-[281px] w-[202px] h-[69px] font-bold text-[31px] text-[#080609] text-center leading-[100%]">
+        ورود
       </h2>
 
-      {/* متن توضیحی */}
-      <p className="absolute left-[32px] top-[385px] w-[347px] h-[60px] text-center text-[#545454] text-[16px] leading-[24px]">
-        !لطفا شماره تلفن همراه خود را وارد کنید
+      <p className="absolute left-[32px] top-[353px] w-[347px] h-[60px] text-center text-[#545454] text-[16px] leading-[24px]">
+        لطفا شماره تلفن همراه خود را وارد کنید
       </p>
 
-      {/* input شماره تلفن */}
-      <div
-        className="absolute left-[88px] top-[448px] w-[235px] h-[46px] flex items-center justify-center bg-[#F5C6F0] rounded-full px-3"
-      >
+      <div className="absolute left-[88px] top-[416px] w-[235px] h-[46px] flex items-center justify-center bg-[#F5C6F0] rounded-full px-3">
         <input
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="شماره تلفن همراه"
+          style={{ padding: "4px 7px" }}
           className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
         />
-        <img src={TelephoneIcon} alt="phone" className="w-5 h-5 ml-2" />
+        <img
+          src={TelephoneIcon}
+          alt="phone"
+          style={{ padding: "4px 10px" }}
+          className="w-5 h-5 ml-2"
+        />
       </div>
 
-      {/* دکمه ورود با رمز یکبار مصرف */}
       <button
         onClick={handleOTPLogin}
-        className="absolute left-[89px] top-[513px] w-[234px] h-[44px] rounded-full font-bold text-black text-[16px] text-center font-[BYekan]"
+        className="absolute left-[89px] top-[481px] w-[234px] h-[44px] rounded-full font-bold text-black text-[16px] text-center font-[BYekan]"
         style={{
+          direction:"rtl",
           background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
           border: "none",
         }}
       >
-        {loading ? "در حال ارسال..." : "ورود با رمز یکبار مصرف"}
+        {loading ? "در حال بررسی..." : "ورود با رمز یکبار مصرف"}
       </button>
 
-      {/* دکمه ورود با رمز عبور */}
       <button
         onClick={goToPasswordLogin}
-        className="absolute left-[89px] top-[561px] w-[234px] h-[44px] rounded-[24px] text-[16px] font-[400] text-center border border-black font-[BYekan]"
+        className="absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-[24px] text-[16px] font-[400] text-center border border-black font-[BYekan]"
         style={{ background: "#FEF9FE" }}
       >
         ورود با رمز عبور
-      </button>
+      </button> 
+      {/* لینک ایجاد حساب کاربری > */}
+      <div className="absolute left-[178px] top-[585px] w-[129px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
+        <p className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline" 
+         style={{ direction: "rtl" }}
+         onClick={goToSignUpLogin} >
+           ایجاد حساب کاربری &gt; 
+        </p>
+      </div>
 
-      {/* تصویر گای */}
       <img
         src={Guy}
         alt="Guy"
         className="absolute left-[105px] top-[619px] w-[275px] h-[275px] z-20 object-contain"
       />
 
-      {/* موج پایین چسبیده به ته صفحه */}
       <div className="absolute top-[715px] bottom-0 left-0 w-full">
         <BottomWave />
       </div>

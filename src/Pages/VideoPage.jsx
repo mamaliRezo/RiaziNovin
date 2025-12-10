@@ -14,7 +14,6 @@ export default function VideoPage({gotoDashboard}) {
   const [currentVideo, setCurrentVideo] = useState(null);
   const [error, setError] = useState("");
 
-  // ⛔ فقط لینک‌های embed Aparat اینجا بذار
   const sessions = [
     { time: "6:12", title: "جلسه اول: توابع", videoUrl: "https://www.aparat.com/video/video/embed/videohash/Q7cyU/vt/frame" },
     { time: "4:06", title: "جلسه دوم: کسرها", videoUrl: "https://www.aparat.com/video/video/embed/videohash/hhq6ag9/vt/frame" },
@@ -32,7 +31,7 @@ export default function VideoPage({gotoDashboard}) {
       return;
     }
     setCurrentVideo(session.videoUrl);
-    setError(""); // پاک کردن خطا هنگام انتخاب ویدیو
+    setError(""); 
   }
 
   return (
@@ -137,8 +136,6 @@ export default function VideoPage({gotoDashboard}) {
         </p>
 
         <p style={{ width: "348px", margin: "15px auto", fontSize: "14px", color: "#333", lineHeight: "24px" }}>
-توضیحات در مورد دوره:
-
 دوره‌ی ریاضی ششم شامل 8 قسمت آموزشی با مجموع زمان 5 ساعت و ۵۶ دقیقه  است. در این دوره،تمامی فصل های کتاب ریاضی ششم به‌صورت خط به خط و مفهومی تدریس شده و مفاهیم اصلی با مثال‌ها و تمرین‌های کاربردی توضیح داده  می‌شوند.
 همچنین نمونه سؤال‌های امتحانی و تمرین‌های متنوع بررسی شده‌اند تا  دانش‌آموزان برای امتحانات مدرسه و پایه‌ریزی موفقیت در سال‌های بعد آماده  باشند.
  <br/>

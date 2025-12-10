@@ -5,7 +5,7 @@ import TopWave from "../components/TopWave.jsx";
 import BottomWave from "../components/BottomWave.jsx";
 import ErrorBox from "../components/ErrorBox.jsx";
 
-export default function OTP({ phone_email, role, onVerified }) {
+export default function OTP({ phone_email, role, onVerified, fromPage , onToPassword }) {
   const [timeLeft, setTimeLeft] = useState(120);
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
@@ -13,14 +13,9 @@ export default function OTP({ phone_email, role, onVerified }) {
 
   const BACKEND = "http://localhost:8000";
 
-  // -------------------------------------------
-  //  تایمر
-  // -------------------------------------------
   useEffect(() => {
     if (timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft((p) => p - 1);
-    }, 1000);
+    const timer = setInterval(() => setTimeLeft((p) => p - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft]);
 
@@ -33,9 +28,6 @@ export default function OTP({ phone_email, role, onVerified }) {
   const otpComplete = otpValues.every((v) => v !== "");
   const otpCode = otpValues.join("");
 
-  // -------------------------------------------
-  //  ارسال OTP
-  // -------------------------------------------
   async function submitOTP() {
     if (!otpComplete) return;
 
@@ -50,7 +42,7 @@ export default function OTP({ phone_email, role, onVerified }) {
         body: JSON.stringify({
           phone_email,
           otp: otpCode,
-          action: "login",
+          action: fromPage === "signup" ? "signup" : "login",
           role: role || "student",
         }),
       });
@@ -58,7 +50,7 @@ export default function OTP({ phone_email, role, onVerified }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "کد اشتباه است");
+        setError(data.message || "خطا");
         setLoading(false);
         return;
       }
@@ -71,9 +63,6 @@ export default function OTP({ phone_email, role, onVerified }) {
     setLoading(false);
   }
 
-  // -------------------------------------------
-  // ارسال مجدد
-  // -------------------------------------------
   async function resendOTP() {
     setTimeLeft(120);
     setError(null);
@@ -89,35 +78,35 @@ export default function OTP({ phone_email, role, onVerified }) {
     });
   }
 
-  // -------------------------------------------
-  // رندر UI
-  // -------------------------------------------
   return (
     <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden bg-[#FEF9FE] font-[BYekan]">
-
-      {/* 🔔 باکس خطا بالای صفحه */}
       {error && <ErrorBox message={error} onClose={() => setError(null)} />}
-
       <TopWave />
-
-      {/* لوگو */}
       <img
         src={LogoRiaziNovin}
         alt="logo"
         className="absolute left-[105px] top-[177px] w-[202px] h-[140px]"
       />
 
-      {/* تیتر */}
       <h2 className="absolute left-[32px] top-[313px] w-[348px] text-center font-bold text-[26px] text-[#080609]">
         کد فعال سازی را وارد کنید
       </h2>
 
-      {/* متن */}
-      <p className="absolute left-[32px] top-[377px] w-[347px] text-center text-[#545454] text-[16px]">
-        کدتایید ارسال شده را وارد کنید
-      </p>
+      {fromPage === "login" && (
+        <p className="absolute left-[32px] top-[377px] w-[347px] text-center text-[#545454] text-[16px]">
+        کد تایید ارسال شده را وارد کنید
+        </p>
+      )}
 
-      {/* OTP INPUTS */}
+      {fromPage === "signup" && (
+        <p className="absolute left-[32px] top-[377px] w-[347px] text-center text-[#545454] text-[16px]">
+        برای ثبت نام کد تایید را وارد کنید
+        </p>
+      )}
+
+
+
+
       <div className="absolute left-[32px] top-[433px] w-[348px] flex justify-between">
         {otpValues.map((val, idx) => (
           <input
@@ -146,17 +135,13 @@ export default function OTP({ phone_email, role, onVerified }) {
                 setOtpValues(newOtp);
                 document.getElementById(`otp-${idx - 1}`)?.focus();
               }
-
             }}
-            style={{
-                border: "none",
-            }}
+            style={{ border: "none" }}
             className="w-[57px] h-[52px] text-center text-[24px] bg-[#F5C6F0] rounded-[19px] focus:outline-none"
           />
         ))}
       </div>
 
-      {/* تایمر */}
       {timeLeft > 0 ? (
         <div className="absolute left-[105px] top-[497px] w-[202px] text-center text-[13px] text-[#2C0528]">
           تا دریافت مجدد کد {formatTime(timeLeft)}
@@ -175,17 +160,29 @@ export default function OTP({ phone_email, role, onVerified }) {
         disabled={!otpComplete || loading}
         className="absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-[16px]"
         style={{
+          direction: "rtl",
           background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
-          border: "none",   
-          opacity: !otpComplete ? 0.5 : 1, 
+          border: "none",
+          opacity: !otpComplete ? 0.5 : 1,
           cursor: !otpComplete ? "not-allowed" : "pointer",
         }}
       >
         {loading ? "در حال بررسی..." : "ورود"}
       </button>
 
+      {/* لینک  شرطی  > */}
+      <div className="absolute left-[250px] top-[585px] w-[130px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
+        {fromPage === "login" && (
+         <p className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline" 
+           style={{ direction: "rtl" }}
+           onClick={onToPassword} >
+            ورود با رمز عبور &gt; 
+        </p>
+        )}
 
-      {/* تصویر */}
+      </div>
+
+
       <img
         src={Guy}
         alt="Guy"

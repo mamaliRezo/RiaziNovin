@@ -4,7 +4,7 @@ import { XCircle, X } from 'lucide-react';
 export default function ErrorBox({ message, onClose }) {
   return (
     <div 
-      className="fixed top-[120px] left-[460px] -translate-x-1/2 h-[40px] w-[300px]  flex items-start p-4 rounded-[24px]
+      className="fixed top-[120px] left-[460px] -translate-x-1/2 h-[47px] w-[300px]  flex items-start p-4 rounded-[24px]
                  bg-white border border-red-500 shadow-xl z-50 animate-slideDown" 
       role="alert"
     style={{

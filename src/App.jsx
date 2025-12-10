@@ -15,20 +15,30 @@ function App() {
   const [page, setPage] = useState("dashboard"); // صفحه فعلی
   const [authPhoneEmail, setAuthPhoneEmail] = useState(null);
   const [authRole, setAuthRole] = useState("student");
+  const [fromPage, setFromPage] = useState(null);
 
   return (
     <>
       {/* -------------------- LOGIN PAGE -------------------- */}
       {page === "login" && (
         <Login
-          onNext={({ phone_email, role }) => {
+          onOTP={({ phone_email, role }) => {
             setAuthPhoneEmail(phone_email);
             setAuthRole(role);
+            setFromPage("login");
             setPage("otp");
+            
+          }}
+          onSignup={({phone_email, role})=> {
+            setAuthPhoneEmail(phone_email);
+            setAuthRole(role);
+            setFromPage("login")
+            setPage("signup");
           }}
           onPassword={({ phone_email, role }) => {
             setAuthPhoneEmail(phone_email);
             setAuthRole(role);
+            setFromPage("login")
             setPage("password");
           }}
         />
@@ -39,6 +49,7 @@ function App() {
         <OTP
           phone_email={authPhoneEmail}
           role={authRole}
+          fromPage={fromPage}
           onVerified={() => setPage("dashboard")}
           onToSignup={() => setPage("signup")}
           onToPassword={() => setPage("password")}
@@ -50,7 +61,10 @@ function App() {
         <SignUp
           phone_email={authPhoneEmail}
           role={authRole}
-          onSignupComplete={() => setPage("otp")}
+          onSignupComplete={()=>{
+            setFromPage("signup");
+            setPage("otp");
+          }}
         />
       )}
 
@@ -58,6 +72,8 @@ function App() {
       {page === "password" && (
         <PasswordIN
           phone_email={authPhoneEmail}
+          role={authRole}
+          goToOTP={() => setPage("otp")}
           onSuccess={() => setPage("dashboard")}
         />
       )}
