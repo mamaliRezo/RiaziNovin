@@ -49,6 +49,44 @@ export default function PasswordIN({ phone_email, onSuccess, goToOTP }) {
     setLoading(false);
   };
 
+  
+  const handleGoToOTP = async () => {
+    setError(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${BACKEND}/api/check-user/`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone_email,
+          role: "student" 
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "خطا");
+        setLoading(false);
+        return;
+      }
+      goToOTP({
+        phone_email,
+        role: "student",
+        data,
+      });
+
+    } catch (err) {
+      console.log(err);
+      setError("مشکل در اتصال به سرور");
+    }
+
+    setLoading(false);
+  };
+
+
   return (
     <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden font-[BYekan] bg-[#FEF9FE]">
       <TopWave />
@@ -91,7 +129,7 @@ export default function PasswordIN({ phone_email, onSuccess, goToOTP }) {
       <div className="absolute left-[240px] top-[569px] w-[130px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
         <p className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline" 
          style={{ direction: "rtl" }}
-         onClick={goToOTP} >
+         onClick={handleGoToOTP} >
             ورود با کد تایید &gt; 
         </p>
       </div>
