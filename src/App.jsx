@@ -10,9 +10,10 @@ import StudentDashboard from "./Pages/StudentDash.jsx";
 import StudentCourses from "./Pages/StudentCourses.jsx";
 import VideoPage from "./Pages/VideoPage.jsx";
 import ComingSoon from "./Pages/ComingSoon.jsx";
+import Profile from "./Pages/Profile.jsx"
 
 function App() {
-  const [page, setPage] = useState("dashboard"); // صفحه فعلی
+  const [page, setPage] = useState("profile"); // صفحه فعلی
   const [authPhoneEmail, setAuthPhoneEmail] = useState(null);
   const [authRole, setAuthRole] = useState("student");
   const [fromPage, setFromPage] = useState(null);
@@ -107,6 +108,12 @@ function App() {
         <ComingSoon
         gotoDashboard={() => setPage("dashboard")}
         goBack={() => setPage("dashboard")}
+        />
+      )}
+
+      {page=== "profile" && (
+        <Profile
+
         />
       )}
     </>
