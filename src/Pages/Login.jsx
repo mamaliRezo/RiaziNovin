@@ -6,7 +6,7 @@ import TopWave from "../components/TopWave.jsx";
 import BottomWave from "../components/BottomWave.jsx";
 import ErrorBox from "../components/ErrorBox.jsx";
 
-export default function Login({ onOTP, onPassword, onSignup }) {
+export default function Login({ onOTP, onPassword, onSignup}) {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,7 +29,7 @@ export default function Login({ onOTP, onPassword, onSignup }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone_email: phone,
-          role: "student",
+          role: "student"
         }),
       });
 
@@ -66,16 +66,18 @@ export default function Login({ onOTP, onPassword, onSignup }) {
     });
   }
 
-  function goToSignUpLogin() {
+  function goToSignUpLogin(){
     setError(null);
     if (!phone.trim()) {
-      setError("اول شماره تلفن را وارد کنید");
-      return;
+    setError("اول شماره تلفن را وارد کنید");
+    return;
     }
     onSignup({
       phone_email: phone,
       role: "student",
+
     });
+
   }
 
   return (
@@ -117,7 +119,7 @@ export default function Login({ onOTP, onPassword, onSignup }) {
         onClick={handleOTPLogin}
         className="absolute left-[89px] top-[481px] w-[234px] h-[44px] rounded-full font-bold text-black text-[16px] text-center font-[BYekan]"
         style={{
-          direction: "rtl",
+          direction:"rtl",
           background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
           border: "none",
         }}
@@ -131,15 +133,13 @@ export default function Login({ onOTP, onPassword, onSignup }) {
         style={{ background: "#FEF9FE" }}
       >
         ورود با رمز عبور
-      </button>
+      </button> 
       {/* لینک ایجاد حساب کاربری > */}
       <div className="absolute left-[178px] top-[585px] w-[129px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
-        <p
-          className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline"
-          style={{ direction: "rtl" }}
-          onClick={goToSignUpLogin}
-        >
-          ایجاد حساب کاربری &gt;
+        <p className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline" 
+         style={{ direction: "rtl" }}
+         onClick={goToSignUpLogin} >
+           ایجاد حساب کاربری &gt; 
         </p>
       </div>
 

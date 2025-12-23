@@ -13,7 +13,7 @@ import ComingSoon from "./Pages/ComingSoon.jsx";
 import Profile from "./Pages/Profile.jsx"
 
 function App() {
-  const [page, setPage] = useState("profile"); // صفحه فعلی
+  const [page, setPage] = useState("dashboard"); // صفحه فعلی
   const [authPhoneEmail, setAuthPhoneEmail] = useState(null);
   const [authRole, setAuthRole] = useState("student");
   const [fromPage, setFromPage] = useState(null);
