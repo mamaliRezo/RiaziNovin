@@ -1,5 +1,5 @@
 // ErrorBox.jsx (نسخه نهایی)
-import { XCircle, X } from 'lucide-react'; 
+// import { XCircle, X } from 'lucide-react'; 
 
 export default function ErrorBox({ message, onClose }) {
   return (
