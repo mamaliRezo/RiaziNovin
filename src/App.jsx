@@ -2,15 +2,15 @@ import { useState } from "react";
 import "./App.css";
 
 // صفحات
-import Login from "./Pages/Login.jsx";
-import OTP from "./Pages/OTP.jsx";
-import SignUp from "./Pages/SignUp.jsx";
-import PasswordIN from "./Pages/PasswordIN.jsx";
-import StudentDashboard from "./Pages/StudentDash.jsx";
-import StudentCourses from "./Pages/StudentCourses.jsx";
-import VideoPage from "./Pages/VideoPage.jsx";
-import ComingSoon from "./Pages/ComingSoon.jsx";
-import Profile from "./Pages/Profile.jsx"
+import Login from "./Pages/auth/Login.jsx";
+import OTP from "./Pages/auth/OTP.jsx";
+import SignUp from "./Pages/auth/SignUp.jsx";
+import PasswordIN from "./Pages/auth/passwordIN.jsx";
+import StudentDashboard from "./Pages/dashboard/StudentDash.jsx";
+import StudentCourses from "./Pages/dashboard/StudentCourses.jsx";
+import VideoPage from "./Pages/public/VideoPage.jsx";
+import ComingSoon from "./Pages/public/ComingSoon.jsx";
+import Profile from "./Pages/dashboard/Profile.jsx";
 
 function App() {
   const [page, setPage] = useState("dashboard"); // صفحه فعلی
@@ -28,18 +28,17 @@ function App() {
             setAuthRole(role);
             setFromPage("login");
             setPage("otp");
-            
           }}
-          onSignup={({phone_email, role})=> {
+          onSignup={({ phone_email, role }) => {
             setAuthPhoneEmail(phone_email);
             setAuthRole(role);
-            setFromPage("login")
+            setFromPage("login");
             setPage("signup");
           }}
           onPassword={({ phone_email, role }) => {
             setAuthPhoneEmail(phone_email);
             setAuthRole(role);
-            setFromPage("login")
+            setFromPage("login");
             setPage("password");
           }}
         />
@@ -62,7 +61,7 @@ function App() {
         <SignUp
           phone_email={authPhoneEmail}
           role={authRole}
-          onSignupComplete={()=>{
+          onSignupComplete={() => {
             setFromPage("signup");
             setPage("otp");
           }}
@@ -106,16 +105,12 @@ function App() {
       {/* -------------------- COMING SOON PAGE -------------------- */}
       {page === "comingsoon" && (
         <ComingSoon
-        gotoDashboard={() => setPage("dashboard")}
-        goBack={() => setPage("dashboard")}
+          gotoDashboard={() => setPage("dashboard")}
+          goBack={() => setPage("dashboard")}
         />
       )}
 
-      {page=== "profile" && (
-        <Profile
-
-        />
-      )}
+      {page === "profile" && <Profile />}
     </>
   );
 }

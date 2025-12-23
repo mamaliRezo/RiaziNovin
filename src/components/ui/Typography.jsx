@@ -1,39 +1,74 @@
-export function TitleXL({ children, className = "" }) {
+const styles = {
+  titleXL: "text-[32px] font-bold text-secondary",
+  titleLG: "text-[20px] font-bold text-secondary",
+  titleMD: "text-[14px] font-bold text-secondary",
+  titleSM: "text-[12px] font-semibold text-secondary",
+  body: "text-[14px] font-normal text-slate-600",
+  caption: "text-[12px] font-normal text-slate-500",
+};
+
+export function Typography({ variant = "body", className = "", children }) {
+  const Component =
+    variant === "titleXL"
+      ? "h1"
+      : variant === "titleLG"
+      ? "h2"
+      : variant === "titleMD"
+      ? "h3"
+      : "p";
+
   return (
-    <h1 className={`text-[31.42px] font-bold text-secondary ${className}`}>
+    <Component className={`${styles[variant]} ${className}`}>
       {children}
-    </h1>
+    </Component>
   );
 }
 
-export function TitleLG({ children, className = "" }) {
+// Named exports for convenience
+export function TitleXL({ className = "", children }) {
   return (
-    <h2 className={`text-[19.42px] font-bold text-secondary ${className}`}>
+    <Typography variant="titleXL" className={className}>
       {children}
-    </h2>
+    </Typography>
   );
 }
 
-export function TitleMD({ children, className = "" }) {
+export function TitleLG({ className = "", children }) {
   return (
-    <h3 className={`text-[12px] font-bold text-secondary ${className}`}>
+    <Typography variant="titleLG" className={className}>
       {children}
-    </h3>
+    </Typography>
   );
 }
 
-export function TitleSM({ children, className = "" }) {
+export function TitleMD({ className = "", children }) {
   return (
-    <h4 className={`text-[7.41px] font-bold text-secondary ${className}`}>
+    <Typography variant="titleMD" className={className}>
       {children}
-    </h4>
+    </Typography>
   );
 }
 
-export function BodyText({ children, className = "" }) {
+export function TitleSM({ className = "", children }) {
   return (
-    <p className={`text-[12px] font-normal text-slate-600 ${className}`}>
+    <Typography variant="titleSM" className={className}>
       {children}
-    </p>
+    </Typography>
+  );
+}
+
+export function BodyText({ className = "", children }) {
+  return (
+    <Typography variant="body" className={className}>
+      {children}
+    </Typography>
+  );
+}
+
+export function Caption({ className = "", children }) {
+  return (
+    <Typography variant="caption" className={className}>
+      {children}
+    </Typography>
   );
 }
