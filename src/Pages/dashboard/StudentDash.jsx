@@ -6,9 +6,7 @@ import Card from "../../components/ui/Card.jsx";
 import BottomMenu from "../../components/common/BottomMenu.jsx";
 import VideoSymbol from "../../assets/VideoSymbol.svg";
 import NoteSymbol from "../../assets/NoteSymbol.svg";
-import logo from "../../assets/logo.svg";
-import etemad from "../../assets/etemad.svg";
-import icons from "../../assets/icons.svg";
+import GoldenPackage from "../../assets/GoldenPackage.svg";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
 
@@ -17,38 +15,76 @@ export default function StudentDashboard({
   gotoComingSoon,
   gotoDashboard,
   gotoVideo,
+  gotoProfile,
+  gotoStudentPack,
 }) {
-  const headerHeight = 125;
-  const bottomMenuHeight = 70;
+  const headerHeight = 150;
+  const bottomMenuHeight = 90;
 
   return (
-    <div className="font-[byekan] w-[412px] h-screen overflow-hidden relative mx-auto bg-White">
-      {/* هدر ثابت */}
+    <div
+      className="font-[byekan]"
+      style={{ width: "412px", margin: "0 auto", background: "#FEF9FE", position: "relative", height: "100vh", overflow: "hidden" }}
+    >
+      {/* fixed header (includes WelcomeBox) */}
       <div
-        className="fixed top-0 left-1/2 -translate-x-1/2 w-[412px] z-10 bg-White"
-        style={{ height: `${headerHeight}px` }}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          margin: "0 auto",
+          width: "412px",
+          height: headerHeight + "px",
+          background: "#FEF9FE",
+          zIndex: 20,
+        }}
       >
         <HeaderDash />
-        <WelcomeBox />
+        <div style={{ width: "100%" }}>
+          <div style={{ width: "412px", margin: "0 auto" }}>
+            <WelcomeBox />
+          </div>
+        </div>
       </div>
 
-      {/* بخش اسکرول شونده */}
+      {/* scrollable middle region */}
       <div
-        className="absolute left-0 right-0 overflow-y-auto overflow-x-hidden bg-transparent"
-        style={{ top: `${headerHeight}px`, bottom: `${bottomMenuHeight}px` }}
+        style={{
+          position: "absolute",
+          top: headerHeight + "px",
+          bottom: bottomMenuHeight + "px",
+          left: 0,
+          right: 0,
+          overflowY: "auto",
+        }}
       >
         <div className="flex flex-col items-center">
-          {/* اسلایدر */}
+          {/* slider */}
           <div className="mt-5">
             <SliderBox onClick={gotoVideo} />
           </div>
 
-          {/* سرچ باکس */}
-          <div className="mt-5 w-[348px]">
+          {/* search box */}
+          <div style={{ marginTop: "8.97px" }} className="mt-6 w-[348px]">
             <SearchBox />
           </div>
-          {/*کارت ها*/}
-          <div className="relative w-full min-h-[220px] mt-10">
+
+          {/* golden package */}
+          <div
+            className="font-[byekan] mt-10 w-[348px] h-[100px] rounded-[12px] bg-[#C90BBCC9] shadow-[10px_10px_10px_2px_rgba(0,0,0,0.25)] flex items-center justify-center px-4 cursor-pointer text-center relative"
+            style={{ marginTop: "52px" }}
+            onClick={gotoStudentPack}
+          >
+            <div>
+              <p className="text-[21px] text-[#FEF9FE] font-bold">پکیج‌های طلایی</p>
+            </div>
+            <img src={GoldenPackage} alt="Golden Package" />
+            
+          </div>
+
+          {/* cards */}
+          <div className="relative w-full min-h-[220px] mt-10" style={{ marginTop: "12px" }}>
             <Card
               title="ویدیو آموزشی"
               style={{
@@ -80,26 +116,34 @@ export default function StudentDashboard({
               className="absolute top-[5px] left-[264px] w-[105px] h-[88px] pointer-events-none"
             />
           </div>
+        <div className="relative top-[127.33px]">          
+          <ConsultationForm/>
+          <ContactFooter/>
+        </div>
 
-          <ConsultationForm logo={logo} />
-          <ContactFooter etemad={etemad} icons={icons} />
         </div>
       </div>
 
-      {/* منوی پایین ثابت */}
-      {/* منوی پایین با استایل اجباری */}
+      {/* fixed footer */}
       <div
         style={{
           position: "fixed",
-          bottom: "0px",
-          left: "0px",
-          width: "100%",
-          height: `${bottomMenuHeight}px`,
-          zIndex: "9999",
-          backgroundColor: "#FEF9FE",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          margin: "0 auto",
+          width: "412px",
+          zIndex: 30,
+          background: "#FEF9FE",
+          height: bottomMenuHeight + "px",
         }}
       >
-        <BottomMenu gotoDashboard={gotoDashboard} />
+        <BottomMenu
+          gotoDashboard={gotoDashboard}
+          gotoComingSoon={gotoComingSoon}
+          gotoProfile={gotoProfile}
+        />
+
       </div>
     </div>
   );

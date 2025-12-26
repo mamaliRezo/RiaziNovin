@@ -1,45 +1,79 @@
+import { useState } from "react";
 import ActiveHome from "../../assets/ActiveHome.svg";
+import ActiveProfile from "../../assets/ActiveProfile.png";
+import ActiveCourse from "../../assets/myCourses.svg";
+import ActiveShop from "../../assets/ActiveShop.svg";
+import DeActiveHome from "../../assets/DeActiveHome.svg";
 import DeActiveProfileCheck from "../../assets/DeActiveProfileCheck.svg";
 import DeActiveShop from "../../assets/DeActiveShop.svg";
 import DeActiveCourses from "../../assets/DeActiveCourses.svg";
 
-export default function BottomMenu({ gotoDashboard }) {
+export default function BottomMenu({ gotoDashboard, gotoComingSoon, gotoProfile }) {
+  const [activeItem, setActiveItem] = useState("دوره های من");
+
   const menuItems = [
     {
-      icon: ActiveHome,
       text: "خانه",
-      active: true,
-      onClick: gotoDashboard,
+      icon: DeActiveHome,
+      activeIcon: ActiveHome,
       size: 24,
+      onClick: gotoComingSoon,
     },
-    { icon: DeActiveShop, text: "فروشگاه", active: false, size: 20 },
-    { icon: DeActiveProfileCheck, text: "پروفایل", active: false, size: 24 },
+    {
+      text: "دوره های من",
+      icon: DeActiveCourses,
+      activeIcon: ActiveCourse,
+      size: 24,
+      onClick: gotoDashboard,
+    },
+    {
+      text: "فروشگاه",
+      icon: DeActiveShop,
+      activeIcon: ActiveShop,
+      size: 20,
+      onClick: gotoComingSoon,
+    },
+    {
+      text: "پروفایل",
+      icon: DeActiveProfileCheck,
+      activeIcon: ActiveProfile,
+      size: 24,
+      onClick: gotoProfile,
+    },
   ];
-
+  
   return (
-    <div className="bg-white flex justify-center items-center">
-      <div className="w-[280px] flex justify-between items-center">
-        {menuItems.map((item, i) => (
-          <div
-            key={i}
-            onClick={item.onClick}
-            className="text-center cursor-pointer"
-          >
-            <img
-              src={item.icon}
-              className="w-auto"
-              style={{ width: `${item.size}px` }}
-            />
-            <p
-              className={`
-              text-xs mt-1
-              ${item.active ? "text-[#00C0D9] font-bold" : "text-[#C90BBCC9]"}
-            `}
+    <div className="flex justify-center items-center h-full">
+      <div className="w-[300px] flex justify-between items-end pb-2">
+        {menuItems.map((item, i) => {
+          const isActive = activeItem === item.text;
+
+          return (
+            <div
+              key={i}
+              onClick={() => {
+                setActiveItem(item.text);
+                item.onClick();
+              }}
+              className="flex flex-col items-center cursor-pointer"
             >
-              {item.text}
-            </p>
-          </div>
-        ))}
+              <img
+                src={isActive ? item.activeIcon : item.icon}
+                style={{ width: `${item.size}px` }}
+                className="mt-1"
+                alt={item.text}
+              />
+
+              <p
+                className={`text-[11px] mt-1 ${
+                  isActive ? "text-[#00C0D9] font-bold" : "text-[#C90BBCC9]"
+                }`}
+              >
+                {item.text}
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

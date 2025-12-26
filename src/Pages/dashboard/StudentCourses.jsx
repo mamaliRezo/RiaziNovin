@@ -5,8 +5,13 @@ import CourseCard from "../../components/common/CourseCard";
 import BlogCard1 from "../../assets/BlogCard1.svg";
 import BlogCard2 from "../../assets/BlogCard2.svg";
 import BlogCard3 from "../../assets/BlogCard3.svg";
+import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+import ContactFooter from "../../components/section/ContactFooter.jsx";
 
-export default function StudentCourses({ gotoDashboard, gotoVideo }) {
+export default function StudentCourses({   
+  gotoDashboard,
+  gotoComingSoon,
+  gotoProfile, }) {
   const headerHeight = 100;
   return (
     <div
@@ -69,6 +74,11 @@ export default function StudentCourses({ gotoDashboard, gotoVideo }) {
           onClick={() => gotoVideo()}
         />
       </div>
+      
+      <div className="relative top-[-20px]">          
+        <ConsultationForm/>
+        <ContactFooter/>
+      </div>
 
       {/* منوی پایین ثابت */}
       <div
@@ -82,7 +92,11 @@ export default function StudentCourses({ gotoDashboard, gotoVideo }) {
           zIndex: 20,
         }}
       >
-        <BottomMenu gotoDashboard={gotoDashboard} />
+      <BottomMenu
+        gotoDashboard={gotoDashboard}
+        gotoComingSoon={gotoComingSoon}
+        gotoProfile={gotoProfile}
+      />
       </div>
     </div>
   );

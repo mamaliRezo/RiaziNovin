@@ -11,6 +11,7 @@ import StudentCourses from "./Pages/dashboard/StudentCourses.jsx";
 import VideoPage from "./Pages/public/VideoPage.jsx";
 import ComingSoon from "./Pages/public/ComingSoon.jsx";
 import Profile from "./Pages/dashboard/Profile.jsx";
+import StudentPack from "./Pages/dashboard/StudentPack.jsx";
 
 function App() {
   const [page, setPage] = useState("dashboard"); // صفحه فعلی
@@ -80,25 +81,40 @@ function App() {
 
       {/* -------------------- DASHBOARD -------------------- */}
       {page === "dashboard" && (
-        <StudentDashboard
-          gotoCourses={() => setPage("courses")}
-          gotoComingSoon={() => setPage("comingsoon")}
-          gotoVideo={() => setPage("video")}
-        />
+         <StudentDashboard 
+         gotoCourses={() => setPage("courses")} 
+         gotoComingSoon={() => setPage("comingsoon")} 
+         gotoVideo={() => setPage("video")} 
+         gotoDashboard={() => setPage("dashboard")} 
+         gotoProfile={() => setPage("profile")} 
+         gotoStudentPack={() => setPage("package")}
+         />
       )}
 
       {/* -------------------- COURSES PAGE -------------------- */}
       {page === "courses" && (
         <StudentCourses
-          gotoDashboard={() => setPage("dashboard")}
-          gotoVideo={() => setPage("video")}
+         gotoDashboard={() => setPage("dashboard")} 
+         gotoComingSoon={() => setPage("comingsoon")} 
+         gotoProfile={() => setPage("profile")}
+        />
+      )}
+      {/* -------------------- PackageStudend -------------------- */}
+      {page === "package" && (
+        <StudentPack
+         gotoDashboard={() => setPage("dashboard")} 
+         gotoComingSoon={() => setPage("comingsoon")} 
+         gotoProfile={() => setPage("profile")}
         />
       )}
 
       {/* -------------------- VIDEO PAGE -------------------- */}
       {page === "video" && (
         <VideoPage
-          gotoDashboard={() => setPage("dashboard")} // اضافه شد
+         gotoDashboard={() => setPage("dashboard")} 
+         gotoComingSoon={() => setPage("comingsoon")} 
+         gotoProfile={() => setPage("profile")}
+
         />
       )}
 

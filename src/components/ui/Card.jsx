@@ -4,7 +4,7 @@ export default function Card({ title, style, fontSize = "21px", onClick }) {
       style={{
         width: "130px",
         height: "131.73px",
-        background: "#C90BBC",
+        background: "#C90BBCC9",
         borderRadius: "12px",
         boxShadow: "10px 10px 10px 2px #00000040",
         display: "flex",

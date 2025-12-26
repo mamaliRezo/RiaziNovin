@@ -14,7 +14,7 @@ module.exports = {
         Highlight: {
           DEFAULT: "#FFCA28",
         },
-        White: {
+        white: {
           DEFAULT: "#FEF9FE",
         },
         Black: {

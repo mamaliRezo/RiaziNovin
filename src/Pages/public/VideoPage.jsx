@@ -8,10 +8,21 @@ import UserIcon from "../../assets/UserIcon.svg";
 import VideoIcon from "../../assets/camera.svg";
 import videoCover from "../../assets/videoCover.svg";
 import guguli from "../../assets/guguliVideo.svg";
+import download from "../../assets/download.svg";
 
-export default function VideoPage({ gotoDashboard }) {
+import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+import ContactFooter from "../../components/section/ContactFooter.jsx";
+
+export default function VideoPage({ 
+  gotoDashboard,
+  gotoComingSoon,
+  gotoProfile, }) 
+  
+  {
   const [currentVideo, setCurrentVideo] = useState(null);
   const [error, setError] = useState("");
+  const headerHeight = 70;
+  const bottomMenuHeight = 90;
 
   const sessions = [
     {
@@ -81,6 +92,7 @@ export default function VideoPage({ gotoDashboard }) {
         margin: "0 auto",
         background: "#FEF9FE",
         position: "relative",
+        height: "100vh",
         overflow: "hidden",
       }}
     >
@@ -91,10 +103,11 @@ export default function VideoPage({ gotoDashboard }) {
         style={{
           position: "fixed",
           top: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
+          left: 0,
+          right: 0,
+          margin: "0 auto",
           width: "412px",
-          height: "70px",
+          height: `${headerHeight}px`,
           background: "#FEF9FE",
           zIndex: 20,
         }}
@@ -105,13 +118,17 @@ export default function VideoPage({ gotoDashboard }) {
       {/* Scroll Content */}
       <div
         style={{
-          paddingTop: "80px",
-          paddingBottom: "90px",
+          position: "absolute",
+          top: `${headerHeight}px`,
+          bottom: `${bottomMenuHeight}px`,
+          left: 0,
+          right: 0,
           overflowY: "auto",
-          direction: "rtl",
           textAlign: "right",
         }}
       >
+        
+        <div style={{ direction: "rtl", textAlign: "right" }}>
         {/* باکس ویدیو */}
         <div
           style={{
@@ -172,7 +189,7 @@ export default function VideoPage({ gotoDashboard }) {
             color: "#000",
           }}
         >
-          آموزش ریاضی ششم دبستان با حل نمونه سوال
+        دوره کامل آمورش کتاب ریاضی ششم دبستان 
         </h2>
 
         <div
@@ -210,12 +227,8 @@ export default function VideoPage({ gotoDashboard }) {
             lineHeight: "24px",
           }}
         >
-          دوره‌ی ریاضی ششم شامل 8 قسمت آموزشی با مجموع زمان 5 ساعت و ۵۶ دقیقه
-          است. در این دوره،تمامی فصل های کتاب ریاضی ششم به‌صورت خط به خط و
-          مفهومی تدریس شده و مفاهیم اصلی با مثال‌ها و تمرین‌های کاربردی توضیح
-          داده می‌شوند. همچنین نمونه سؤال‌های امتحانی و تمرین‌های متنوع بررسی
-          شده‌اند تا دانش‌آموزان برای امتحانات مدرسه و پایه‌ریزی موفقیت در
-          سال‌های بعد آماده باشند.
+دوره‌ی ریاضی ششم شامل 8 قسمت آموزشی با مجموع زمان 5 ساعت و ۵۶ دقیقه  است. در این دوره،تمامی فصل های کتاب ریاضی ششم به‌صورت خط به خط و مفهومی تدریس شده و مفاهیم اصلی با مثال‌ها و تمرین‌های کاربردی توضیح داده  می‌شوند<div/>
+تا دانش‌آموزان برای امتحانات مدرسه و پایه‌ریزی موفقیت در سال‌های بعد آماده  باشند.
           <br />
           📌 تعداد جلسات: 8
           <br />
@@ -224,10 +237,22 @@ export default function VideoPage({ gotoDashboard }) {
           🎯 پوشش کامل تمام فصل‌های ریاضی ششم
         </p>
 
+        {/* باکس دانلود */}
+        <div style={{ width: "278px", height: "32px", position: "absolute", top: "572px", left: "85px", border: "1px solid #000000", borderRadius: "6px", opacity: 1, transform: "rotate(0deg)", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "8px", paddingRight: "10px", backgroundColor: "#FEF9FE", cursor: "pointer", zIndex: 10, }} >
+        {/* آیکون دانلود */}
+          <img 
+            src={download}
+            alt="download"
+             />
+          <p style={{ fontSize: "13px", color: "#000000", fontWeight: "500" }}>
+              دریافت فایل جزوه این جلسه 
+          </p>
+        </div>
+
         <div
           style={{
             width: "348px",
-            margin: "15px auto 5px auto",
+            margin: "80px auto 5px auto",
             display: "flex",
             alignItems: "center",
             gap: "10px",
@@ -345,6 +370,11 @@ export default function VideoPage({ gotoDashboard }) {
             </div>
           ))}
         </div>
+        </div>
+        <div className="relative top-[180px]">          
+          <ConsultationForm/>
+          <ContactFooter/>
+        </div>
       </div>
 
       {/* Bottom menu */}
@@ -352,14 +382,20 @@ export default function VideoPage({ gotoDashboard }) {
         style={{
           position: "fixed",
           bottom: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
+          left: 0,
+          right: 0,
+          margin: "0 auto",
           width: "412px",
           zIndex: 30,
           background: "#FEF9FE",
+          height: `${bottomMenuHeight}px`,
         }}
       >
-        <BottomMenu gotoDashboard={gotoDashboard} />
+      <BottomMenu
+        gotoDashboard={gotoDashboard}
+        gotoComingSoon={gotoComingSoon}
+        gotoProfile={gotoProfile}
+      />
       </div>
     </div>
   );
