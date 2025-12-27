@@ -16,7 +16,7 @@ export default function StudentDashboard({
   gotoDashboard,
   gotoVideo,
   gotoProfile,
-  gotoStudentPack,
+  gotoStudentPack, 
 }) {
   const headerHeight = 150;
   const bottomMenuHeight = 90;

@@ -1,8 +1,10 @@
 import { useState } from "react";
+
 import ActiveHome from "../../assets/ActiveHome.svg";
 import ActiveProfile from "../../assets/ActiveProfile.png";
 import ActiveCourse from "../../assets/myCourses.svg";
 import ActiveShop from "../../assets/ActiveShop.svg";
+
 import DeActiveHome from "../../assets/DeActiveHome.svg";
 import DeActiveProfileCheck from "../../assets/DeActiveProfileCheck.svg";
 import DeActiveShop from "../../assets/DeActiveShop.svg";

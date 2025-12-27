@@ -12,9 +12,10 @@ import VideoPage from "./Pages/public/VideoPage.jsx";
 import ComingSoon from "./Pages/public/ComingSoon.jsx";
 import Profile from "./Pages/dashboard/Profile.jsx";
 import StudentPack from "./Pages/dashboard/StudentPack.jsx";
+import CreateCourse from "./Pages/teacher/createCourse.jsx";
 
 function App() {
-  const [page, setPage] = useState("dashboard"); // صفحه فعلی
+  const [page, setPage] = useState("create"); // صفحه فعلی
   const [authPhoneEmail, setAuthPhoneEmail] = useState(null);
   const [authRole, setAuthRole] = useState("student");
   const [fromPage, setFromPage] = useState(null);
@@ -107,6 +108,15 @@ function App() {
          gotoProfile={() => setPage("profile")}
         />
       )}
+      {/* -------------------- createCourse -------------------- */}
+      {page === "create" && (
+        <CreateCourse
+         gotoDashboard={() => setPage("dashboard")} 
+         gotoComingSoon={() => setPage("comingsoon")} 
+         gotoProfile={() => setPage("profile")}
+        />
+      )}
+
 
       {/* -------------------- VIDEO PAGE -------------------- */}
       {page === "video" && (
