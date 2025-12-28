@@ -43,7 +43,6 @@ export default function OTP({
     try {
       const res = await fetch(`${BACKEND}/api/verify-otp/`, {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone_email,
@@ -61,6 +60,13 @@ export default function OTP({
         return;
       }
 
+      if (data.access) {
+        localStorage.setItem("access_token", data.access);
+      }
+      if (data.refresh) {
+        localStorage.setItem("refresh_token", data.refresh);
+      }
+
       onVerified();
     } catch {
       setError("مشکل در اتصال به سرور");
@@ -75,7 +81,6 @@ export default function OTP({
 
     await fetch(`${BACKEND}/api/resend-otp/`, {
       method: "POST",
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         phone_email,

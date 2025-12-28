@@ -13,15 +13,18 @@ import ComingSoon from "./Pages/public/ComingSoon.jsx";
 import Profile from "./Pages/dashboard/Profile.jsx";
 import StudentPack from "./Pages/dashboard/StudentPack.jsx";
 import CreateCourse from "./Pages/teacher/createCourse.jsx";
+import api from "./services/api";
+import CoursesList from "./services/check.jsx";
 
 function App() {
-  const [page, setPage] = useState("create"); // صفحه فعلی
+  const [page, setPage] = useState(""); // صفحه فعلی
   const [authPhoneEmail, setAuthPhoneEmail] = useState(null);
   const [authRole, setAuthRole] = useState("student");
   const [fromPage, setFromPage] = useState(null);
 
   return (
     <>
+    <CoursesList />
       {/* -------------------- LOGIN PAGE -------------------- */}
       {page === "login" && (
         <Login
@@ -82,49 +85,47 @@ function App() {
 
       {/* -------------------- DASHBOARD -------------------- */}
       {page === "dashboard" && (
-         <StudentDashboard 
-         gotoCourses={() => setPage("courses")} 
-         gotoComingSoon={() => setPage("comingsoon")} 
-         gotoVideo={() => setPage("video")} 
-         gotoDashboard={() => setPage("dashboard")} 
-         gotoProfile={() => setPage("profile")} 
-         gotoStudentPack={() => setPage("package")}
-         />
+        <StudentDashboard
+          gotoCourses={() => setPage("courses")}
+          gotoComingSoon={() => setPage("comingsoon")}
+          gotoVideo={() => setPage("video")}
+          gotoDashboard={() => setPage("dashboard")}
+          gotoProfile={() => setPage("profile")}
+          gotoStudentPack={() => setPage("package")}
+        />
       )}
 
       {/* -------------------- COURSES PAGE -------------------- */}
       {page === "courses" && (
         <StudentCourses
-         gotoDashboard={() => setPage("dashboard")} 
-         gotoComingSoon={() => setPage("comingsoon")} 
-         gotoProfile={() => setPage("profile")}
+          gotoDashboard={() => setPage("dashboard")}
+          gotoComingSoon={() => setPage("comingsoon")}
+          gotoProfile={() => setPage("profile")}
         />
       )}
       {/* -------------------- PackageStudend -------------------- */}
       {page === "package" && (
         <StudentPack
-         gotoDashboard={() => setPage("dashboard")} 
-         gotoComingSoon={() => setPage("comingsoon")} 
-         gotoProfile={() => setPage("profile")}
+          gotoDashboard={() => setPage("dashboard")}
+          gotoComingSoon={() => setPage("comingsoon")}
+          gotoProfile={() => setPage("profile")}
         />
       )}
       {/* -------------------- createCourse -------------------- */}
       {page === "create" && (
         <CreateCourse
-         gotoDashboard={() => setPage("dashboard")} 
-         gotoComingSoon={() => setPage("comingsoon")} 
-         gotoProfile={() => setPage("profile")}
+          gotoDashboard={() => setPage("dashboard")}
+          gotoComingSoon={() => setPage("comingsoon")}
+          gotoProfile={() => setPage("profile")}
         />
       )}
-
 
       {/* -------------------- VIDEO PAGE -------------------- */}
       {page === "video" && (
         <VideoPage
-         gotoDashboard={() => setPage("dashboard")} 
-         gotoComingSoon={() => setPage("comingsoon")} 
-         gotoProfile={() => setPage("profile")}
-
+          gotoDashboard={() => setPage("dashboard")}
+          gotoComingSoon={() => setPage("comingsoon")}
+          gotoProfile={() => setPage("profile")}
         />
       )}
 
