@@ -2,29 +2,24 @@ import { useState } from "react";
 import "./App.css";
 
 // صفحات
-import Login from "./Pages/auth/Login.jsx";
-import OTP from "./Pages/auth/OTP.jsx";
-import SignUp from "./Pages/auth/SignUp.jsx";
-import PasswordIN from "./Pages/auth/passwordIN.jsx";
-import StudentDashboard from "./Pages/dashboard/StudentDash.jsx";
-import StudentCourses from "./Pages/dashboard/StudentCourses.jsx";
-import VideoPage from "./Pages/public/VideoPage.jsx";
-import ComingSoon from "./Pages/public/ComingSoon.jsx";
-import Profile from "./Pages/dashboard/Profile.jsx";
-import StudentPack from "./Pages/dashboard/StudentPack.jsx";
-import CreateCourse from "./Pages/teacher/createCourse.jsx";
-import api from "./services/api";
-import CoursesList from "./services/check.jsx";
+import Login from "./Pages/Login.jsx";
+import OTP from "./Pages/OTP.jsx";
+import SignUp from "./Pages/SignUp.jsx";
+import PasswordIN from "./Pages/PasswordIN.jsx";
+import StudentDashboard from "./Pages/StudentDash.jsx";
+import StudentCourses from "./Pages/StudentCourses.jsx";
+import VideoPage from "./Pages/VideoPage.jsx";
+import ComingSoon from "./Pages/ComingSoon.jsx";
+import Profile from "./Pages/Profile.jsx";
 
 function App() {
-  const [page, setPage] = useState(""); // صفحه فعلی
+  const [page, setPage] = useState("login"); // صفحه فعلی
   const [authPhoneEmail, setAuthPhoneEmail] = useState(null);
   const [authRole, setAuthRole] = useState("student");
   const [fromPage, setFromPage] = useState(null);
 
   return (
     <>
-    <CoursesList />
       {/* -------------------- LOGIN PAGE -------------------- */}
       {page === "login" && (
         <Login
@@ -89,9 +84,6 @@ function App() {
           gotoCourses={() => setPage("courses")}
           gotoComingSoon={() => setPage("comingsoon")}
           gotoVideo={() => setPage("video")}
-          gotoDashboard={() => setPage("dashboard")}
-          gotoProfile={() => setPage("profile")}
-          gotoStudentPack={() => setPage("package")}
         />
       )}
 
@@ -99,33 +91,14 @@ function App() {
       {page === "courses" && (
         <StudentCourses
           gotoDashboard={() => setPage("dashboard")}
-          gotoComingSoon={() => setPage("comingsoon")}
-          gotoProfile={() => setPage("profile")}
-        />
-      )}
-      {/* -------------------- PackageStudend -------------------- */}
-      {page === "package" && (
-        <StudentPack
-          gotoDashboard={() => setPage("dashboard")}
-          gotoComingSoon={() => setPage("comingsoon")}
-          gotoProfile={() => setPage("profile")}
-        />
-      )}
-      {/* -------------------- createCourse -------------------- */}
-      {page === "create" && (
-        <CreateCourse
-          gotoDashboard={() => setPage("dashboard")}
-          gotoComingSoon={() => setPage("comingsoon")}
-          gotoProfile={() => setPage("profile")}
+          gotoVideo={() => setPage("video")}
         />
       )}
 
       {/* -------------------- VIDEO PAGE -------------------- */}
       {page === "video" && (
         <VideoPage
-          gotoDashboard={() => setPage("dashboard")}
-          gotoComingSoon={() => setPage("comingsoon")}
-          gotoProfile={() => setPage("profile")}
+          gotoDashboard={() => setPage("dashboard")} // اضافه شد
         />
       )}
 

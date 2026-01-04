@@ -115,7 +115,7 @@ export default function Login({ onOTP, onPassword, onSignup }) {
 
       <button
         onClick={handleOTPLogin}
-        className="absolute left-[89px] top-[481px] w-[234px] h-[44px] rounded-full font-bold text-black text-[16px] text-center font-[BYekan]"
+        className="absolute cursor-pointer left-[89px] top-[481px] w-[234px] h-[44px] rounded-full font-bold text-black text-[16px] text-center font-[BYekan]"
         style={{
           direction: "rtl",
           background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
@@ -127,7 +127,7 @@ export default function Login({ onOTP, onPassword, onSignup }) {
 
       <button
         onClick={goToPasswordLogin}
-        className="absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-[24px] text-[16px] font-[400] text-center border border-black font-[BYekan]"
+        className="absolute left-[89px] cursor-pointer top-[529px] w-[234px] h-[44px] rounded-[24px] text-[16px] font-[400] text-center border border-black font-[BYekan]"
         style={{ background: "#FEF9FE" }}
       >
         ورود با رمز عبور
