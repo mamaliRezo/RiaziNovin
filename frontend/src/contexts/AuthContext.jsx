@@ -1,0 +1,161 @@
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api, { setAuthToken } from "../services/api";
+import ROLE_ROUTES from "../config/roleRoutes";
+
+const AuthContext = createContext(null);
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const raw = localStorage.getItem("auth");
+        const token = localStorage.getItem("access_token");
+        if (token) {
+          setAuthToken(token);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            setUser(parsed.user || null);
+            setRole(parsed.role || null);
+            setIsAuthenticated(!!parsed.isAuthenticated);
+          }
+          // Try to refresh profile to validate token
+          try {
+            const resp = await api.get("/me");
+            const profile = resp.data;
+            setUser(profile);
+            setRole(profile?.role || profile?.type || null);
+            setIsAuthenticated(true);
+            localStorage.setItem(
+              "auth",
+              JSON.stringify({
+                isAuthenticated: true,
+                user: profile,
+                role: profile?.role || profile?.type || null,
+              }),
+            );
+          } catch {
+            // token might be invalid, clear
+            clearAuthState();
+          }
+        } else {
+          clearAuthState();
+        }
+      } catch (e) {
+        clearAuthState();
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function clearAuthState() {
+    setUser(null);
+    setRole(null);
+    setIsAuthenticated(false);
+    setAuthToken(null);
+    try {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("auth");
+    } catch (e) {}
+  }
+
+  async function login(credentials) {
+    setLoading(true);
+    try {
+      // POST /login is generic; backend may return access_token or token
+      const res = await api.post("/login", credentials);
+      const token =
+        res?.data?.access_token || res?.data?.token || res?.data?.data?.token;
+      if (!token) throw new Error("No token received from login");
+      // persist token and configure axios
+      localStorage.setItem("access_token", token);
+      setAuthToken(token);
+
+      // fetch current user profile
+      const me = await api.get("/me");
+      const profile = me.data;
+      setUser(profile);
+      const resolvedRole = profile?.role || profile?.type || null;
+      setRole(resolvedRole);
+      setIsAuthenticated(true);
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({
+          isAuthenticated: true,
+          user: profile,
+          role: resolvedRole,
+        }),
+      );
+
+      // redirect based on role mapping
+      const dest = ROLE_ROUTES[resolvedRole] || "/unauthorized";
+      navigate(dest, { replace: true });
+      return profile;
+    } catch (err) {
+      clearAuthState();
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function logout() {
+    clearAuthState();
+    navigate("/login", { replace: true });
+  }
+
+  async function getCurrentUser() {
+    if (!isAuthenticated) return null;
+    try {
+      const resp = await api.get("/me");
+      setUser(resp.data);
+      return resp.data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  const value = {
+    isAuthenticated,
+    user,
+    role,
+    loading,
+    login,
+    logout,
+    getCurrentUser,
+  };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export default AuthContext;
