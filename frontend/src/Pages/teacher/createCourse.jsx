@@ -1,12 +1,17 @@
 import { useState } from "react";
 import HeaderDash from "../../components/section/HeaderDash";
 import BottomMenu from "../../components/common/BottomMenu";
-import guguli from "../../assets/guguliVideo.svg"; 
+import guguli from "../../assets/guguliVideo.svg";
 import upload from "../../assets/upload.svg";
 import pen from "../../assets/editPen.svg";
-import ProfileAvatar from "../../assets/ProfileAvatar.svg";
-import UserIcon from "../../assets/UserIcon.svg";
-import  PlusIcon from "../../assets/UserIcon.svg";
+import PlusIcon from "../../assets/UserIcon.svg";
+import api from "../../services/api";
+
+const COURSE_TYPES = [
+  { value: "educational", label: "ویدیو آموزشی" },
+  { value: "sample_questions", label: "نمونه سوال" },
+];
+
 export default function CreateCourse({
   gotoDashboard,
   gotoComingSoon,
@@ -15,40 +20,91 @@ export default function CreateCourse({
   const headerHeight = 70;
   const bottomMenuHeight = 90;
 
-const [coverPreview, setCoverPreview] = useState(null); 
-const [title, setTitle] = useState(""); 
-const [courseGoal, setCourseGoal] = useState(""); 
-const [score, setScore] = useState(""); 
-const [description, setDescription] = useState(""); 
-const [totalSessions, setTotalSessions] = useState(""); 
-const [totalDuration, setTotalDuration] = useState("");
-const [teacherName, setTeacherName] = useState("");
-const [studentNumber, setStudentNumber] = useState("");
+  // ---- فیلدهای فرم (دقیقا مطابق چیزی که create_course تو بک‌اند می‌خواد) ----
+  const [coverFile, setCoverFile] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [courseType, setCourseType] = useState("educational");
+  const [grade, setGrade] = useState("");
+  const [subject, setSubject] = useState("");
 
+  // ---- وضعیت ذخیره‌ی دوره ----
+  const [courseId, setCourseId] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
 
-const handleAddSessionClick = () => {
-  document.getElementById("video").click();
-};
-
-const handleVideoUpload = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    gotoEditSession(file);
-  }
-};
-
-const gotoEditSession = (file) => {
-  console.log("رفتن به صفحه ویرایش جلسه با فایل:", file.name);
-  // اینجا می‌تونی route بزنی یا state منتقل کنی
-};
-
+  // ---- وضعیت آپلود جلسات ویدیویی (فقط بعد از ساخته‌شدن دوره) ----
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videos, setVideos] = useState([]);
 
   const handleCoverChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const previewURL = URL.createObjectURL(file);
-      setCoverPreview(previewURL);
-      // TODO: این فایل را برای ذخیره/آپلود نگه‌دار (مثلاً در یک state دیگر یا فرم اصلی)
+      setCoverFile(file);
+      setCoverPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSaveCourse = async () => {
+    if (!title.trim() || !description.trim() || !subject.trim()) {
+      setFormError("عنوان، توضیحات و درس اجباری هستن.");
+      return;
+    }
+    setSaving(true);
+    setFormError("");
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("course_type", courseType);
+      formData.append("grade", grade);
+      formData.append("subject", subject);
+      if (coverFile) formData.append("thumbnail", coverFile);
+
+      const res = await api.post("/create-course/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setCourseId(res.data.course_id);
+    } catch (err) {
+      setFormError(
+        err?.response?.data?.message || "خطا در ذخیره‌ی دوره. دوباره تلاش کن."
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAddSessionClick = () => {
+    if (!courseId) {
+      setFormError("اول باید دوره رو ذخیره کنی، بعد بتونی جلسه اضافه کنی.");
+      return;
+    }
+    document.getElementById("video").click();
+  };
+
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !courseId) return;
+
+    setUploadingVideo(true);
+    setFormError("");
+    try {
+      const formData = new FormData();
+      formData.append("title", file.name);
+      formData.append("video_file", file);
+
+      const res = await api.post(
+        `/courses/${courseId}/add-video/`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      setVideos((prev) => [...prev, { order: res.data.order, title: file.name }]);
+    } catch (err) {
+      setFormError(err?.response?.data?.message || "خطا در آپلود ویدیو.");
+    } finally {
+      setUploadingVideo(false);
+      e.target.value = "";
     }
   };
 
@@ -94,7 +150,6 @@ const gotoEditSession = (file) => {
         <div style={{ direction: "rtl" }}>
           {/* ------------------ بخش کاور دوره ------------------ */}
           <div className="w-[348px] mx-auto mt-[1px]">
-            {/* باکس طوسی نمایش کاور */}
             <div
               className="relative w-[348px] h-[172px] rounded-[8px] overflow-hidden"
               style={{ backgroundColor: "#080609A3" }}
@@ -106,8 +161,6 @@ const gotoEditSession = (file) => {
                   className="w-full h-full object-cover"
                 />
               )}
-
-              {/* آیکون پلی وسط */}
               <img
                 src={guguli}
                 alt="play"
@@ -115,15 +168,13 @@ const gotoEditSession = (file) => {
               />
             </div>
 
-            {/* باکس آبی انتخاب تصویر — چسبیده زیر باکس طوسی، راست‌چین با آیکون آپلود */}
             <label
               htmlFor="cover-upload"
               className="w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
               style={{ direction: "rtl" }}
-            >              
-            <img src={upload} alt="upload" />
-            <span className="ml-2">تغییر تصویر پیش‌نمایش ویدیو</span>
-
+            >
+              <img src={upload} alt="upload" />
+              <span className="ml-2">تغییر تصویر پیش‌نمایش ویدیو</span>
             </label>
 
             <input
@@ -135,195 +186,156 @@ const gotoEditSession = (file) => {
             />
           </div>
 
-          {/* فیلد تیتر دوره ویدیویی */}
+          {/* عنوان دوره */}
           <div className="w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
-            <img src={pen} alt="pen"/>
+            <img src={pen} alt="pen" />
             <input
-                type="text"
-                className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[19.42px] font-[byekan] focus:outline-none"
-                placeholder="تیتر دوره ویدیویی"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+              type="text"
+              className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[19.42px] font-[byekan] focus:outline-none"
+              placeholder="تیتر دوره ویدیویی"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
-          {/* ⭐ ....... (....... امتیاز) */}
-            <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex justify-start items-center gap-1">
-            <img src={pen} alt="pen"/>
-            <input
-                type="text"
-                className="w-[30px] px-1 py-[2px] border-none focus:outline-none text-center placeholder:text-[#999] bg-[#FEF9FE]"
-                placeholder="......."
-                value={score}
-                onChange={(e) => setScore(e.target.value)}
-            />            
-        <span>⭐</span>
-        <span>(</span>
-        <input
-            type="text"
-            className="w-[30px] px-1 py-[2px] border-none focus:outline-none text-center placeholder:text-[#999] bg-[#FEF9FE]"
-            placeholder="......."
-            // value={scoreLabel}
-            // onChange={(e) => setScoreLabel(e.target.value)}
-        />
-        <span>امتیاز)</span>        
 
-        </div>
-        <div className="text-right">
-         <p
-          style={{
-            width: "348px",
-            margin: "15px auto",
-            fontSize: "15px",
-            color: "#C90BBCC9",
-            lineHeight: "22px",
-          }}
-        >
-          توضیحات در مورد دوره:
-        </p>
-        </div>
-        {/* فیلد توضیحات دوره ویدیویی */}
+          <div className="text-right">
+            <p
+              style={{
+                width: "348px",
+                margin: "15px auto",
+                fontSize: "15px",
+                color: "#C90BBCC9",
+                lineHeight: "22px",
+              }}
+            >
+              توضیحات در مورد دوره:
+            </p>
+          </div>
           <div className="w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
-            <img src={pen} alt="pen"/>
+            <img src={pen} alt="pen" />
             <textarea
-                type="text"
-                className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[12px] font-[byekan] focus:outline-none"
-                rows={4}
-                placeholder=".................................................................................................................................................................................................................................................................................................................."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+              className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[12px] font-[byekan] focus:outline-none"
+              rows={4}
+              placeholder="توضیحات دوره..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
-        <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-1">
-        <span>📌</span>
-        <img src={pen} alt="pen"/>
-        <span>تعداد جلسات:</span>
-        <input
-            type="text"
-            className="w-[80px] px-1 border-none focus:outline-none text-center placeholder:text-[#999] bg-[#FEF9FE]"
-            placeholder=".........."
-            value={totalSessions}
-            onChange={(e) => setTotalSessions(e.target.value)}
-        />
-        </div>
 
-        <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-1">
-        <span>⏰</span>
-        <img src={pen} alt="pen"/>
-        <span>زمان کل دوره:</span>
-        <input
-            type="text"
-            className="w-[80px] px-1 border-none focus:outline-none text-center placeholder:text-[#999] bg-[#FEF9FE]"
-            placeholder=".........."
-            value={totalDuration}
-            onChange={(e) => setTotalDuration(e.target.value)}
-        />
-        </div>
-        <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-1">
-        <span>🎯</span>
-        <img src={pen} alt="pen"/>
-        <input
-            type="text"
-            className="w-[123px] px-1 border-none focus:outline-none text-center placeholder:text-[#999] bg-[#FEF9FE]"
-            placeholder="............................................"
-            value={courseGoal}
-            onChange={(e) => setCourseGoal(e.target.value)}
-        />
-        </div>
-                <div
-                  className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-1"
-                  style={{
-                    width: "348px",
-                    margin: "80px auto 5px auto",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                  }}
-                >
-                  <img src={ProfileAvatar} alt="teacherAvatar" />
-                  <div style={{ display: "flex" }}>
-                    <img src={pen} alt="pen"/>
-                    <span style={{ color: "#00C0D9", fontSize: "14px" }}>
-                      مدرس:
-                    </span>
-                    <input
-                     type="text"
-                     className="w-[100px] px-1 border-none focus:outline-none text-[#00C0D9] text-right placeholder:text-[#999] bg-[#FEF9FE]"
-                     placeholder="............."
-                     value={teacherName}
-                     onChange={(e) => setTeacherName(e.target.value)}
-                    />
+          {/* نوع دوره */}
+          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+            <span>📌</span>
+            <span>نوع دوره:</span>
+            <select
+              className="flex-1 bg-[#FEF9FE] border border-[#00C0D9A3] rounded-[6px] px-2 py-1 focus:outline-none"
+              value={courseType}
+              onChange={(e) => setCourseType(e.target.value)}
+            >
+              {COURSE_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                  </div>
+          {/* پایه تحصیلی */}
+          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+            <span>🎓</span>
+            <span>پایه:</span>
+            <input
+              type="text"
+              className="flex-1 px-2 py-1 border-none focus:outline-none placeholder:text-[#999] bg-[#FEF9FE]"
+              placeholder="مثلاً دهم، یازدهم..."
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+            />
+          </div>
+
+          {/* درس */}
+          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+            <span>📚</span>
+            <span>درس:</span>
+            <input
+              type="text"
+              className="flex-1 px-2 py-1 border-none focus:outline-none placeholder:text-[#999] bg-[#FEF9FE]"
+              placeholder="مثلاً ریاضی، فیزیک..."
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+            />
+          </div>
+
+          {formError && (
+            <div className="w-[348px] mx-auto mt-[12px] text-sm text-red-600">
+              {formError}
+            </div>
+          )}
+
+          {/* دکمه ذخیره دوره */}
+          {!courseId ? (
+            <button
+              onClick={handleSaveCourse}
+              disabled={saving}
+              className="w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
+              style={{ display: "flex" }}
+            >
+              {saving ? "در حال ذخیره..." : "ذخیره دوره"}
+            </button>
+          ) : (
+            <div className="w-[348px] mx-auto mt-[16px] text-sm text-green-700">
+              دوره ذخیره شد ✅ حالا می‌تونی جلسات ویدیویی اضافه کنی.
+            </div>
+          )}
+
+          <h3
+            style={{
+              width: "348px",
+              margin: "30px auto 10px auto",
+              fontSize: "24px",
+              fontWeight: "bold",
+              textAlign: "center",
+              color: "#00A7D1",
+            }}
+          >
+            محتوای دوره
+          </h3>
+
+          {/* لیست جلسات اضافه‌شده */}
+          {videos.length > 0 && (
+            <div className="w-[348px] mx-auto mb-[10px] text-sm text-[#333]">
+              {videos.map((v) => (
+                <div key={v.order} className="flex justify-between py-1 border-b border-[#eee]">
+                  <span>جلسه {v.order}</span>
+                  <span>{v.title}</span>
                 </div>
-                <div
-                    style={{
-                    width: "348px",
-                    height: "1px",
-                    background: "#080609",
-                    margin: "0px auto 10px auto",
-                    }}
-                ></div>
+              ))}
+            </div>
+          )}
 
-                <div
-                    style={{
-                    width: "348px",
-                    margin: "0 auto 20px auto",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    fontSize: "14px",
-                    color: "#080609A3",
-                    }}
-                >
-                <img src={UserIcon} alt="userIcon" style={{ width: "20px" }} />
-                    <input
-                     type="text"
-                     className="w-[25px] px-1 border-none focus:outline-none text-[#00C0D9] text-right placeholder:text-[#999] bg-[#FEF9FE]"
-                     placeholder="......."
-                     value={studentNumber}
-                     onChange={(e) => setStudentNumber(e.target.value)}
-                    />               
-                <span> دانش‌آموز</span>
-                </div>
-                <h3
-                    style={{
-                    width: "348px",
-                    margin: "30px auto 10px auto",
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    color: "#00A7D1",
-                    }}
-                >
-                محتوای دوره
-                </h3>
+          {/* سطر اضافه کردن جلسه ویدیویی */}
+          <div
+            className="w-[348px] mx-auto mt-[20px] flex items-start justify-start border border-[#080609] rounded-[8px] px-3 py-2 bg-[#E5A6E6]"
+            style={{ direction: "rtl", opacity: courseId ? 1 : 0.5 }}
+          >
+            <span
+              onClick={handleAddSessionClick}
+              className="flex items-start gap-1 text-sm font-bold"
+              style={{ cursor: "pointer" }}
+            >
+              <img src={PlusIcon} alt="add" className="w-[16px]" />
+              {uploadingVideo
+                ? "در حال آپلود..."
+                : "اضافه کردن یک جلسه ویدیویی"}
+            </span>
+          </div>
 
-
-        {/* سطر اضافه کردن جلسه ویدیویی */}
-<div
-  className="w-[348px] mx-auto mt-[20px] flex items-start justify-start border border-[#080609] rounded-[8px] px-3 py-2 bg-[#E5A6E6]"
-  style={{ direction: "rtl" }}
->
-  <span
-    onClick={handleAddSessionClick}
-    className="flex items-start gap-1 text-sm font-bold"
-    style={{ cursor: "pointer" }}
-  >
-    <img src={PlusIcon} alt="add" className="w-[16px]" />
-    اضافه کردن یک جلسه ویدیویی
-  </span>
-</div>
-
-<input
-  id="video"
-  type="file"
-  accept="video/*"
-  className="hidden"
-  onChange={handleVideoUpload}
-/>
-
-
-
+          <input
+            id="video"
+            type="file"
+            accept="video/*"
+            className="hidden"
+            onChange={handleVideoUpload}
+          />
         </div>
       </div>
 
