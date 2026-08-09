@@ -10,12 +10,13 @@ import GoldenPackage from "../../assets/GoldenPackage.svg";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getStudentDashboard } from "../../services/api";
 
 function DashboardSummary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [data, setData] = useState({ xp: 0, tasksCount: 0, coursesCount: 0 });
+  const [coursesCount, setCoursesCount] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -24,13 +25,12 @@ function DashboardSummary() {
       try {
         const res = await getStudentDashboard();
         if (!mounted) return;
-        setData(res.data || {});
+        setCoursesCount(res?.data?.statistics?.total_courses ?? 0);
       } catch (e) {
         if (!mounted) return;
         setError(e.message || "Failed to load");
       } finally {
-        if (!mounted) return;
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
     load();
@@ -42,32 +42,34 @@ function DashboardSummary() {
 
   return (
     <div className="flex justify-between bg-white p-3 rounded-md shadow-sm">
+      {/* XP و Tasks هنوز تو بک‌اند پیاده‌سازی نشدن (فیچر گیمیفیکیشن) */}
       <div className="text-center">
         <div className="text-sm text-gray-500">XP</div>
-        <div className="text-lg font-bold">{data.xp}</div>
+        <div className="text-lg font-bold">—</div>
       </div>
       <div className="text-center">
         <div className="text-sm text-gray-500">Tasks</div>
-        <div className="text-lg font-bold">{data.tasksCount}</div>
+        <div className="text-lg font-bold">—</div>
       </div>
       <div className="text-center">
         <div className="text-sm text-gray-500">Courses</div>
-        <div className="text-lg font-bold">{data.coursesCount}</div>
+        <div className="text-lg font-bold">{coursesCount}</div>
       </div>
     </div>
   );
 }
 
-export default function StudentDashboard({
-  gotoCourses,
-  gotoComingSoon,
-  gotoDashboard,
-  gotoVideo,
-  gotoProfile,
-  gotoStudentPack,
-}) {
+export default function StudentDashboard() {
   const headerHeight = 150;
   const bottomMenuHeight = 90;
+  const navigate = useNavigate();
+
+  const gotoCourses = () => navigate("/student/courses");
+  const gotoComingSoon = () => navigate("/comingsoon");
+  // بنر اسلایدر به دوره‌ی خاصی وصل نیست، فعلاً می‌بریم لیست دوره‌ها
+  const gotoVideo = () => navigate("/student/courses");
+  // صفحه‌ی پکیج‌ها هنوز رو روتر ثبت نشده (تو اولویت بعدیه)
+  const gotoStudentPack = () => navigate("/comingsoon");
 
   return (
     <div
@@ -201,11 +203,7 @@ export default function StudentDashboard({
           height: bottomMenuHeight + "px",
         }}
       >
-        <BottomMenu
-          gotoDashboard={gotoDashboard}
-          gotoComingSoon={gotoComingSoon}
-          gotoProfile={gotoProfile}
-        />
+        <BottomMenu />
       </div>
     </div>
   );

@@ -1,0 +1,240 @@
+diff --git a/frontend/src/Pages/dashboard/StudentDash.jsx b/frontend/src/Pages/dashboard/StudentDash.jsx
+index 6ddbd50..b7c0adb 100644
+--- a/frontend/src/Pages/dashboard/StudentDash.jsx
++++ b/frontend/src/Pages/dashboard/StudentDash.jsx
+@@ -10,12 +10,13 @@ import GoldenPackage from "../../assets/GoldenPackage.svg";
+ import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+ import ContactFooter from "../../components/section/ContactFooter.jsx";
+ import { useEffect, useState } from "react";
++import { useNavigate } from "react-router-dom";
+ import { getStudentDashboard } from "../../services/api";
+ 
+ function DashboardSummary() {
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState(null);
+-  const [data, setData] = useState({ xp: 0, tasksCount: 0, coursesCount: 0 });
++  const [coursesCount, setCoursesCount] = useState(0);
+ 
+   useEffect(() => {
+     let mounted = true;
+@@ -24,13 +25,12 @@ function DashboardSummary() {
+       try {
+         const res = await getStudentDashboard();
+         if (!mounted) return;
+-        setData(res.data || {});
++        setCoursesCount(res?.data?.statistics?.total_courses ?? 0);
+       } catch (e) {
+         if (!mounted) return;
+         setError(e.message || "Failed to load");
+       } finally {
+-        if (!mounted) return;
+-        setLoading(false);
++        if (mounted) setLoading(false);
+       }
+     };
+     load();
+@@ -42,32 +42,34 @@ function DashboardSummary() {
+ 
+   return (
+     <div className="flex justify-between bg-white p-3 rounded-md shadow-sm">
++      {/* XP و Tasks هنوز تو بک‌اند پیاده‌سازی نشدن (فیچر گیمیفیکیشن) */}
+       <div className="text-center">
+         <div className="text-sm text-gray-500">XP</div>
+-        <div className="text-lg font-bold">{data.xp}</div>
++        <div className="text-lg font-bold">—</div>
+       </div>
+       <div className="text-center">
+         <div className="text-sm text-gray-500">Tasks</div>
+-        <div className="text-lg font-bold">{data.tasksCount}</div>
++        <div className="text-lg font-bold">—</div>
+       </div>
+       <div className="text-center">
+         <div className="text-sm text-gray-500">Courses</div>
+-        <div className="text-lg font-bold">{data.coursesCount}</div>
++        <div className="text-lg font-bold">{coursesCount}</div>
+       </div>
+     </div>
+   );
+ }
+ 
+-export default function StudentDashboard({
+-  gotoCourses,
+-  gotoComingSoon,
+-  gotoDashboard,
+-  gotoVideo,
+-  gotoProfile,
+-  gotoStudentPack,
+-}) {
++export default function StudentDashboard() {
+   const headerHeight = 150;
+   const bottomMenuHeight = 90;
++  const navigate = useNavigate();
++
++  const gotoCourses = () => navigate("/student/courses");
++  const gotoComingSoon = () => navigate("/comingsoon");
++  // بنر اسلایدر به دوره‌ی خاصی وصل نیست، فعلاً می‌بریم لیست دوره‌ها
++  const gotoVideo = () => navigate("/student/courses");
++  // صفحه‌ی پکیج‌ها هنوز رو روتر ثبت نشده (تو اولویت بعدیه)
++  const gotoStudentPack = () => navigate("/comingsoon");
+ 
+   return (
+     <div
+@@ -201,11 +203,7 @@ export default function StudentDashboard({
+           height: bottomMenuHeight + "px",
+         }}
+       >
+-        <BottomMenu
+-          gotoDashboard={gotoDashboard}
+-          gotoComingSoon={gotoComingSoon}
+-          gotoProfile={gotoProfile}
+-        />
++        <BottomMenu />
+       </div>
+     </div>
+   );
+diff --git a/frontend/src/components/common/BottomMenu.jsx b/frontend/src/components/common/BottomMenu.jsx
+index 93c3242..7e1b14f 100644
+--- a/frontend/src/components/common/BottomMenu.jsx
++++ b/frontend/src/components/common/BottomMenu.jsx
+@@ -1,4 +1,5 @@
+-import { useState } from "react";
++import { useNavigate, useLocation } from "react-router-dom";
++import { useAuth } from "../../contexts/AuthContext";
+ 
+ import ActiveHome from "../../assets/ActiveHome.svg";
+ import ActiveProfile from "../../assets/ActiveProfile.png";
+@@ -10,8 +11,18 @@ import DeActiveProfileCheck from "../../assets/DeActiveProfileCheck.svg";
+ import DeActiveShop from "../../assets/DeActiveShop.svg";
+ import DeActiveCourses from "../../assets/DeActiveCourses.svg";
+ 
+-export default function BottomMenu({ gotoDashboard, gotoComingSoon, gotoProfile }) {
+-  const [activeItem, setActiveItem] = useState("دوره های من");
++// این کامپوننت خودکفاست: خودش با useNavigate جابه‌جا می‌شه و دیگه
++// به gotoDashboard/gotoComingSoon/gotoProfile ای که هیچ‌جا پاس داده نمی‌شدن نیاز نداره.
++export default function BottomMenu() {
++  const navigate = useNavigate();
++  const location = useLocation();
++  const auth = useAuth();
++  const role = auth?.role;
++
++  const homePath = role === "teacher" ? "/teacher" : "/student";
++  const coursesPath = role === "teacher" ? "/teacher" : "/student/courses";
++  // صفحه‌ی پروفایل معلم هنوز ساخته نشده، فعلاً می‌فرستیمش به همون کامینگ‌سون
++  const profilePath = role === "teacher" ? "/comingsoon" : "/student/profile";
+ 
+   const menuItems = [
+     {
+@@ -19,44 +30,42 @@ export default function BottomMenu({ gotoDashboard, gotoComingSoon, gotoProfile
+       icon: DeActiveHome,
+       activeIcon: ActiveHome,
+       size: 24,
+-      onClick: gotoComingSoon,
++      path: homePath,
+     },
+     {
+       text: "دوره های من",
+       icon: DeActiveCourses,
+       activeIcon: ActiveCourse,
+       size: 24,
+-      onClick: gotoDashboard,
++      path: coursesPath,
+     },
+     {
+       text: "فروشگاه",
+       icon: DeActiveShop,
+       activeIcon: ActiveShop,
+       size: 20,
+-      onClick: gotoComingSoon,
++      // فروشگاه هنوز ساخته نشده
++      path: "/comingsoon",
+     },
+     {
+       text: "پروفایل",
+       icon: DeActiveProfileCheck,
+       activeIcon: ActiveProfile,
+       size: 24,
+-      onClick: gotoProfile,
++      path: profilePath,
+     },
+   ];
+-  
++
+   return (
+     <div className="flex justify-center items-center h-full">
+       <div className="w-[300px] flex justify-between items-end pb-2">
+         {menuItems.map((item, i) => {
+-          const isActive = activeItem === item.text;
++          const isActive = location.pathname === item.path;
+ 
+           return (
+             <div
+               key={i}
+-              onClick={() => {
+-                setActiveItem(item.text);
+-                item.onClick();
+-              }}
++              onClick={() => navigate(item.path)}
+               className="flex flex-col items-center cursor-pointer"
+             >
+               <img
+diff --git a/frontend/src/services/api.js b/frontend/src/services/api.js
+index 682e1a6..62b9cdf 100644
+--- a/frontend/src/services/api.js
++++ b/frontend/src/services/api.js
+@@ -23,8 +23,8 @@ api.interceptors.request.use((config) => {
+   try {
+     const token = localStorage.getItem("access_token");
+     if (token) config.headers.Authorization = `Bearer ${token}`;
+-  } catch (e) {
+-    // ignore
++  } catch {
++    // ignore malformed/missing token
+   }
+   return config;
+ });
+@@ -38,7 +38,9 @@ api.interceptors.response.use(
+       try {
+         localStorage.removeItem("access_token");
+         localStorage.removeItem("auth");
+-      } catch (e) {}
++      } catch {
++        // ignore storage errors
++      }
+       // hard redirect to ensure app state resets
+       window.location.href = "/login";
+     }
+@@ -58,32 +60,9 @@ export async function getMe() {
+ }
+ 
+ export async function getStudentDashboard() {
+-  try {
+-    const res = await api.get("/student/dashboard");
+-    return res;
+-  } catch (err) {
+-    // Return lightweight mock data for beta stability
+-    return {
+-      data: {
+-        xp: 1200,
+-        tasksCount: 7,
+-        coursesCount: 3,
+-      },
+-    };
+-  }
++  return api.get("/dashboard/");
+ }
+ 
+ export async function getTeacherDashboard() {
+-  try {
+-    const res = await api.get("/teacher/dashboard");
+-    return res;
+-  } catch (err) {
+-    return {
+-      data: {
+-        xp: 3400,
+-        tasksCount: 12,
+-        coursesCount: 8,
+-      },
+-    };
+-  }
++  return api.get("/dashboard/");
+ }

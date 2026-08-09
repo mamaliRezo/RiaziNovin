@@ -23,8 +23,8 @@ api.interceptors.request.use((config) => {
   try {
     const token = localStorage.getItem("access_token");
     if (token) config.headers.Authorization = `Bearer ${token}`;
-  } catch (e) {
-    // ignore
+  } catch {
+    // ignore malformed/missing token
   }
   return config;
 });
@@ -38,7 +38,9 @@ api.interceptors.response.use(
       try {
         localStorage.removeItem("access_token");
         localStorage.removeItem("auth");
-      } catch (e) {}
+      } catch {
+        // ignore storage errors
+      }
       // hard redirect to ensure app state resets
       window.location.href = "/login";
     }
@@ -58,32 +60,9 @@ export async function getMe() {
 }
 
 export async function getStudentDashboard() {
-  try {
-    const res = await api.get("/student/dashboard");
-    return res;
-  } catch (err) {
-    // Return lightweight mock data for beta stability
-    return {
-      data: {
-        xp: 1200,
-        tasksCount: 7,
-        coursesCount: 3,
-      },
-    };
-  }
+  return api.get("/dashboard/");
 }
 
 export async function getTeacherDashboard() {
-  try {
-    const res = await api.get("/teacher/dashboard");
-    return res;
-  } catch (err) {
-    return {
-      data: {
-        xp: 3400,
-        tasksCount: 12,
-        coursesCount: 8,
-      },
-    };
-  }
+  return api.get("/dashboard/");
 }

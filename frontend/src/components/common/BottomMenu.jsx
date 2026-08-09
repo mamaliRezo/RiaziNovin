@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 import ActiveHome from "../../assets/ActiveHome.svg";
 import ActiveProfile from "../../assets/ActiveProfile.png";
@@ -10,8 +11,18 @@ import DeActiveProfileCheck from "../../assets/DeActiveProfileCheck.svg";
 import DeActiveShop from "../../assets/DeActiveShop.svg";
 import DeActiveCourses from "../../assets/DeActiveCourses.svg";
 
-export default function BottomMenu({ gotoDashboard, gotoComingSoon, gotoProfile }) {
-  const [activeItem, setActiveItem] = useState("دوره های من");
+// این کامپوننت خودکفاست: خودش با useNavigate جابه‌جا می‌شه و دیگه
+// به gotoDashboard/gotoComingSoon/gotoProfile ای که هیچ‌جا پاس داده نمی‌شدن نیاز نداره.
+export default function BottomMenu() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const auth = useAuth();
+  const role = auth?.role;
+
+  const homePath = role === "teacher" ? "/teacher" : "/student";
+  const coursesPath = role === "teacher" ? "/teacher" : "/student/courses";
+  // صفحه‌ی پروفایل معلم هنوز ساخته نشده، فعلاً می‌فرستیمش به همون کامینگ‌سون
+  const profilePath = role === "teacher" ? "/comingsoon" : "/student/profile";
 
   const menuItems = [
     {
@@ -19,44 +30,42 @@ export default function BottomMenu({ gotoDashboard, gotoComingSoon, gotoProfile 
       icon: DeActiveHome,
       activeIcon: ActiveHome,
       size: 24,
-      onClick: gotoComingSoon,
+      path: homePath,
     },
     {
       text: "دوره های من",
       icon: DeActiveCourses,
       activeIcon: ActiveCourse,
       size: 24,
-      onClick: gotoDashboard,
+      path: coursesPath,
     },
     {
       text: "فروشگاه",
       icon: DeActiveShop,
       activeIcon: ActiveShop,
       size: 20,
-      onClick: gotoComingSoon,
+      // فروشگاه هنوز ساخته نشده
+      path: "/comingsoon",
     },
     {
       text: "پروفایل",
       icon: DeActiveProfileCheck,
       activeIcon: ActiveProfile,
       size: 24,
-      onClick: gotoProfile,
+      path: profilePath,
     },
   ];
-  
+
   return (
     <div className="flex justify-center items-center h-full">
       <div className="w-[300px] flex justify-between items-end pb-2">
         {menuItems.map((item, i) => {
-          const isActive = activeItem === item.text;
+          const isActive = location.pathname === item.path;
 
           return (
             <div
               key={i}
-              onClick={() => {
-                setActiveItem(item.text);
-                item.onClick();
-              }}
+              onClick={() => navigate(item.path)}
               className="flex flex-col items-center cursor-pointer"
             >
               <img
