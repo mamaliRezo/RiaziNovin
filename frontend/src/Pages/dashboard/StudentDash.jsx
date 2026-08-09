@@ -69,7 +69,7 @@ export default function StudentDashboard() {
   // بنر اسلایدر به دوره‌ی خاصی وصل نیست، فعلاً می‌بریم لیست دوره‌ها
   const gotoVideo = () => navigate("/student/courses");
   // صفحه‌ی پکیج‌ها هنوز رو روتر ثبت نشده (تو اولویت بعدیه)
-  const gotoStudentPack = () => navigate("/comingsoon");
+  const gotoStudentPack = () => navigate("/student/packages");
 
   return (
     <div

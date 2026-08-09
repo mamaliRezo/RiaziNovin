@@ -14,8 +14,11 @@ import NotFound from "../Pages/public/NotFound.jsx";
 // Dashboard pages
 import StudentDash from "../Pages/dashboard/StudentDash.jsx";
 import StudentCourses from "../Pages/dashboard/StudentCourses.jsx";
+import PackagesList from "../Pages/dashboard/PackagesList.jsx";
+import PackageDetail from "../Pages/dashboard/PackageDetail.jsx";
 import Profile from "../Pages/dashboard/Profile.jsx";
 import CreateCourse from "../Pages/teacher/createCourse.jsx";
+import CreatePackage from "../Pages/teacher/createPackage.jsx";
 import TeacherDash from "../Pages/teacher/TeacherDash.jsx";
 
 // Layouts & route guards
@@ -58,6 +61,8 @@ export default function AppRoutes() {
         >
           <Route index element={<StudentDash />} />
           <Route path="courses" element={<StudentCourses />} />
+          <Route path="packages" element={<PackagesList />} />
+          <Route path="packages/:packageId" element={<PackageDetail />} />
           <Route path="profile" element={<Profile />} />
         </Route>
 
@@ -72,6 +77,7 @@ export default function AppRoutes() {
         >
           <Route index element={<TeacherDash />} />
           <Route path="create" element={<CreateCourse />} />
+          <Route path="create-package" element={<CreatePackage />} />
         </Route>
       </Route>
 

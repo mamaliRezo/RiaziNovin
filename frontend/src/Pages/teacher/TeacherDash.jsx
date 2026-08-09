@@ -93,6 +93,19 @@ export default function TeacherDashboard() {
         + ساخت دوره‌ی جدید
       </button>
 
+      {/* دکمه‌ی ساخت پکیج جدید */}
+      <button
+        onClick={() => navigate("/teacher/create-package")}
+        className="w-[348px] mx-auto mt-[10px] h-[44px] rounded-full font-bold text-white text-[15px] flex items-center justify-center"
+        style={{
+          display: "flex",
+          background: "#C90BBC",
+          border: "none",
+        }}
+      >
+        + ساخت پکیج جدید
+      </button>
+
       {/* عنوان لیست دوره‌ها */}
       <h3
         className="w-[348px] mx-auto"
