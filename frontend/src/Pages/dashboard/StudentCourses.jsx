@@ -1,18 +1,42 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import HeaderDash from "../../components/section/HeaderDash";
 import SearchBox from "../../components/common/SearchBox";
 import BottomMenu from "../../components/common/BottomMenu";
 import CourseCard from "../../components/common/CourseCard";
-import BlogCard1 from "../../assets/BlogCard1.svg";
-import BlogCard2 from "../../assets/BlogCard2.svg";
-import BlogCard3 from "../../assets/BlogCard3.svg";
+import videoCover from "../../assets/videoCover.svg";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
+import api from "../../services/api";
 
-export default function StudentCourses({   
+export default function StudentCourses({
   gotoDashboard,
   gotoComingSoon,
   gotoProfile, }) {
   const headerHeight = 100;
+  const navigate = useNavigate();
+
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchCourses() {
+      try {
+        const res = await api.get("/my-enrolled-courses/");
+        if (isMounted) setCourses(res.data.data || []);
+      } catch {
+        if (isMounted) setError("خطا در دریافت دوره‌های شما.");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    fetchCourses();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   return (
     <div
       className="font-[BYekan]"
@@ -53,26 +77,35 @@ export default function StudentCourses({
         <SearchBox style={{ width: "348px", margin: "0 auto 20px auto" }} />
 
         {/* کارت‌ها */}
-        <CourseCard
-          img={BlogCard1}
-          title="ریاضی ششم دبستان"
-          desc="آموزش ریاضی ششم دبستان با حل نمونه سوال اضافه بر کتاب"
-          onClick={() => gotoVideo()}
-        />
+        {loading && (
+          <div style={{ textAlign: "center", padding: "20px" }}>
+            در حال بارگذاری دوره‌ها...
+          </div>
+        )}
 
-        <CourseCard
-          img={BlogCard3}
-          title="ریاضی پنجم دبستان"
-          desc="آموزش ریاضی پنجم دبستان با حل نمونه سوال اضافه بر کتاب"
-          onClick={() => gotoVideo()}
-        />
+        {!loading && error && (
+          <div style={{ textAlign: "center", padding: "20px", color: "#c00" }}>
+            {error}
+          </div>
+        )}
 
-        <CourseCard
-          img={BlogCard2}
-          title="ریاضی سوم دبستان"
-          desc="دوره آموزشی برای یادگیری مفاهیم ریاضی پایه سوم به همراه جزوه درسی"
-          onClick={() => gotoVideo()}
-        />
+        {!loading && !error && courses.length === 0 && (
+          <div style={{ textAlign: "center", padding: "20px" }}>
+            هنوز در هیچ دوره‌ای ثبت‌نام نکرده‌اید.
+          </div>
+        )}
+
+        {courses.map((course) => (
+          <CourseCard
+            key={course.id}
+            img={course.thumbnail || videoCover}
+            title={course.title}
+            desc={course.description}
+            sessionsCount={course.video_count}
+            teacherName={course.teacher_name}
+            onClick={() => navigate(`/video/${course.id}`)}
+          />
+        ))}
       </div>
       
       <div className="relative top-[-20px]">          

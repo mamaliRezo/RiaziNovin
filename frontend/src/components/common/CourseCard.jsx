@@ -1,4 +1,11 @@
-export default function CourseCard({ img, title, desc, onClick }) {
+export default function CourseCard({
+  img,
+  title,
+  desc,
+  onClick,
+  sessionsCount,
+  teacherName,
+}) {
   return (
     <div
       onClick={onClick} // کلیک روی کل کارت
@@ -50,8 +57,8 @@ export default function CourseCard({ img, title, desc, onClick }) {
             padding: "0 12px",
           }}
         >
-          <span style={{direction:"rtl", color: "#C90BBC" }}>8 جلسه</span>
-          <span style={{ color: "#00C0D9" }}>مدرس: مریم محمدی</span>
+          <span style={{direction:"rtl", color: "#C90BBC" }}>{sessionsCount ?? 0} جلسه</span>
+          <span style={{ color: "#00C0D9" }}>مدرس: {teacherName || "—"}</span>
         </div>
       </div>
     </div>

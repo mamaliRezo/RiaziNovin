@@ -249,3 +249,17 @@ def resend_otp_view(request):
             
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': 'خطا در ارسال مجدد'}, status=500)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def me_view(request):
+    """ برگرداندن اطلاعات کاربر لاگین‌شده، بر اساس توکن """
+    user = request.user
+    return Response({
+        'id': user.id,
+        'phone_number': user.phone_number,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'role': user.role,
+    })

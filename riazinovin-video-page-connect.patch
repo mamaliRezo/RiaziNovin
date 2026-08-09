@@ -1,0 +1,442 @@
+diff --git a/frontend/src/Pages/dashboard/StudentCourses.jsx b/frontend/src/Pages/dashboard/StudentCourses.jsx
+index fe2e121..b672478 100644
+--- a/frontend/src/Pages/dashboard/StudentCourses.jsx
++++ b/frontend/src/Pages/dashboard/StudentCourses.jsx
+@@ -1,18 +1,42 @@
++import { useState, useEffect } from "react";
++import { useNavigate } from "react-router-dom";
+ import HeaderDash from "../../components/section/HeaderDash";
+ import SearchBox from "../../components/common/SearchBox";
+ import BottomMenu from "../../components/common/BottomMenu";
+ import CourseCard from "../../components/common/CourseCard";
+-import BlogCard1 from "../../assets/BlogCard1.svg";
+-import BlogCard2 from "../../assets/BlogCard2.svg";
+-import BlogCard3 from "../../assets/BlogCard3.svg";
++import videoCover from "../../assets/videoCover.svg";
+ import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+ import ContactFooter from "../../components/section/ContactFooter.jsx";
++import api from "../../services/api";
+ 
+-export default function StudentCourses({   
++export default function StudentCourses({
+   gotoDashboard,
+   gotoComingSoon,
+   gotoProfile, }) {
+   const headerHeight = 100;
++  const navigate = useNavigate();
++
++  const [courses, setCourses] = useState([]);
++  const [loading, setLoading] = useState(true);
++  const [error, setError] = useState("");
++
++  useEffect(() => {
++    let isMounted = true;
++    async function fetchCourses() {
++      try {
++        const res = await api.get("/my-enrolled-courses/");
++        if (isMounted) setCourses(res.data.data || []);
++      } catch {
++        if (isMounted) setError("خطا در دریافت دوره‌های شما.");
++      } finally {
++        if (isMounted) setLoading(false);
++      }
++    }
++    fetchCourses();
++    return () => {
++      isMounted = false;
++    };
++  }, []);
+   return (
+     <div
+       className="font-[BYekan]"
+@@ -53,26 +77,35 @@ export default function StudentCourses({
+         <SearchBox style={{ width: "348px", margin: "0 auto 20px auto" }} />
+ 
+         {/* کارت‌ها */}
+-        <CourseCard
+-          img={BlogCard1}
+-          title="ریاضی ششم دبستان"
+-          desc="آموزش ریاضی ششم دبستان با حل نمونه سوال اضافه بر کتاب"
+-          onClick={() => gotoVideo()}
+-        />
++        {loading && (
++          <div style={{ textAlign: "center", padding: "20px" }}>
++            در حال بارگذاری دوره‌ها...
++          </div>
++        )}
++
++        {!loading && error && (
++          <div style={{ textAlign: "center", padding: "20px", color: "#c00" }}>
++            {error}
++          </div>
++        )}
+ 
+-        <CourseCard
+-          img={BlogCard3}
+-          title="ریاضی پنجم دبستان"
+-          desc="آموزش ریاضی پنجم دبستان با حل نمونه سوال اضافه بر کتاب"
+-          onClick={() => gotoVideo()}
+-        />
++        {!loading && !error && courses.length === 0 && (
++          <div style={{ textAlign: "center", padding: "20px" }}>
++            هنوز در هیچ دوره‌ای ثبت‌نام نکرده‌اید.
++          </div>
++        )}
+ 
+-        <CourseCard
+-          img={BlogCard2}
+-          title="ریاضی سوم دبستان"
+-          desc="دوره آموزشی برای یادگیری مفاهیم ریاضی پایه سوم به همراه جزوه درسی"
+-          onClick={() => gotoVideo()}
+-        />
++        {courses.map((course) => (
++          <CourseCard
++            key={course.id}
++            img={course.thumbnail || videoCover}
++            title={course.title}
++            desc={course.description}
++            sessionsCount={course.video_count}
++            teacherName={course.teacher_name}
++            onClick={() => navigate(`/video/${course.id}`)}
++          />
++        ))}
+       </div>
+       
+       <div className="relative top-[-20px]">          
+diff --git a/frontend/src/Pages/public/VideoPage.jsx b/frontend/src/Pages/public/VideoPage.jsx
+index e3a269e..1d85217 100644
+--- a/frontend/src/Pages/public/VideoPage.jsx
++++ b/frontend/src/Pages/public/VideoPage.jsx
+@@ -1,7 +1,9 @@
+-import { useState } from "react";
++import { useState, useEffect } from "react";
++import { useParams, useNavigate } from "react-router-dom";
+ import HeaderDash from "../../components/section/HeaderDash";
+ import BottomMenu from "../../components/common/BottomMenu";
+ import ErrorBox from "../../components/common/ErrorBox";
++import api from "../../services/api";
+ 
+ import ProfileAvatar from "../../assets/ProfileAvatar.svg";
+ import UserIcon from "../../assets/UserIcon.svg";
+@@ -13,74 +15,64 @@ import download from "../../assets/download.svg";
+ import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+ import ContactFooter from "../../components/section/ContactFooter.jsx";
+ 
+-export default function VideoPage({ 
++export default function VideoPage({
+   gotoDashboard,
+   gotoComingSoon,
+-  gotoProfile, }) 
+-  
+-  {
++  gotoProfile,
++}) {
++  const { courseId } = useParams();
++  const navigate = useNavigate();
++
++  const [course, setCourse] = useState(null);
++  const [loading, setLoading] = useState(true);
+   const [currentVideo, setCurrentVideo] = useState(null);
+   const [error, setError] = useState("");
+   const headerHeight = 70;
+   const bottomMenuHeight = 90;
+ 
+-  const sessions = [
+-    {
+-      time: "6:12",
+-      title: "جلسه اول: توابع",
+-      videoUrl:
+-        "https://www.aparat.com/video/video/embed/videohash/Q7cyU/vt/frame",
+-    },
+-    {
+-      time: "4:06",
+-      title: "جلسه دوم: کسرها",
+-      videoUrl:
+-        "https://www.aparat.com/video/video/embed/videohash/hhq6ag9/vt/frame",
+-    },
+-    {
+-      time: "4:56",
+-      title: "جلسه سوم: تقسیم",
+-      videoUrl:
+-        "https://www.aparat.com/video/video/embed/videohash/3RLP0/vt/frame",
+-    },
+-    {
+-      time: "3:09",
+-      title: "جلسه چهارم: ضرب",
+-      videoUrl:
+-        "https://www.aparat.com/video/video/embed/videohash/xkue0cq/vt/frame",
+-    },
+-    {
+-      time: "8:15",
+-      title: "جلسه پنجم: حد",
+-      videoUrl:
+-        "https://www.aparat.com/video/video/embed/videohash/vthuj9k/vt/frame",
+-    },
+-    {
+-      time: "6:13",
+-      title: "جلسه ششم: مشتق",
+-      videoUrl:
+-        "https://www.aparat.com/video/video/embed/videohash/vobcd00/vt/frame",
+-    },
+-    {
+-      time: "3:37",
+-      title: "جلسه هفتم: اعداد اعشاری",
+-      videoUrl:
+-        "https://www.aparat.com/video/video/embed/videohash/qdh8q4b/vt/frame",
+-    },
+-    {
+-      time: "5:42",
+-      title: "جلسه هشتم: اعداد صحیح",
+-      videoUrl:
+-        "https://www.aparat.com/video/video/embed/videohash/q26z1w3/vt/frame",
+-    },
+-  ];
++  useEffect(() => {
++    // اگه توکن نداریم اصلا سمت بک‌اند نریم، مستقیم بفرستیم لاگین
++    // (این صفحه چون بیرون از ProtectedRoute هست، خودمون این چک رو انجام میدیم)
++    const token = localStorage.getItem("access_token");
++    if (!token) {
++      navigate("/login", { replace: true });
++      return;
++    }
++
++    let isMounted = true;
++    async function fetchCourse() {
++      setLoading(true);
++      setError("");
++      try {
++        const res = await api.get(`/my-courses/${courseId}/`);
++        if (isMounted) setCourse(res.data.data);
++      } catch (err) {
++        if (isMounted) {
++          const status = err?.response?.status;
++          setError(
++            status === 404
++              ? "این دوره یافت نشد یا دسترسی به آن ندارید."
++              : "خطا در دریافت اطلاعات دوره."
++          );
++        }
++      } finally {
++        if (isMounted) setLoading(false);
++      }
++    }
++    fetchCourse();
++    return () => {
++      isMounted = false;
++    };
++  }, [courseId, navigate]);
++
++  const sessions = course?.videos || [];
+ 
+-  function handleSelectVideo(session) {
+-    if (!session.videoUrl) {
+-      setError("لینک این جلسه هنوز ثبت نشده است.");
++  function handleSelectVideo(video) {
++    if (!video.video_file) {
++      setError("فایل این جلسه هنوز آپلود نشده است.");
+       return;
+     }
+-    setCurrentVideo(session.videoUrl);
++    setCurrentVideo(video.video_file);
+     setError("");
+   }
+ 
+@@ -141,13 +133,14 @@ export default function VideoPage({
+           }}
+         >
+           {currentVideo ? (
+-            <iframe
++            <video
++              key={currentVideo}
+               src={currentVideo}
++              controls
++              autoPlay
+               width="348px"
+               height="190px"
+-              allowFullScreen
+-              style={{ border: "none", borderRadius: "8px" }}
+-              title="video-player"
++              style={{ border: "none", borderRadius: "8px", background: "#000" }}
+             />
+           ) : (
+             <>
+@@ -189,7 +182,7 @@ export default function VideoPage({
+             color: "#000",
+           }}
+         >
+-        دوره کامل آمورش کتاب ریاضی ششم دبستان 
++        {course?.title || (loading ? "در حال بارگذاری..." : "دوره")}
+         </h2>
+ 
+         <div
+@@ -203,7 +196,7 @@ export default function VideoPage({
+             gap: "8px",
+           }}
+         >
+-          ⭐ 4.6 (721 امتیاز)
++          ⭐ {course?.average_rating || 0} ({course?.ratings_count || 0} امتیاز)
+         </div>
+ 
+         <p
+@@ -227,27 +220,28 @@ export default function VideoPage({
+             lineHeight: "24px",
+           }}
+         >
+-دوره‌ی ریاضی ششم شامل 8 قسمت آموزشی با مجموع زمان 5 ساعت و ۵۶ دقیقه  است. در این دوره،تمامی فصل های کتاب ریاضی ششم به‌صورت خط به خط و مفهومی تدریس شده و مفاهیم اصلی با مثال‌ها و تمرین‌های کاربردی توضیح داده  می‌شوند<div/>
+-تا دانش‌آموزان برای امتحانات مدرسه و پایه‌ریزی موفقیت در سال‌های بعد آماده  باشند.
++{course?.description}
+           <br />
+-          📌 تعداد جلسات: 8
++          📌 تعداد جلسات: {course?.video_count || 0}
+           <br />
+-          ⏰ زمان کل دوره: 5 ساعت و ۵۶ دقیقه
+-          <br />
+-          🎯 پوشش کامل تمام فصل‌های ریاضی ششم
++          ⏰ زمان کل دوره: {course?.total_duration || "00:00"}
+         </p>
+ 
+         {/* باکس دانلود */}
+-        <div style={{ width: "278px", height: "32px", position: "absolute", top: "572px", left: "85px", border: "1px solid #000000", borderRadius: "6px", opacity: 1, transform: "rotate(0deg)", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "8px", paddingRight: "10px", backgroundColor: "#FEF9FE", cursor: "pointer", zIndex: 10, }} >
+-        {/* آیکون دانلود */}
+-          <img 
+-            src={download}
+-            alt="download"
+-             />
+-          <p style={{ fontSize: "13px", color: "#000000", fontWeight: "500" }}>
+-              دریافت فایل جزوه این جلسه 
+-          </p>
+-        </div>
++        {course?.handout && (
++          <div
++            onClick={() => window.open(course.handout, "_blank")}
++            style={{ width: "278px", height: "32px", position: "absolute", top: "572px", left: "85px", border: "1px solid #000000", borderRadius: "6px", opacity: 1, transform: "rotate(0deg)", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "8px", paddingRight: "10px", backgroundColor: "#FEF9FE", cursor: "pointer", zIndex: 10, }} >
++          {/* آیکون دانلود */}
++            <img
++              src={download}
++              alt="download"
++               />
++            <p style={{ fontSize: "13px", color: "#000000", fontWeight: "500" }}>
++                دریافت فایل جزوه دوره
++            </p>
++          </div>
++        )}
+ 
+         <div
+           style={{
+@@ -261,7 +255,7 @@ export default function VideoPage({
+           <img src={ProfileAvatar} alt="teacherAvatar" />
+           <div style={{ display: "flex", flexDirection: "column" }}>
+             <span style={{ color: "#00C0D9", fontSize: "14px" }}>
+-              مدرس: مریم محمدی
++              مدرس: {course?.teacher_name || "—"}
+             </span>
+           </div>
+         </div>
+@@ -287,7 +281,7 @@ export default function VideoPage({
+           }}
+         >
+           <img src={UserIcon} alt="userIcon" style={{ width: "20px" }} />
+-          <span>143 دانش‌آموز</span>
++          <span>{course?.student_count || 0} دانش‌آموز</span>
+         </div>
+ 
+         <h3
+@@ -314,8 +308,8 @@ export default function VideoPage({
+             color: "#000000",
+           }}
+         >
+-          <span>8 جلسه</span>
+-          <span>۶ ساعت آموزش</span>
++          <span>{course?.video_count || 0} جلسه</span>
++          <span>{course?.total_duration || "00:00"} آموزش</span>
+         </div>
+ 
+         {/* لیست جلسات */}
+@@ -340,15 +334,28 @@ export default function VideoPage({
+               borderBottom: "1px solid #080609",
+             }}
+           >
+-            آموزش ریاضی ششم دبستان
++            {course?.title || "محتوای دوره"}
+           </div>
+ 
+-          {sessions.map((row, i) => (
++          {loading && (
++            <div style={{ padding: "12px", textAlign: "center", fontSize: "14px" }}>
++              در حال بارگذاری جلسات...
++            </div>
++          )}
++
++          {!loading && sessions.length === 0 && (
++            <div style={{ padding: "12px", textAlign: "center", fontSize: "14px" }}>
++              هنوز جلسه‌ای برای این دوره آپلود نشده است.
++            </div>
++          )}
++
++          {sessions.map((video) => (
+             <div
+-              key={i}
+-              onClick={() => handleSelectVideo(row)}
++              key={video.id}
++              onClick={() => handleSelectVideo(video)}
+               style={{
+-                background: "#E5A6E6",
++                background:
++                  currentVideo === video.video_file ? "#C90BBC66" : "#E5A6E6",
+                 padding: "12px 10px",
+                 display: "flex",
+                 justifyContent: "space-between",
+@@ -363,10 +370,10 @@ export default function VideoPage({
+                 style={{ display: "flex", alignItems: "center", gap: "8px" }}
+               >
+                 <img src={VideoIcon} alt="video" style={{ width: "22px" }} />
+-                <span>{row.title}</span>
++                <span>جلسه {video.order}: {video.title}</span>
+               </div>
+ 
+-              <span>{row.time}</span>
++              <span>{video.duration}</span>
+             </div>
+           ))}
+         </div>
+diff --git a/frontend/src/components/common/CourseCard.jsx b/frontend/src/components/common/CourseCard.jsx
+index fbc1b0c..8e67df7 100644
+--- a/frontend/src/components/common/CourseCard.jsx
++++ b/frontend/src/components/common/CourseCard.jsx
+@@ -1,4 +1,11 @@
+-export default function CourseCard({ img, title, desc, onClick }) {
++export default function CourseCard({
++  img,
++  title,
++  desc,
++  onClick,
++  sessionsCount,
++  teacherName,
++}) {
+   return (
+     <div
+       onClick={onClick} // کلیک روی کل کارت
+@@ -50,8 +57,8 @@ export default function CourseCard({ img, title, desc, onClick }) {
+             padding: "0 12px",
+           }}
+         >
+-          <span style={{direction:"rtl", color: "#C90BBC" }}>8 جلسه</span>
+-          <span style={{ color: "#00C0D9" }}>مدرس: مریم محمدی</span>
++          <span style={{direction:"rtl", color: "#C90BBC" }}>{sessionsCount ?? 0} جلسه</span>
++          <span style={{ color: "#00C0D9" }}>مدرس: {teacherName || "—"}</span>
+         </div>
+       </div>
+     </div>
+diff --git a/frontend/src/routes/AppRoutes.jsx b/frontend/src/routes/AppRoutes.jsx
+index 5d8049d..b0504a4 100644
+--- a/frontend/src/routes/AppRoutes.jsx
++++ b/frontend/src/routes/AppRoutes.jsx
+@@ -35,7 +35,7 @@ export default function AppRoutes() {
+       <Route path="/otp" element={<OTP />} />
+       <Route path="/signup" element={<SignUp />} />
+       <Route path="/password" element={<PasswordIN />} />
+-      <Route path="/video" element={<VideoPage />} />
++      <Route path="/video/:courseId" element={<VideoPage />} />
+       <Route path="/comingsoon" element={<ComingSoon />} />
+       <Route path="/unauthorized" element={<Unauthorized />} />
+ 

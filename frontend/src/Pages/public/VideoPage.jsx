@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import HeaderDash from "../../components/section/HeaderDash";
 import BottomMenu from "../../components/common/BottomMenu";
 import ErrorBox from "../../components/common/ErrorBox";
+import api from "../../services/api";
 
 import ProfileAvatar from "../../assets/ProfileAvatar.svg";
 import UserIcon from "../../assets/UserIcon.svg";
@@ -13,74 +15,64 @@ import download from "../../assets/download.svg";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
 
-export default function VideoPage({ 
+export default function VideoPage({
   gotoDashboard,
   gotoComingSoon,
-  gotoProfile, }) 
-  
-  {
+  gotoProfile,
+}) {
+  const { courseId } = useParams();
+  const navigate = useNavigate();
+
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [error, setError] = useState("");
   const headerHeight = 70;
   const bottomMenuHeight = 90;
 
-  const sessions = [
-    {
-      time: "6:12",
-      title: "جلسه اول: توابع",
-      videoUrl:
-        "https://www.aparat.com/video/video/embed/videohash/Q7cyU/vt/frame",
-    },
-    {
-      time: "4:06",
-      title: "جلسه دوم: کسرها",
-      videoUrl:
-        "https://www.aparat.com/video/video/embed/videohash/hhq6ag9/vt/frame",
-    },
-    {
-      time: "4:56",
-      title: "جلسه سوم: تقسیم",
-      videoUrl:
-        "https://www.aparat.com/video/video/embed/videohash/3RLP0/vt/frame",
-    },
-    {
-      time: "3:09",
-      title: "جلسه چهارم: ضرب",
-      videoUrl:
-        "https://www.aparat.com/video/video/embed/videohash/xkue0cq/vt/frame",
-    },
-    {
-      time: "8:15",
-      title: "جلسه پنجم: حد",
-      videoUrl:
-        "https://www.aparat.com/video/video/embed/videohash/vthuj9k/vt/frame",
-    },
-    {
-      time: "6:13",
-      title: "جلسه ششم: مشتق",
-      videoUrl:
-        "https://www.aparat.com/video/video/embed/videohash/vobcd00/vt/frame",
-    },
-    {
-      time: "3:37",
-      title: "جلسه هفتم: اعداد اعشاری",
-      videoUrl:
-        "https://www.aparat.com/video/video/embed/videohash/qdh8q4b/vt/frame",
-    },
-    {
-      time: "5:42",
-      title: "جلسه هشتم: اعداد صحیح",
-      videoUrl:
-        "https://www.aparat.com/video/video/embed/videohash/q26z1w3/vt/frame",
-    },
-  ];
-
-  function handleSelectVideo(session) {
-    if (!session.videoUrl) {
-      setError("لینک این جلسه هنوز ثبت نشده است.");
+  useEffect(() => {
+    // اگه توکن نداریم اصلا سمت بک‌اند نریم، مستقیم بفرستیم لاگین
+    // (این صفحه چون بیرون از ProtectedRoute هست، خودمون این چک رو انجام میدیم)
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      navigate("/login", { replace: true });
       return;
     }
-    setCurrentVideo(session.videoUrl);
+
+    let isMounted = true;
+    async function fetchCourse() {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await api.get(`/my-courses/${courseId}/`);
+        if (isMounted) setCourse(res.data.data);
+      } catch (err) {
+        if (isMounted) {
+          const status = err?.response?.status;
+          setError(
+            status === 404
+              ? "این دوره یافت نشد یا دسترسی به آن ندارید."
+              : "خطا در دریافت اطلاعات دوره."
+          );
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    fetchCourse();
+    return () => {
+      isMounted = false;
+    };
+  }, [courseId, navigate]);
+
+  const sessions = course?.videos || [];
+
+  function handleSelectVideo(video) {
+    if (!video.video_file) {
+      setError("فایل این جلسه هنوز آپلود نشده است.");
+      return;
+    }
+    setCurrentVideo(video.video_file);
     setError("");
   }
 
@@ -141,13 +133,14 @@ export default function VideoPage({
           }}
         >
           {currentVideo ? (
-            <iframe
+            <video
+              key={currentVideo}
               src={currentVideo}
+              controls
+              autoPlay
               width="348px"
               height="190px"
-              allowFullScreen
-              style={{ border: "none", borderRadius: "8px" }}
-              title="video-player"
+              style={{ border: "none", borderRadius: "8px", background: "#000" }}
             />
           ) : (
             <>
@@ -189,7 +182,7 @@ export default function VideoPage({
             color: "#000",
           }}
         >
-        دوره کامل آمورش کتاب ریاضی ششم دبستان 
+        {course?.title || (loading ? "در حال بارگذاری..." : "دوره")}
         </h2>
 
         <div
@@ -203,7 +196,7 @@ export default function VideoPage({
             gap: "8px",
           }}
         >
-          ⭐ 4.6 (721 امتیاز)
+          ⭐ {course?.average_rating || 0} ({course?.ratings_count || 0} امتیاز)
         </div>
 
         <p
@@ -227,27 +220,28 @@ export default function VideoPage({
             lineHeight: "24px",
           }}
         >
-دوره‌ی ریاضی ششم شامل 8 قسمت آموزشی با مجموع زمان 5 ساعت و ۵۶ دقیقه  است. در این دوره،تمامی فصل های کتاب ریاضی ششم به‌صورت خط به خط و مفهومی تدریس شده و مفاهیم اصلی با مثال‌ها و تمرین‌های کاربردی توضیح داده  می‌شوند<div/>
-تا دانش‌آموزان برای امتحانات مدرسه و پایه‌ریزی موفقیت در سال‌های بعد آماده  باشند.
+{course?.description}
           <br />
-          📌 تعداد جلسات: 8
+          📌 تعداد جلسات: {course?.video_count || 0}
           <br />
-          ⏰ زمان کل دوره: 5 ساعت و ۵۶ دقیقه
-          <br />
-          🎯 پوشش کامل تمام فصل‌های ریاضی ششم
+          ⏰ زمان کل دوره: {course?.total_duration || "00:00"}
         </p>
 
         {/* باکس دانلود */}
-        <div style={{ width: "278px", height: "32px", position: "absolute", top: "572px", left: "85px", border: "1px solid #000000", borderRadius: "6px", opacity: 1, transform: "rotate(0deg)", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "8px", paddingRight: "10px", backgroundColor: "#FEF9FE", cursor: "pointer", zIndex: 10, }} >
-        {/* آیکون دانلود */}
-          <img 
-            src={download}
-            alt="download"
-             />
-          <p style={{ fontSize: "13px", color: "#000000", fontWeight: "500" }}>
-              دریافت فایل جزوه این جلسه 
-          </p>
-        </div>
+        {course?.handout && (
+          <div
+            onClick={() => window.open(course.handout, "_blank")}
+            style={{ width: "278px", height: "32px", position: "absolute", top: "572px", left: "85px", border: "1px solid #000000", borderRadius: "6px", opacity: 1, transform: "rotate(0deg)", display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "8px", paddingRight: "10px", backgroundColor: "#FEF9FE", cursor: "pointer", zIndex: 10, }} >
+          {/* آیکون دانلود */}
+            <img
+              src={download}
+              alt="download"
+               />
+            <p style={{ fontSize: "13px", color: "#000000", fontWeight: "500" }}>
+                دریافت فایل جزوه دوره
+            </p>
+          </div>
+        )}
 
         <div
           style={{
@@ -261,7 +255,7 @@ export default function VideoPage({
           <img src={ProfileAvatar} alt="teacherAvatar" />
           <div style={{ display: "flex", flexDirection: "column" }}>
             <span style={{ color: "#00C0D9", fontSize: "14px" }}>
-              مدرس: مریم محمدی
+              مدرس: {course?.teacher_name || "—"}
             </span>
           </div>
         </div>
@@ -287,7 +281,7 @@ export default function VideoPage({
           }}
         >
           <img src={UserIcon} alt="userIcon" style={{ width: "20px" }} />
-          <span>143 دانش‌آموز</span>
+          <span>{course?.student_count || 0} دانش‌آموز</span>
         </div>
 
         <h3
@@ -314,8 +308,8 @@ export default function VideoPage({
             color: "#000000",
           }}
         >
-          <span>8 جلسه</span>
-          <span>۶ ساعت آموزش</span>
+          <span>{course?.video_count || 0} جلسه</span>
+          <span>{course?.total_duration || "00:00"} آموزش</span>
         </div>
 
         {/* لیست جلسات */}
@@ -340,15 +334,28 @@ export default function VideoPage({
               borderBottom: "1px solid #080609",
             }}
           >
-            آموزش ریاضی ششم دبستان
+            {course?.title || "محتوای دوره"}
           </div>
 
-          {sessions.map((row, i) => (
+          {loading && (
+            <div style={{ padding: "12px", textAlign: "center", fontSize: "14px" }}>
+              در حال بارگذاری جلسات...
+            </div>
+          )}
+
+          {!loading && sessions.length === 0 && (
+            <div style={{ padding: "12px", textAlign: "center", fontSize: "14px" }}>
+              هنوز جلسه‌ای برای این دوره آپلود نشده است.
+            </div>
+          )}
+
+          {sessions.map((video) => (
             <div
-              key={i}
-              onClick={() => handleSelectVideo(row)}
+              key={video.id}
+              onClick={() => handleSelectVideo(video)}
               style={{
-                background: "#E5A6E6",
+                background:
+                  currentVideo === video.video_file ? "#C90BBC66" : "#E5A6E6",
                 padding: "12px 10px",
                 display: "flex",
                 justifyContent: "space-between",
@@ -363,10 +370,10 @@ export default function VideoPage({
                 style={{ display: "flex", alignItems: "center", gap: "8px" }}
               >
                 <img src={VideoIcon} alt="video" style={{ width: "22px" }} />
-                <span>{row.title}</span>
+                <span>جلسه {video.order}: {video.title}</span>
               </div>
 
-              <span>{row.time}</span>
+              <span>{video.duration}</span>
             </div>
           ))}
         </div>

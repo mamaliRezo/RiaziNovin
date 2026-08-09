@@ -1,11 +1,20 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import LogoRiaziNovin from "../../assets/logoRiazinovin.svg";
 import Guy from "../../assets/Guy.svg";
 import TopWave from "../../components/section/TopWave.jsx";
 import BottomWave from "../../components/section/BottomWave.jsx";
 import ErrorBox from "../../components/common/ErrorBox.jsx";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
-export default function PasswordIN({ phone_email, onSuccess, goToOTP }) {
+export default function PasswordIN() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  // شماره تلفن رو از صفحه‌ی قبل (Login.jsx) می‌گیریم که با navigate state فرستاده شده
+  const phone_email = location.state?.phone_email || "";
+
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -15,44 +24,37 @@ export default function PasswordIN({ phone_email, onSuccess, goToOTP }) {
   const handleLogin = async () => {
     setError(null);
 
+    if (!phone_email) {
+      setError("شماره تلفن مشخص نیست، لطفا از صفحه‌ی ورود دوباره شروع کنید");
+      return;
+    }
+
     if (!password.trim()) {
       setError("لطفا رمز عبور را وارد کنید");
       return;
     }
 
     setLoading(true);
-
     try {
-      const res = await fetch(`${BACKEND}/api/verify-password/`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone_email,
-          password,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message || "خطا");
-        setLoading(false);
-        return;
-      }
-
-      onSuccess();
-    } catch {
-      setError("مشکل در اتصال به سرور");
+      // login() از AuthContext هم توکن رو ذخیره می‌کنه هم بر اساس نقش هدایت می‌کنه
+      await login({ phone_email, password });
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || "رمز عبور نادرست است یا خطایی رخ داد",
+      );
     }
-
     setLoading(false);
   };
 
   const handleGoToOTP = async () => {
     setError(null);
-    setLoading(true);
 
+    if (!phone_email) {
+      setError("شماره تلفن مشخص نیست، لطفا از صفحه‌ی ورود دوباره شروع کنید");
+      return;
+    }
+
+    setLoading(true);
     try {
       const res = await fetch(`${BACKEND}/api/check-user/`, {
         method: "POST",
@@ -71,10 +73,12 @@ export default function PasswordIN({ phone_email, onSuccess, goToOTP }) {
         setLoading(false);
         return;
       }
-      goToOTP({
-        phone_email,
-        role: "student",
-        data,
+      navigate("/otp", {
+        state: {
+          phone_email,
+          role: data.role,
+          data,
+        },
       });
     } catch (err) {
       console.log(err);

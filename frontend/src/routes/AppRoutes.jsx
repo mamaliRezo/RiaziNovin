@@ -35,7 +35,7 @@ export default function AppRoutes() {
       <Route path="/otp" element={<OTP />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/password" element={<PasswordIN />} />
-      <Route path="/video" element={<VideoPage />} />
+      <Route path="/video/:courseId" element={<VideoPage />} />
       <Route path="/comingsoon" element={<ComingSoon />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 

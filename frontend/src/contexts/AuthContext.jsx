@@ -32,17 +32,17 @@ export function AuthProvider({ children }) {
           }
           // Try to refresh profile to validate token
           try {
-            const resp = await api.get("/me");
+            const resp = await api.get("/me/");
             const profile = resp.data;
             setUser(profile);
-            setRole(profile?.role || profile?.type || null);
+            setRole(profile?.role || null);
             setIsAuthenticated(true);
             localStorage.setItem(
               "auth",
               JSON.stringify({
                 isAuthenticated: true,
                 user: profile,
-                role: profile?.role || profile?.type || null,
+                role: profile?.role || null,
               }),
             );
           } catch {
@@ -73,23 +73,25 @@ export function AuthProvider({ children }) {
     } catch (e) {}
   }
 
+  // credentials: { phone_email, password }
   async function login(credentials) {
     setLoading(true);
     try {
-      // POST /login is generic; backend may return access_token or token
-      const res = await api.post("/login", credentials);
-      const token =
-        res?.data?.access_token || res?.data?.token || res?.data?.data?.token;
-      if (!token) throw new Error("No token received from login");
-      // persist token and configure axios
+      // آدرس درست بک‌اند برای ورود با رمز عبور
+      const res = await api.post("/verify-password/", credentials);
+
+      // شکل واقعی پاسخ بک‌اند: { status, tokens: { access, refresh }, role }
+      const token = res?.data?.tokens?.access;
+      if (!token) throw new Error("توکنی از سرور دریافت نشد");
+
       localStorage.setItem("access_token", token);
       setAuthToken(token);
 
-      // fetch current user profile
-      const me = await api.get("/me");
+      // گرفتن پروفایل کامل کاربر از endpoint جدید /me/
+      const me = await api.get("/me/");
       const profile = me.data;
       setUser(profile);
-      const resolvedRole = profile?.role || profile?.type || null;
+      const resolvedRole = profile?.role || res?.data?.role || null;
       setRole(resolvedRole);
       setIsAuthenticated(true);
       localStorage.setItem(
@@ -101,7 +103,7 @@ export function AuthProvider({ children }) {
         }),
       );
 
-      // redirect based on role mapping
+      // هدایت بر اساس نقش کاربر
       const dest = ROLE_ROUTES[resolvedRole] || "/unauthorized";
       navigate(dest, { replace: true });
       return profile;
@@ -121,7 +123,7 @@ export function AuthProvider({ children }) {
   async function getCurrentUser() {
     if (!isAuthenticated) return null;
     try {
-      const resp = await api.get("/me");
+      const resp = await api.get("/me/");
       setUser(resp.data);
       return resp.data;
     } catch (e) {

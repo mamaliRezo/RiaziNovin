@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import LogoRiaziNovin from "../../assets/logoRiazinovin.svg";
 import Guy from "../../assets/Guy.svg";
 import TelephoneIcon from "../../assets/TelephoneIcon.svg";
@@ -6,7 +7,8 @@ import TopWave from "../../components/section/TopWave.jsx";
 import BottomWave from "../../components/section/BottomWave.jsx";
 import ErrorBox from "../../components/common/ErrorBox.jsx";
 
-export default function Login({ onOTP, onPassword, onSignup }) {
+export default function Login() {
+  const navigate = useNavigate();
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -40,10 +42,12 @@ export default function Login({ onOTP, onPassword, onSignup }) {
         setLoading(false);
         return;
       }
-      onOTP({
-        phone_email: phone,
-        role: "student",
-        data,
+      navigate("/otp", {
+        state: {
+          phone_email: phone,
+          role: "student",
+          data,
+        },
       });
     } catch (err) {
       console.log(err);
@@ -60,9 +64,11 @@ export default function Login({ onOTP, onPassword, onSignup }) {
       return;
     }
 
-    onPassword({
-      phone_email: phone,
-      role: "student",
+    navigate("/password", {
+      state: {
+        phone_email: phone,
+        role: "student",
+      },
     });
   }
 
@@ -72,9 +78,11 @@ export default function Login({ onOTP, onPassword, onSignup }) {
       setError("اول شماره تلفن را وارد کنید");
       return;
     }
-    onSignup({
-      phone_email: phone,
-      role: "student",
+    navigate("/signup", {
+      state: {
+        phone_email: phone,
+        role: "student",
+      },
     });
   }
 
@@ -132,7 +140,6 @@ export default function Login({ onOTP, onPassword, onSignup }) {
       >
         ورود با رمز عبور
       </button>
-      {/* لینک ایجاد حساب کاربری > */}
       <div className="absolute left-[178px] top-[585px] w-[129px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
         <p
           className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline"
