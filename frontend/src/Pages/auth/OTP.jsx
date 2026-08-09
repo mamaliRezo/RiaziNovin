@@ -4,6 +4,7 @@ import Guy from "../../assets/Guy.svg";
 import TopWave from "../../components/section/TopWave.jsx";
 import BottomWave from "../../components/section/BottomWave.jsx";
 import ErrorBox from "../../components/common/ErrorBox.jsx";
+import { BACKEND_ORIGIN } from "../../config.js";
 
 export default function OTP({
   phone_email,
@@ -17,7 +18,7 @@ export default function OTP({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const BACKEND = "http://localhost:8000";
+  const BACKEND = BACKEND_ORIGIN;
 
   useEffect(() => {
     if (timeLeft <= 0) return;

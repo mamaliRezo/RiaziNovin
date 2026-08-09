@@ -1,20 +1,33 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# مقادیر حساس (SECRET_KEY، پسورد ایمیل، کلید پیامک و ...) از فایل .env
+# خونده می‌شن، نه اینکه مستقیم تو کد باشن. یه نمونه‌ی بدون مقدار واقعی
+# تو backend/.env.example هست؛ یه کپی از اون به اسم backend/.env بساز
+# و مقادیر واقعی رو توش بذار (این فایل تو .gitignore هست، پوش نمی‌شه).
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/topics/settings/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2_wh$+r3s+-^2y-_qbs&o7m0^6^fy7ncl%a8+1e%10)gfphmfy'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-2_wh$+r3s+-^2y-_qbs&o7m0^6^fy7ncl%a8+1e%10)gfphmfy',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'mean-steaks-open.laca.lt']
+ALLOWED_HOSTS = os.environ.get(
+    'DJANGO_ALLOWED_HOSTS',
+    'localhost,127.0.0.1,mean-steaks-open.laca.lt',
+).split(',')
 
 # Application definition
 
@@ -92,12 +105,12 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'yalda.ma3600@gmail.com'
-EMAIL_HOST_PASSWORD = '123456789'
-DEFAULT_FROM_EMAIL = 'yalda.ma3600@gmail.com'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # SMS (Placeholders)
-SMS_API_KEY = 'your-sms-api-key'
+SMS_API_KEY = os.environ.get('SMS_API_KEY', 'your-sms-api-key')
 SMS_SENDER = '10008663'
 
 # URLs

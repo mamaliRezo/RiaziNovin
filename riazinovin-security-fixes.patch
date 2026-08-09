@@ -1,0 +1,228 @@
+diff --git a/.gitignore b/.gitignore
+index a547bf3..556cd6e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -12,6 +12,11 @@ dist
+ dist-ssr
+ *.local
+ 
++# Environment variables
++.env
++.env.local
++.env.*.local
++
+ # Editor directories and files
+ .vscode/*
+ !.vscode/extensions.json
+diff --git a/backend/.env.example b/backend/.env.example
+new file mode 100644
+index 0000000..59c89c6
+--- /dev/null
++++ b/backend/.env.example
+@@ -0,0 +1,19 @@
++# این فایل رو کپی کن به اسم .env (توی همین پوشه‌ی backend) و مقادیر واقعی رو بذار توش.
++# فایل .env هیچ‌وقت نباید commit بشه (توی .gitignore هست).
++
++# یه کلید تصادفی جدید بساز، مثلاً با این دستور تو پایتون:
++#   python -c "import secrets; print(secrets.token_urlsafe(50))"
++DJANGO_SECRET_KEY=your-secret-key-here
++
++# تو محیط لوکال True بذار، رو سرور واقعی (production) حتماً False
++DJANGO_DEBUG=True
++
++# دامنه‌ها/آی‌پی‌هایی که اجازه دارن به بک‌اند وصل بشن، با کاما جدا بشن
++DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
++
++# اطلاعات ایمیل برای ارسال (اگه استفاده می‌کنی)
++EMAIL_HOST_USER=your-email@gmail.com
++EMAIL_HOST_PASSWORD=your-gmail-app-password
++
++# کلید API پنل پیامک (اگه استفاده می‌کنی)
++SMS_API_KEY=your-sms-api-key
+diff --git a/backend/Math/settings.py b/backend/Math/settings.py
+index b98a786..8676552 100644
+--- a/backend/Math/settings.py
++++ b/backend/Math/settings.py
+@@ -1,20 +1,33 @@
+ import os
+ from pathlib import Path
+ from datetime import timedelta
++from dotenv import load_dotenv
+ 
+ # Build paths inside the project like this: BASE_DIR / 'subdir'.
+ BASE_DIR = Path(__file__).resolve().parent.parent
+ 
++# مقادیر حساس (SECRET_KEY، پسورد ایمیل، کلید پیامک و ...) از فایل .env
++# خونده می‌شن، نه اینکه مستقیم تو کد باشن. یه نمونه‌ی بدون مقدار واقعی
++# تو backend/.env.example هست؛ یه کپی از اون به اسم backend/.env بساز
++# و مقادیر واقعی رو توش بذار (این فایل تو .gitignore هست، پوش نمی‌شه).
++load_dotenv(BASE_DIR / '.env')
++
+ # Quick-start development settings - unsuitable for production
+ # See https://docs.djangoproject.com/en/4.2/topics/settings/
+ 
+ # SECURITY WARNING: keep the secret key used in production secret!
+-SECRET_KEY = 'django-insecure-2_wh$+r3s+-^2y-_qbs&o7m0^6^fy7ncl%a8+1e%10)gfphmfy'
++SECRET_KEY = os.environ.get(
++    'DJANGO_SECRET_KEY',
++    'django-insecure-2_wh$+r3s+-^2y-_qbs&o7m0^6^fy7ncl%a8+1e%10)gfphmfy',
++)
+ 
+ # SECURITY WARNING: don't run with debug turned on in production!
+-DEBUG = True
++DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+ 
+-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'mean-steaks-open.laca.lt']
++ALLOWED_HOSTS = os.environ.get(
++    'DJANGO_ALLOWED_HOSTS',
++    'localhost,127.0.0.1,mean-steaks-open.laca.lt',
++).split(',')
+ 
+ # Application definition
+ 
+@@ -92,12 +105,12 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+ EMAIL_HOST = 'smtp.gmail.com'
+ EMAIL_PORT = 587
+ EMAIL_USE_TLS = True
+-EMAIL_HOST_USER = 'yalda.ma3600@gmail.com'
+-EMAIL_HOST_PASSWORD = '123456789'
+-DEFAULT_FROM_EMAIL = 'yalda.ma3600@gmail.com'
++EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
++EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
++DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+ 
+ # SMS (Placeholders)
+-SMS_API_KEY = 'your-sms-api-key'
++SMS_API_KEY = os.environ.get('SMS_API_KEY', 'your-sms-api-key')
+ SMS_SENDER = '10008663'
+ 
+ # URLs
+diff --git a/backend/requirements.txt b/backend/requirements.txt
+index c970c2067be15b1da7bff90c623248eb8479fcf8..4a77c911a8cbda6ac68f1a240709556ab3399575 100644
+GIT binary patch
+literal 348
+zcmZutJ933E4D5XuJlMcY8g;ox#sL8$#`crVBfQf`CMi?y>_@wDc_GFbpwn;Ks1do)
+zOaQjEgEp-m)VMm%Seg)dcb;CzRov@dy>Bio5un#r+d)k?Y{tmBS<y|%xpKX3|0u>>
+zW_CNCk-ut)8MOV6YclQ0<8~H+L5oh&6x{7FYMWfaLOWKjmGC`23DX5&1a>Ns_wf|e
+z-lx-5))<;877Wi{jZut`L&``$t2--G^24V(6F??QNVyV)<paOPl_`dMiRq+ndC7h0
+YazDtbgT1HEt_DezItqEw)+Sc{0H9%Q0ssI2
+
+literal 546
+zcmYk3%}&EG5QOK9#G@3&X)AH*t?z*XNoZ(D+S(C64-b61PH1I0k-amsGwa`<N>Q)s
+zbWx*LJJwncdSnOP>rOA+Uz9+!Y^#?l*jq;we77_1pbBIJpS04Tk<&YOJ-lyMS=2YM
+zHqP4X4a9(h(Y38o`p&BLO?`zI(~PJe(5qCtYW!y!yKvoGo+XQTYT;HmYV_ecN9S4E
+z;Au){cBl^E7O!ER!-*6<YlLmJKqpJFbhIvKO>?j8$&#!+Pfi;_^g5xQ=VUs0f`+qc
+zCw)=xd?HV1eR9)qirkI<H;#1;{!ZC*V!k!1Y4&}6p<JKnXWlzK!!m_D<E85a)6!+v
+K!86%An4>=?15vjC
+
+diff --git a/frontend/.env.example b/frontend/.env.example
+new file mode 100644
+index 0000000..cc7acea
+--- /dev/null
++++ b/frontend/.env.example
+@@ -0,0 +1,4 @@
++# این فایل رو کپی کن به اسم .env (توی همین پوشه‌ی frontend) و آدرس واقعی بک‌اندت رو بذار.
++# فایل .env هیچ‌وقت نباید commit بشه.
++
++VITE_API_BASE_URL=http://127.0.0.1:8000/api
+diff --git a/frontend/src/Pages/auth/Login.jsx b/frontend/src/Pages/auth/Login.jsx
+index b9b1c6d..f88b66e 100644
+--- a/frontend/src/Pages/auth/Login.jsx
++++ b/frontend/src/Pages/auth/Login.jsx
+@@ -6,6 +6,7 @@ import TelephoneIcon from "../../assets/TelephoneIcon.svg";
+ import TopWave from "../../components/section/TopWave.jsx";
+ import BottomWave from "../../components/section/BottomWave.jsx";
+ import ErrorBox from "../../components/common/ErrorBox.jsx";
++import { BACKEND_ORIGIN } from "../../config.js";
+ 
+ export default function Login() {
+   const navigate = useNavigate();
+@@ -13,7 +14,7 @@ export default function Login() {
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState(null);
+ 
+-  const BACKEND = "http://localhost:8000";
++  const BACKEND = BACKEND_ORIGIN;
+ 
+   async function handleOTPLogin() {
+     setError(null);
+diff --git a/frontend/src/Pages/auth/OTP.jsx b/frontend/src/Pages/auth/OTP.jsx
+index 8a9c0f9..b609287 100644
+--- a/frontend/src/Pages/auth/OTP.jsx
++++ b/frontend/src/Pages/auth/OTP.jsx
+@@ -4,6 +4,7 @@ import Guy from "../../assets/Guy.svg";
+ import TopWave from "../../components/section/TopWave.jsx";
+ import BottomWave from "../../components/section/BottomWave.jsx";
+ import ErrorBox from "../../components/common/ErrorBox.jsx";
++import { BACKEND_ORIGIN } from "../../config.js";
+ 
+ export default function OTP({
+   phone_email,
+@@ -17,7 +18,7 @@ export default function OTP({
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState(null);
+ 
+-  const BACKEND = "http://localhost:8000";
++  const BACKEND = BACKEND_ORIGIN;
+ 
+   useEffect(() => {
+     if (timeLeft <= 0) return;
+diff --git a/frontend/src/Pages/auth/SignUp.jsx b/frontend/src/Pages/auth/SignUp.jsx
+index 0fc4f44..ea25ca7 100644
+--- a/frontend/src/Pages/auth/SignUp.jsx
++++ b/frontend/src/Pages/auth/SignUp.jsx
+@@ -4,6 +4,7 @@ import Guy from "../../assets/Guy.svg";
+ import TopWave from "../../components/section/TopWave.jsx";
+ import BottomWave from "../../components/section/BottomWave.jsx";
+ import ErrorBox from "../../components/common/ErrorBox.jsx";
++import { BACKEND_ORIGIN } from "../../config.js";
+ 
+ export default function Signup({ phone_email, role, onSignupComplete }) {
+   const [first, setFirst] = useState("");
+@@ -11,7 +12,7 @@ export default function Signup({ phone_email, role, onSignupComplete }) {
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState(null);
+ 
+-  const BACKEND = "http://localhost:8000";
++  const BACKEND = BACKEND_ORIGIN;
+ 
+   async function handleSignup() {
+     setError(null);
+diff --git a/frontend/src/Pages/auth/passwordIN.jsx b/frontend/src/Pages/auth/passwordIN.jsx
+index 777cc0c..2323a9d 100644
+--- a/frontend/src/Pages/auth/passwordIN.jsx
++++ b/frontend/src/Pages/auth/passwordIN.jsx
+@@ -5,6 +5,7 @@ import Guy from "../../assets/Guy.svg";
+ import TopWave from "../../components/section/TopWave.jsx";
+ import BottomWave from "../../components/section/BottomWave.jsx";
+ import ErrorBox from "../../components/common/ErrorBox.jsx";
++import { BACKEND_ORIGIN } from "../../config.js";
+ import { useAuth } from "../../contexts/AuthContext.jsx";
+ 
+ export default function PasswordIN() {
+@@ -19,7 +20,7 @@ export default function PasswordIN() {
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState(null);
+ 
+-  const BACKEND = "http://localhost:8000";
++  const BACKEND = BACKEND_ORIGIN;
+ 
+   const handleLogin = async () => {
+     setError(null);
+diff --git a/frontend/src/config.js b/frontend/src/config.js
+new file mode 100644
+index 0000000..e5c7768
+--- /dev/null
++++ b/frontend/src/config.js
+@@ -0,0 +1,11 @@
++// آدرس بک‌اند از متغیر محیطی VITE_API_BASE_URL خونده می‌شه (همون چیزی که
++// services/api.js هم استفاده می‌کنه)، نه هاردکد. برای تنظیمش یه فایل
++// frontend/.env بساز و این خط رو توش بذار:
++//   VITE_API_BASE_URL=http://127.0.0.1:8000/api
++// اگه چیزی ست نشده باشه، پیش‌فرض رو localhost می‌ذاریم که کار محلی خراب نشه.
++const API_BASE =
++  import.meta?.env?.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
++
++// خیلی از صفحات auth مستقیم fetch می‌زنن (نه از سرویس api.js)، پس بهشون
++// ریشه‌ی بک‌اند رو بدون "/api" هم می‌دیم.
++export const BACKEND_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
