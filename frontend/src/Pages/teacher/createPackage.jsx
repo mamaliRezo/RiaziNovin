@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import HeaderDash from "../../components/section/HeaderDash";
 import BottomMenu from "../../components/common/BottomMenu";
 import guguli from "../../assets/guguliVideo.svg";
-import upload from "../../assets/upload.svg";
-import pen from "../../assets/editPen.svg";
+import upload from "../../assets/upload.webp";
+import pen from "../../assets/editPen.webp";
 import api from "../../services/api";
 
 export default function CreatePackage() {

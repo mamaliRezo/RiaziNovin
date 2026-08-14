@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import cover from "../../assets/cover.svg";
+import cover from "../../assets/cover.webp";
 
 import HeaderDash from "../../components/section/HeaderDash";
 import SearchBox from "../../components/common/SearchBox";

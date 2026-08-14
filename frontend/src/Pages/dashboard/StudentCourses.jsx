@@ -4,7 +4,7 @@ import HeaderDash from "../../components/section/HeaderDash";
 import SearchBox from "../../components/common/SearchBox";
 import BottomMenu from "../../components/common/BottomMenu";
 import CourseCard from "../../components/common/CourseCard";
-import videoCover from "../../assets/videoCover.svg";
+import videoCover from "../../assets/videoCover.webp";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
 import api from "../../services/api";

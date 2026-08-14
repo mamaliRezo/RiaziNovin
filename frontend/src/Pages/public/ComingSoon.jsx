@@ -1,4 +1,4 @@
-import LogoRiaziNovin from "../../assets/logoRiazinovin.svg";
+import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
 import BottomMenu from "../../components/common/BottomMenu";
 
 export default function ComingSoon({ gotoDashboard }) {

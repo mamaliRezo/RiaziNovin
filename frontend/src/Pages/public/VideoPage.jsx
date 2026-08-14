@@ -8,9 +8,9 @@ import api from "../../services/api";
 import ProfileAvatar from "../../assets/ProfileAvatar.svg";
 import UserIcon from "../../assets/UserIcon.svg";
 import VideoIcon from "../../assets/camera.svg";
-import videoCover from "../../assets/videoCover.svg";
+import videoCover from "../../assets/videoCover.webp";
 import guguli from "../../assets/guguliVideo.svg";
-import download from "../../assets/download.svg";
+import download from "../../assets/download.webp";
 
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";

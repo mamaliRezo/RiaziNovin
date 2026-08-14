@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TitleMD, BodyText } from "../ui/Typography.jsx";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.webp";
 
 export default function ConsultationForm() {
   const [name, setName] = useState("");

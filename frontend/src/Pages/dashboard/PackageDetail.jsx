@@ -6,7 +6,7 @@ import ErrorBox from "../../components/common/ErrorBox";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
 import ProfileAvatar from "../../assets/ProfileAvatar.svg";
-import GoldenPackage from "../../assets/GoldenPackage.svg";
+import GoldenPackage from "../../assets/GoldenPackage.webp";
 import api from "../../services/api";
 import { resolveMediaUrl } from "../../utils/resolveMedia";
 

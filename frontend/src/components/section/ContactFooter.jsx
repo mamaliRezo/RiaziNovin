@@ -1,6 +1,6 @@
 import { TitleLG, TitleMD, TitleSM, BodyText } from "../ui/Typography.jsx";
-import etemad from "../../assets/etemad.svg";
-import icons from "../../assets/icons.svg";
+import etemad from "../../assets/etemad.webp";
+import icons from "../../assets/icons.webp";
 
 export default function ContactFooter() {
   return (

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import Slide1 from "../../assets/Slide1.svg";
-import Slide2 from "../../assets/Slide2.svg";
-import Slide3 from "../../assets/Slide3.svg";
-import Slide4 from "../../assets/Slide4.svg";
+import Slide1 from "../../assets/Slide1.webp";
+import Slide2 from "../../assets/Slide2.webp";
+import Slide3 from "../../assets/Slide3.webp";
+import Slide4 from "../../assets/Slide4.webp";
 
 export default function SliderBox({ onClick, style }) {
   const slides = [Slide1, Slide2, Slide3, Slide4];

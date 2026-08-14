@@ -1,5 +1,5 @@
-import LogoRiaziNovin from "../../assets/LogoRiaziNovin.svg";
-import Bell from "../../assets/Bell.svg";
+import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+import Bell from "../../assets/Bell.webp";
 import cart from "../../assets/cart.svg";
 export default function HeaderDash() {
   return (

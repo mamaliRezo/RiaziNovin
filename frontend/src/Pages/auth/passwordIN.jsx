@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import LogoRiaziNovin from "../../assets/logoRiazinovin.svg";
-import Guy from "../../assets/Guy.svg";
+import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+import Guy from "../../assets/Guy.webp";
 import TopWave from "../../components/section/TopWave.jsx";
 import BottomWave from "../../components/section/BottomWave.jsx";
 import ErrorBox from "../../components/common/ErrorBox.jsx";

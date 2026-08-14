@@ -2,8 +2,8 @@ import { useState } from "react";
 import HeaderDash from "../../components/section/HeaderDash";
 import BottomMenu from "../../components/common/BottomMenu";
 import guguli from "../../assets/guguliVideo.svg";
-import upload from "../../assets/upload.svg";
-import pen from "../../assets/editPen.svg";
+import upload from "../../assets/upload.webp";
+import pen from "../../assets/editPen.webp";
 import PlusIcon from "../../assets/UserIcon.svg";
 import api from "../../services/api";
 

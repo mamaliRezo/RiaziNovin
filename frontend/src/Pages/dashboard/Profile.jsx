@@ -1,4 +1,4 @@
-import LogoRiaziNovin from "../../assets/logoRiazinovin.svg";
+import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
 import profile from "../../assets/profile logo.svg";
 import pen from "../../assets/pen logo.svg";
 import logOut from "../../assets/exit logo.svg";

@@ -4,7 +4,7 @@ import HeaderDash from "../../components/section/HeaderDash";
 import SearchBox from "../../components/common/SearchBox";
 import BottomMenu from "../../components/common/BottomMenu";
 import PackageCard from "../../components/common/PackageCard";
-import GoldenPackage from "../../assets/GoldenPackage.svg";
+import GoldenPackage from "../../assets/GoldenPackage.webp";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
 import api from "../../services/api";
