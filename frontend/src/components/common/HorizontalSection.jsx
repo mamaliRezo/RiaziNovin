@@ -4,7 +4,7 @@ export default function HorizontalSection({ type, items = [] }) {
   if (!content) {
     // avoid runtime errors when an invalid/undefined type is passed
     // silently render nothing and warn in dev
-    if (process && process.env && process.env.NODE_ENV !== "production") {
+    if (import.meta.env && import.meta.env.MODE !== "production") {
       // eslint-disable-next-line no-console
       console.warn("HorizontalSection: unknown content type:", type);
     }

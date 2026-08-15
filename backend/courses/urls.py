@@ -40,6 +40,9 @@ urlpatterns = [
     # لیست تمام پکیج‌های موجود (برای فروشگاه)
     path('api/all-packages/', views.all_packages_list, name='all_packages_list'),
 
+    # لیست پکیج‌ها برای صفحه‌ی اصلی/لندینگ (بدون نیاز به لاگین)
+    path('api/public/packages/', views.public_packages_list, name='public_packages_list'),
+
     # ایجاد پکیج جدید (مخصوص معلم)
     path('api/packages/create/', views.create_package, name='create_package'),
 
@@ -48,6 +51,12 @@ urlpatterns = [
 
     # این همان خطی است که کم داشتید:
     path('api/packages/<int:package_id>/enroll/', views.enroll_in_package, name='enroll_in_package'),
+
+    # شروع پرداخت برای یه پکیج پولی (برمی‌گردونه لینک درگاه زرین‌پال)
+    path('api/packages/<int:package_id>/purchase/', views.purchase_package, name='purchase_package'),
+
+    # کال‌بک زرین‌پال بعد از پرداخت (مرورگر کاربر مستقیم بهش ریدایرکت می‌شه)
+    path('api/payment/verify/', views.verify_zarinpal_payment, name='verify_zarinpal_payment'),
 
     # لیست پکیج‌های من (خریداری شده یا ساخته شده)
     path('api/packages/my-list/', views.user_packages_list, name='user_packages_list'),

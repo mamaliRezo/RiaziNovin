@@ -83,7 +83,7 @@ class PackageListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Package
-        fields = ['id', 'title', 'thumbnail', 'teacher_name', 'enrolled_count', 'courses_count']
+        fields = ['id', 'title', 'thumbnail', 'teacher_name', 'enrolled_count', 'courses_count', 'price']
 
     def get_teacher_name(self, obj):
         return f"{obj.teacher.user.first_name} {obj.teacher.user.last_name}"
@@ -98,7 +98,7 @@ class PackageDetailSerializer(serializers.ModelSerializer):
         model = Package
         fields = [
             'id', 'title', 'description', 'thumbnail', 'teacher_name', 
-            'teacher_image', 'courses', 'is_enrolled'
+            'teacher_image', 'courses', 'is_enrolled', 'price'
         ]
 
     def get_teacher_name(self, obj):

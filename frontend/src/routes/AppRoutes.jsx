@@ -1,8 +1,9 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 // Public pages
 import Login from "../Pages/auth/Login.jsx";
+import Home from "../Pages/public/Home.jsx";
 import OTP from "../Pages/auth/OTP.jsx";
 import SignUp from "../Pages/auth/SignUp.jsx";
 import PasswordIN from "../Pages/auth/PasswordIN.jsx";
@@ -16,6 +17,7 @@ import StudentDash from "../Pages/dashboard/StudentDash.jsx";
 import StudentCourses from "../Pages/dashboard/StudentCourses.jsx";
 import PackagesList from "../Pages/dashboard/PackagesList.jsx";
 import PackageDetail from "../Pages/dashboard/PackageDetail.jsx";
+import PaymentResult from "../Pages/dashboard/PaymentResult.jsx";
 import Profile from "../Pages/dashboard/Profile.jsx";
 import CreateCourse from "../Pages/teacher/createCourse.jsx";
 import CreatePackage from "../Pages/teacher/createPackage.jsx";
@@ -31,7 +33,7 @@ import MainLayout from "../layout/MainLayout.jsx";
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Home />} />
 
       {/* Public */}
       <Route path="/login" element={<Login />} />
@@ -39,6 +41,7 @@ export default function AppRoutes() {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/password" element={<PasswordIN />} />
       <Route path="/video/:courseId" element={<VideoPage />} />
+      <Route path="/payment/result" element={<PaymentResult />} />
       <Route path="/comingsoon" element={<ComingSoon />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -78,6 +81,7 @@ export default function AppRoutes() {
           <Route index element={<TeacherDash />} />
           <Route path="create" element={<CreateCourse />} />
           <Route path="create-package" element={<CreatePackage />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
 

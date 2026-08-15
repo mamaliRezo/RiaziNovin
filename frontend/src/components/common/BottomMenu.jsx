@@ -21,8 +21,9 @@ export default function BottomMenu() {
 
   const homePath = role === "teacher" ? "/teacher" : "/student";
   const coursesPath = role === "teacher" ? "/teacher" : "/student/courses";
-  // صفحه‌ی پروفایل معلم هنوز ساخته نشده، فعلاً می‌فرستیمش به همون کامینگ‌سون
-  const profilePath = role === "teacher" ? "/comingsoon" : "/student/profile";
+  const profilePath = role === "teacher" ? "/teacher/profile" : "/student/profile";
+  // فروشگاه یعنی مرور/خرید پکیج‌ها؛ برای معلم فعلاً همون داشبورده (از اونجا پکیج می‌سازه)
+  const shopPath = role === "teacher" ? "/teacher" : "/student/packages";
 
   const menuItems = [
     {
@@ -44,8 +45,7 @@ export default function BottomMenu() {
       icon: DeActiveShop,
       activeIcon: ActiveShop,
       size: 20,
-      // فروشگاه هنوز ساخته نشده
-      path: "/comingsoon",
+      path: shopPath,
     },
     {
       text: "پروفایل",

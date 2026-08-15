@@ -29,6 +29,9 @@ ALLOWED_HOSTS = os.environ.get(
     'localhost,127.0.0.1,mean-steaks-open.laca.lt',
 ).split(',')
 
+# آدرس فرانت، برای ریدایرکت کردن مرورگر کاربر بعد از پرداخت زرین‌پال
+FRONTEND_ORIGIN = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:5173')
+
 # Application definition
 
 INSTALLED_APPS = [

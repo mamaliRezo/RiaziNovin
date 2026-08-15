@@ -16,6 +16,7 @@ export default function CreatePackage() {
   const [coverPreview, setCoverPreview] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
 
   const [myCourses, setMyCourses] = useState([]);
   const [loadingCourses, setLoadingCourses] = useState(true);
@@ -73,6 +74,7 @@ export default function CreatePackage() {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("thumbnail", coverFile);
+      formData.append("price", price ? String(price) : "0");
       selectedCourseIds.forEach((id) => formData.append("course_ids", id));
 
       await api.post("/packages/create/", formData, {
@@ -199,6 +201,35 @@ export default function CreatePackage() {
               placeholder="توضیحات پکیج..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          {/* قیمت پکیج */}
+          <div className="text-right">
+            <p
+              style={{
+                width: "348px",
+                margin: "15px auto 8px auto",
+                fontSize: "15px",
+                color: "#C90BBCC9",
+                lineHeight: "22px",
+              }}
+            >
+              قیمت پکیج (تومان):
+            </p>
+          </div>
+          <div className="w-[348px] mx-auto flex items-center rounded-[8px] px-2">
+            <img src={pen} alt="pen" />
+            <input
+              type="number"
+              min="0"
+              step="1000"
+              className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[15px] font-[byekan] focus:outline-none"
+              placeholder="مثلاً 150000 — برای رایگان خالی بذار یا صفر بزن"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              dir="ltr"
+              style={{ textAlign: "right" }}
             />
           </div>
 

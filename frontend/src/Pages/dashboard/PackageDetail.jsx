@@ -64,6 +64,26 @@ export default function PackageDetail() {
     }
   }
 
+  async function handlePurchase() {
+    setEnrolling(true);
+    setError("");
+    try {
+      const res = await api.post(`/packages/${packageId}/purchase/`);
+      if (res.data.payment_url) {
+        // ریدایرکت کامل مرورگر به درگاه زرین‌پال (نه fetch/axios، چون کاربر باید بره صفحه‌ی درگاه)
+        window.location.href = res.data.payment_url;
+      } else {
+        setMessage(res.data.message || "شما قبلاً این پکیج را تهیه کرده‌اید.");
+      }
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || "خطا در اتصال به درگاه پرداخت. دوباره تلاش کنید."
+      );
+    } finally {
+      setEnrolling(false);
+    }
+  }
+
   return (
     <div
       className="font-[BYekan]"
@@ -131,6 +151,19 @@ export default function PackageDetail() {
 
               <div
                 style={{
+                  fontSize: "17px",
+                  fontWeight: "bold",
+                  color: pkg.price > 0 ? "#C90BBC" : "#0a8f3c",
+                  marginBottom: "12px",
+                }}
+              >
+                {pkg.price > 0
+                  ? `${pkg.price.toLocaleString("fa-IR")} تومان`
+                  : "رایگان"}
+              </div>
+
+              <div
+                style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
@@ -155,7 +188,7 @@ export default function PackageDetail() {
 
               {!pkg.is_enrolled ? (
                 <button
-                  onClick={handleEnroll}
+                  onClick={pkg.price > 0 ? handlePurchase : handleEnroll}
                   disabled={enrolling}
                   style={{
                     width: "100%",
@@ -171,7 +204,11 @@ export default function PackageDetail() {
                     marginBottom: "16px",
                   }}
                 >
-                  {enrolling ? "در حال ثبت‌نام..." : "ثبت‌نام در پکیج"}
+                  {enrolling
+                    ? "در حال انتقال به درگاه پرداخت..."
+                    : pkg.price > 0
+                    ? `پرداخت و خرید پکیج (${pkg.price.toLocaleString("fa-IR")} تومان)`
+                    : "ثبت‌نام در پکیج"}
                 </button>
               ) : (
                 <div

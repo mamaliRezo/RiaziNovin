@@ -107,6 +107,7 @@ class Package(models.Model):
     description = models.TextField()
     thumbnail = models.ImageField(upload_to='packages/thumbnails/')
     courses = models.ManyToManyField(Course, related_name='contained_in_packages')
+    price = models.PositiveIntegerField(default=0, help_text='قیمت به تومان؛ صفر یعنی رایگان')
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -116,3 +117,22 @@ class Package(models.Model):
     @property
     def total_videos_count(self):
         return sum(course.video_count for course in self.courses.all())
+
+class Payment(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'در انتظار پرداخت'),
+        ('paid', 'پرداخت‌شده'),
+        ('failed', 'ناموفق'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payments')
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='payments')
+    amount = models.PositiveIntegerField(help_text='مبلغ به تومان')
+    authority = models.CharField(max_length=64, blank=True, null=True, db_index=True)
+    ref_id = models.CharField(max_length=64, blank=True, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user} -> {self.package} ({self.status})"

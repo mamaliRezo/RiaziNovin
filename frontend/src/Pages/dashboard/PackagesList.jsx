@@ -111,6 +111,7 @@ export default function PackagesList() {
             teacherName={pkg.teacher_name}
             coursesCount={pkg.courses_count}
             enrolledCount={pkg.enrolled_count}
+            price={pkg.price}
             onClick={() => navigate(`/student/packages/${pkg.id}`)}
           />
         ))}

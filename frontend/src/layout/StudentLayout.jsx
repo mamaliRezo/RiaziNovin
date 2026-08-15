@@ -1,21 +1,7 @@
-import React from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
+// هر صفحه‌ی دانش‌آموز (StudentDash, StudentCourses, PackagesList, Profile, ...)
+// خودش کامل HeaderDash + BottomMenu + عرض/ارتفاع صفحه رو مدیریت می‌کنه.
 export default function StudentLayout() {
-  return (
-    <div className="student-layout">
-      <header>
-        <nav>
-          <NavLink to="/student" end>
-            Dashboard
-          </NavLink>{" "}
-          | <NavLink to="/student/courses">Courses</NavLink> |{" "}
-          <NavLink to="/student/profile">Profile</NavLink>
-        </nav>
-      </header>
-      <main>
-        <Outlet />
-      </main>
-    </div>
-  );
+  return <Outlet />;
 }

@@ -6,10 +6,21 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 from django.db import transaction, DatabaseError
 from django.db.models import Q, F
-from .models import Course, Video, Package, Rating
+from .models import Course, Video, Package, Rating, Payment
 from .serializers import CourseSerializer, VideoSerializer, PackageListSerializer, PackageDetailSerializer
 from accounts.models import Teacher
 from django.db.models import Avg, Q, F # اضافه کردن Avg در اینجا ضروری است
+from django.conf import settings
+from django.shortcuts import redirect
+from . import zarinpal
+
+
+def _grant_package_access(user, package):
+    """کاربر رو هم به خود پکیج هم به تک‌تک دوره‌های داخلش اضافه می‌کنه."""
+    with transaction.atomic():
+        package.participants.add(user)
+        for course in package.courses.all():
+            course.participants.add(user)
 
 # ۱. لیست تمام دوره‌های موجود در سایت
 @api_view(['GET'])
@@ -32,7 +43,15 @@ def all_packages_list(request):
     serializer = PackageListSerializer(packages, many=True, context={'request': request})
     return Response({'status': 'success', 'data': serializer.data})
 
-# ۳. ثبت‌نام در دوره (نسخه اصلاح شده)
+# ۲.۱ لیست پکیج‌ها برای صفحه‌ی اصلی/لندینگ (عمومی، بدون نیاز به لاگین)
+@api_view(['GET'])
+@permission_classes([])
+def public_packages_list(request):
+    packages = Package.objects.filter(is_published=True).select_related('teacher__user')
+    serializer = PackageListSerializer(packages, many=True, context={'request': request})
+    return Response({'status': 'success', 'data': serializer.data})
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def enroll_in_course(request, course_id):
@@ -51,7 +70,7 @@ def enroll_in_course(request, course_id):
     except Course.DoesNotExist:
         return Response({'status': 'error', 'message': 'دوره مورد نظر یافت نشد.'}, status=404)
 
-# ۴. ثبت‌نام در پکیج (نسخه جدید با منطق اضافه کردن به دوره‌ها)
+# ۴. ثبت‌نام در پکیج (فقط برای پکیج‌های رایگان؛ پکیج‌های پولی از purchase_package رد می‌شن)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def enroll_in_package(request, package_id):
@@ -62,16 +81,91 @@ def enroll_in_package(request, package_id):
         if package.participants.filter(id=user.id).exists():
             return Response({'status': 'info', 'message': 'شما قبلاً این پکیج را تهیه کرده‌اید.'})
 
-        with transaction.atomic():
-            # اضافه کردن کاربر به پکیج
-            package.participants.add(user)
-            # اضافه کردن کاربر به تک‌تک دوره‌های درون پکیج (برای شمارش درست دانش‌آموزان)
-            for course in package.courses.all():
-                course.participants.add(user)
+        if package.price > 0:
+            return Response({
+                'status': 'error',
+                'message': 'این پکیج رایگان نیست. برای تهیه‌ی آن باید پرداخت انجام شود.',
+            }, status=402)
 
+        _grant_package_access(user, package)
         return Response({'status': 'success', 'message': f'پکیج "{package.title}" و دوره‌های آن با موفقیت اضافه شدند.'})
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=500)
+
+
+# ۴.۱ شروع پرداخت برای یه پکیج پولی: یه تراکنش زرین‌پال می‌سازه و لینک درگاه رو برمی‌گردونه
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def purchase_package(request, package_id):
+    package = get_object_or_404(Package, id=package_id)
+    user = request.user
+
+    if package.participants.filter(id=user.id).exists():
+        return Response({'status': 'info', 'message': 'شما قبلاً این پکیج را تهیه کرده‌اید.'})
+
+    if package.price <= 0:
+        return Response({'status': 'error', 'message': 'این پکیج رایگان است، از مسیر ثبت‌نام رایگان استفاده کنید.'}, status=400)
+
+    payment = Payment.objects.create(user=user, package=package, amount=package.price, status='pending')
+
+    callback_url = request.build_absolute_uri('/api/payment/verify/')
+    ok, result = zarinpal.request_payment(
+        amount=package.price,
+        description=f'خرید پکیج «{package.title}»',
+        callback_url=callback_url,
+        mobile=getattr(user, 'phone_number', None),
+    )
+
+    if not ok:
+        payment.status = 'failed'
+        payment.save()
+        return Response({'status': 'error', 'message': f'خطا در اتصال به درگاه پرداخت: {result}'}, status=502)
+
+    payment.authority = result
+    payment.save()
+
+    return Response({
+        'status': 'success',
+        'payment_url': zarinpal.get_startpay_url(result),
+    })
+
+
+# ۴.۲ کال‌بک زرین‌پال بعد از پرداخت (خودِ مرورگر کاربر بهش ریدایرکت می‌شه، نه fetch/axios)
+@api_view(['GET'])
+@permission_classes([])
+def verify_zarinpal_payment(request):
+    authority = request.query_params.get('Authority')
+    zp_status = request.query_params.get('Status')
+    frontend_base = getattr(settings, 'FRONTEND_ORIGIN', 'http://localhost:5173')
+
+    payment = Payment.objects.filter(authority=authority).select_related('package').first()
+    if not payment:
+        return redirect(f'{frontend_base}/payment/result?status=error&message=payment_not_found')
+
+    if payment.status == 'paid':
+        # قبلاً تأیید شده (مثلاً کاربر رفرش کرده)
+        return redirect(f'{frontend_base}/payment/result?status=success&package={payment.package_id}')
+
+    if zp_status != 'OK':
+        payment.status = 'failed'
+        payment.save()
+        return redirect(f'{frontend_base}/payment/result?status=cancelled&package={payment.package_id}')
+
+    ok, result = zarinpal.verify_payment(amount=payment.amount, authority=authority)
+    if not ok:
+        payment.status = 'failed'
+        payment.save()
+        return redirect(f'{frontend_base}/payment/result?status=failed&package={payment.package_id}')
+
+    from django.utils import timezone
+    payment.status = 'paid'
+    payment.ref_id = result
+    payment.paid_at = timezone.now()
+    payment.save()
+
+    _grant_package_access(payment.user, payment.package)
+
+    return redirect(f'{frontend_base}/payment/result?status=success&package={payment.package_id}&ref_id={result}')
 
 # ۵. لیست دوره‌های خریداری شده (دانش‌آموز)
 @api_view(['GET'])
@@ -268,11 +362,18 @@ def create_package(request):
             return Response({'status': 'error', 'message': 'عنوان پکیج اجباری است'}, status=400)
 
         with transaction.atomic():
+            price = request.data.get('price', 0)
+            try:
+                price = int(price)
+            except (TypeError, ValueError):
+                price = 0
+
             package = Package.objects.create(
                 teacher=teacher,
                 title=title,
                 description=request.data.get('description', ''),
-                thumbnail=request.FILES.get('thumbnail')
+                thumbnail=request.FILES.get('thumbnail'),
+                price=max(price, 0),
             )
             course_ids = request.data.getlist('course_ids')
             if course_ids:

@@ -1,101 +1,357 @@
-import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import HeaderDash from "../../components/section/HeaderDash";
+import BottomMenu from "../../components/common/BottomMenu";
+import { useAuth } from "../../contexts/AuthContext";
+import api from "../../services/api";
+
 import profile from "../../assets/profile logo.svg";
 import pen from "../../assets/pen logo.svg";
 import logOut from "../../assets/exit logo.svg";
-export default function Profile() {
-  return (
-    <div className="relative overflow-hidden w-[412px] h-[917px] mx-auto bg-[#FEF9FE] font-[BYekan]">
-      <div className="rounded-b-[8px] w-[348px] h-[61px] items-center justify-center mx-auto shadow-[4px_4px_12px_rgba(0,0,0,0.25)]">
-        <img
-          src={LogoRiaziNovin}
-          alt="logo"
-          className="absolute left-[163px] top-[1px] w-[87px] h-[60px]"
-        />
-      </div>
-      <div className="relative rounded-[8px] w-[348px] h-[92px] top-[20px] items-center justify-center mx-auto shadow-[4px_4px_12px_rgba(0,0,0,0.25)]">
-        <img
-          src={profile}
-          alt="Your-Profile"
-          className="relative left-[180px] top-[10px] transition-transform duration-300 hover:scale-108 hover:shadow-lg"
-        />
-        <img
-          src={pen}
-          alt="edit"
-          className="relative  left-[20px] top-[-15px] transition-transform duration-300 hover:scale-120 hover:shadow-lg"
-        />
-        <button className="relative w-[58px] h-[20px] left-[30px] top-[25px] bg-[#D9D9D9] rounded-[3px] border text-[8.5px] font-[BYekan] transition-transform duration-300 hover:scale-110 hover:shadow-lg">
-          تغییر رمز عبور
-        </button>
-      </div>
-      <div className="relative rounded-[8px] w-[348px] h-[320px] top-[30px] items-center justify-center mx-auto shadow-[4px_4px_12px_rgba(0,0,0,0.25)]">
-        <p className=" relative left-[88px] top-[5px] text-[14px]">
-          اطلاعات تکمیلی
-        </p>
-        <p
-          dir="rtl"
-          className="relative text-right text-[10px] left-[-50px] font-normal"
-        >
-          برای تکمیل اطلاعات پروفایل خود، لطفا کد ملی و تاریخ تولد خود را
-          <br /> وارد کنید.
-        </p>
-        <p className="relative left-[110px] top-[-5px] text-[11px] font-bold">
-          کدملی
-        </p>
-        <input
-          type="password"
-          inputMode="numeric"
-          maxLength={10}
-          className="relative w-[235px] h-[21px] top-[-14px] rounded-[7px] text-[10px] px-3 font-[BYekan] border-1 border-[#000000] bg-[#FFFFFF] focus:outline-none"
-        />
-        <p className="relative left-[103px] top-[-22px] text-[11px] font-bold">
-          سال تولد
-        </p>
-        <input className="relative  w-[235px] h-[21px] top-[-30px] rounded-[7px] text-[10px] px-3 font-[BYekan] border-1 border-[#000000] bg-[#FFFFFF] focus:outline-none" />
-        <p className="relative left-[103px] top-[-40px] text-[11px] font-bold">
-          ماه تولد
-        </p>
-        <input className="relative  w-[235px] h-[21px] top-[-50px] rounded-[7px] text-[10px] px-3 font-[BYekan] border-1 border-[#000000] bg-[#FFFFFF] focus:outline-none" />
-        <p className="relative left-[103px] top-[-60px] text-[11px] font-bold">
-          روز تولد
-        </p>
-        <input className="relative  w-[235px] h-[21px] top-[-70px] rounded-[7px] text-[10px] px-3 font-[BYekan] border-1 border-[#000000] bg-[#FFFFFF] focus:outline-none" />
 
-        <button className="relative w-[240px] h-[20px] top-[-60px] rounded-[6px] border-none bg-[#FFCA28] font-[BYekan]">
-          ثبت
-        </button>
+export default function Profile() {
+  const navigate = useNavigate();
+  const { role, logout } = useAuth();
+  const headerHeight = 70;
+  const bottomMenuHeight = 90;
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const [nationalCode, setNationalCode] = useState("");
+  const [birthYear, setBirthYear] = useState("");
+  const [birthMonth, setBirthMonth] = useState("");
+  const [birthDay, setBirthDay] = useState("");
+  const [grade, setGrade] = useState(""); // دانش‌آموز: مقطع تحصیلی
+  const [major, setMajor] = useState(""); // دانش‌آموز: رشته
+  const [level, setLevel] = useState(""); // معلم: مقطع تدریس
+  const [subject, setSubject] = useState(""); // معلم: درس تدریسی
+
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchProfile() {
+      try {
+        const res = await api.get("/profile/");
+        const data = res.data.data || {};
+        if (!isMounted) return;
+        setNationalCode(data.national_code || "");
+        setBirthYear(data.birth_year || "");
+        setBirthMonth(data.birth_month || "");
+        setBirthDay(data.birth_day || "");
+        setGrade(data.grade || "");
+        setMajor(data.major || "");
+        setLevel(data.level || "");
+        setSubject(data.subject || "");
+      } catch {
+        if (isMounted) setError("خطا در دریافت اطلاعات پروفایل.");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    fetchProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  async function handleSaveAcademic() {
+    setSaving(true);
+    setError("");
+    setMessage("");
+    try {
+      const formData = new FormData();
+      formData.append("national_code", nationalCode);
+      if (birthYear) formData.append("birth_year", birthYear);
+      if (birthMonth) formData.append("birth_month", birthMonth);
+      if (birthDay) formData.append("birth_day", birthDay);
+      if (role === "teacher") {
+        formData.append("level", level);
+        formData.append("subject", subject);
+      } else {
+        formData.append("grade", grade);
+        formData.append("major", major);
+      }
+      const res = await api.post("/profile/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setMessage(res.data.message || "اطلاعات با موفقیت ذخیره شد.");
+    } catch (err) {
+      setError(err?.response?.data?.message || "خطا در ذخیره‌ی اطلاعات.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleChangePassword() {
+    if (newPassword.length < 8) {
+      setError("رمز عبور باید حداقل ۸ کاراکتر باشد.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    setMessage("");
+    try {
+      const formData = new FormData();
+      formData.append("password", newPassword);
+      const res = await api.post("/profile/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setMessage(res.data.message || "رمز عبور با موفقیت تغییر کرد.");
+      setNewPassword("");
+      setShowPasswordForm(false);
+    } catch (err) {
+      setError(err?.response?.data?.message || "خطا در تغییر رمز عبور.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function handleLogout() {
+    logout();
+    navigate("/login", { replace: true });
+  }
+
+  return (
+    <div
+      className="font-[byekan]"
+      style={{
+        width: "412px",
+        margin: "0 auto",
+        background: "#FEF9FE",
+        height: "100vh",
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          margin: "0 auto",
+          width: "412px",
+          height: headerHeight + "px",
+          background: "#FEF9FE",
+          zIndex: 20,
+        }}
+      >
+        <HeaderDash />
       </div>
-      <div className="relative rounded-[8px] w-[348px] h-[240px] top-[40px] items-center justify-center mx-auto shadow-[4px_4px_12px_rgba(0,0,0,0.25)]">
-        <p className=" relative left-[85px] top-[5px] text-[14px]">
-          اطلاعات تحصیلی
-        </p>
-        <p
-          dir="rtl"
-          className="relative text-right text-[10px] left-[-50px] font-normal"
-        >
-          لطفا قبل از ادامه کار با پنل کاربریتان، رشته و پایه خود را بروزرسانی
-          <br /> کنید.
-        </p>
-        <p className="relative left-[95px] top-[8px] text-[11px] font-bold">
-          مقطع تحصیلی
-        </p>
-        <input className="relative  w-[235px] h-[21px] top-[2px] rounded-[7px] text-[10px] px-3 font-[BYekan] border-1 border-[#000000] bg-[#FFFFFF] focus:outline-none" />
-        <p className="relative left-[108px] top-[-5px] text-[11px] font-bold">
-          رشته
-        </p>
-        <input className="relative  w-[235px] h-[21px] top-[-15px] rounded-[7px] text-[10px] px-3 font-[BYekan] border-1 border-[#000000] bg-[#FFFFFF] focus:outline-none" />
-        <button className="relative w-[240px] h-[20px] top-[-5px] rounded-[6px] border-none bg-[#FFCA28] font-[BYekan]">
-          بروزرسانی اطلاعات
-        </button>
+
+      <div
+        style={{
+          position: "absolute",
+          top: headerHeight + "px",
+          bottom: bottomMenuHeight + "px",
+          overflowY: "auto",
+          width: "100%",
+        }}
+      >
+        <div dir="rtl" style={{ padding: "16px" }}>
+          <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center gap-3">
+            <img src={profile} alt="پروفایل" className="w-12 h-12" />
+            <div className="flex-1">
+              <p className="text-[14px] font-bold">پروفایل کاربری</p>
+              <p className="text-[11px] text-[#666]">
+                {role === "teacher" ? "معلم" : "دانش‌آموز"}
+              </p>
+            </div>
+            <img src={pen} alt="ویرایش" className="w-5 h-5" />
+          </div>
+
+          {loading && (
+            <p className="text-center text-[13px] text-[#666]">در حال بارگذاری...</p>
+          )}
+
+          {!loading && (
+            <>
+              {message && (
+                <div className="w-[348px] mx-auto mb-3 text-[13px] text-green-700">
+                  {message}
+                </div>
+              )}
+              {error && (
+                <div className="w-[348px] mx-auto mb-3 text-[13px] text-red-600">
+                  {error}
+                </div>
+              )}
+
+              {/* رمز عبور */}
+              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+                <p className="text-[13px] font-bold mb-2">رمز عبور</p>
+                {!showPasswordForm ? (
+                  <button
+                    onClick={() => setShowPasswordForm(true)}
+                    className="w-full h-[32px] bg-[#D9D9D9] rounded-[6px] text-[12px] font-bold"
+                  >
+                    تغییر رمز عبور
+                  </button>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="password"
+                      placeholder="رمز عبور جدید (حداقل ۸ کاراکتر)"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full h-[32px] rounded-[6px] text-[12px] px-3 border border-[#000] bg-white focus:outline-none"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleChangePassword}
+                        disabled={saving}
+                        className="flex-1 h-[32px] bg-[#00C0D9] text-white rounded-[6px] text-[12px] font-bold"
+                      >
+                        ذخیره
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowPasswordForm(false);
+                          setNewPassword("");
+                        }}
+                        className="flex-1 h-[32px] bg-[#D9D9D9] rounded-[6px] text-[12px] font-bold"
+                      >
+                        انصراف
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* اطلاعات تکمیلی */}
+              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+                <p className="text-[13px] font-bold mb-1">اطلاعات تکمیلی</p>
+                <p className="text-[11px] text-[#666] mb-3 leading-[1.8]">
+                  برای تکمیل اطلاعات پروفایل خود، لطفا کد ملی و تاریخ تولد
+                  خود را وارد کنید.
+                </p>
+
+                <label className="text-[11px] font-bold block mb-1">کدملی</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={10}
+                  value={nationalCode}
+                  onChange={(e) => setNationalCode(e.target.value)}
+                  className="w-full h-[32px] rounded-[7px] text-[12px] px-3 border border-[#000] bg-white focus:outline-none mb-3"
+                />
+
+                <label className="text-[11px] font-bold block mb-1">
+                  تاریخ تولد (شمسی)
+                </label>
+                <div className="flex gap-2 mb-1">
+                  <input
+                    type="number"
+                    placeholder="روز"
+                    value={birthDay}
+                    onChange={(e) => setBirthDay(e.target.value)}
+                    className="flex-1 h-[32px] rounded-[7px] text-[12px] px-2 border border-[#000] bg-white focus:outline-none"
+                  />
+                  <input
+                    type="number"
+                    placeholder="ماه"
+                    value={birthMonth}
+                    onChange={(e) => setBirthMonth(e.target.value)}
+                    className="flex-1 h-[32px] rounded-[7px] text-[12px] px-2 border border-[#000] bg-white focus:outline-none"
+                  />
+                  <input
+                    type="number"
+                    placeholder="سال"
+                    value={birthYear}
+                    onChange={(e) => setBirthYear(e.target.value)}
+                    className="flex-1 h-[32px] rounded-[7px] text-[12px] px-2 border border-[#000] bg-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* اطلاعات تحصیلی */}
+              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+                <p className="text-[13px] font-bold mb-1">اطلاعات تحصیلی</p>
+                <p className="text-[11px] text-[#666] mb-3 leading-[1.8]">
+                  لطفا قبل از ادامه‌ی کار با پنل کاربری‌تان، این اطلاعات را
+                  بروزرسانی کنید.
+                </p>
+
+                {role === "teacher" ? (
+                  <>
+                    <label className="text-[11px] font-bold block mb-1">
+                      مقطع تدریس
+                    </label>
+                    <input
+                      value={level}
+                      onChange={(e) => setLevel(e.target.value)}
+                      className="w-full h-[32px] rounded-[7px] text-[12px] px-3 border border-[#000] bg-white focus:outline-none mb-3"
+                    />
+                    <label className="text-[11px] font-bold block mb-1">
+                      درس تدریسی
+                    </label>
+                    <input
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      className="w-full h-[32px] rounded-[7px] text-[12px] px-3 border border-[#000] bg-white focus:outline-none mb-3"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <label className="text-[11px] font-bold block mb-1">
+                      مقطع تحصیلی
+                    </label>
+                    <input
+                      value={grade}
+                      onChange={(e) => setGrade(e.target.value)}
+                      className="w-full h-[32px] rounded-[7px] text-[12px] px-3 border border-[#000] bg-white focus:outline-none mb-3"
+                    />
+                    <label className="text-[11px] font-bold block mb-1">رشته</label>
+                    <input
+                      value={major}
+                      onChange={(e) => setMajor(e.target.value)}
+                      className="w-full h-[32px] rounded-[7px] text-[12px] px-3 border border-[#000] bg-white focus:outline-none mb-3"
+                    />
+                  </>
+                )}
+
+                <button
+                  onClick={handleSaveAcademic}
+                  disabled={saving}
+                  className="w-full h-[34px] rounded-[6px] border-none bg-[#FFCA28] font-bold text-[12px]"
+                >
+                  {saving ? "در حال ذخیره..." : "بروزرسانی اطلاعات"}
+                </button>
+              </div>
+
+              {/* خروج */}
+              <div
+                onClick={handleLogout}
+                className="rounded-[8px] w-[348px] mx-auto p-4 mb-6 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <img src={logOut} alt="خروج" className="w-5 h-5" />
+                <p className="text-[13px] font-bold">خروج از حساب کاربری</p>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-      <div className="relative rounded-[8px] w-[348px] h-[56px] top-[50px] items-center justify-center mx-auto shadow-[4px_4px_12px_rgba(0,0,0,0.25)]">
-        <img
-          src={logOut}
-          alt="logOut"
-          className="relative top-[15px] left-[105px]"
-        />
-        <p className="relative top-[-30px] left-[72px]">خروج</p>
+
+      <div
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          margin: "0 auto",
+          width: "412px",
+          zIndex: 30,
+          background: "#FEF9FE",
+          height: bottomMenuHeight + "px",
+        }}
+      >
+        <BottomMenu />
       </div>
-      <div className="relative rounded-t-[8px] w-[348px] h-[228px] top-[95px] items-center justify-center mx-auto shadow-[4px_4px_12px_rgba(0,0,0,0.25)]"></div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ export default function PackageCard({
   teacherName,
   coursesCount,
   enrolledCount,
+  price,
   onClick,
 }) {
   return (
@@ -66,6 +67,17 @@ export default function PackageCard({
             {enrolledCount} دانش‌آموز ثبت‌نام کرده
           </div>
         )}
+
+        <div
+          style={{
+            marginTop: "8px",
+            fontSize: "16px",
+            fontWeight: "bold",
+            color: price > 0 ? "#C90BBC" : "#0a8f3c",
+          }}
+        >
+          {price > 0 ? `${price.toLocaleString("fa-IR")} تومان` : "رایگان"}
+        </div>
       </div>
     </div>
   );
