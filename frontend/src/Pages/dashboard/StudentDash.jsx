@@ -1,9 +1,7 @@
-import HeaderDash from "../../components/section/HeaderDash.jsx";
 import WelcomeBox from "../../components/common/WelcomeBox.jsx";
 import SearchBox from "../../components/common/SearchBox.jsx";
 import SliderBox from "../../components/common/SliderBox.jsx";
 import Card from "../../components/ui/Card.jsx";
-import BottomMenu from "../../components/common/BottomMenu.jsx";
 import VideoSymbol from "../../assets/VideoSymbol.webp";
 import NoteSymbol from "../../assets/NoteSymbol.webp";
 import GoldenPackage from "../../assets/GoldenPackage.webp";
@@ -37,173 +35,102 @@ function DashboardSummary() {
     return () => (mounted = false);
   }, []);
 
-  if (loading) return <div className="text-center">Loading dashboard...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (loading) return <div className="text-center text-[13px] text-[#888]">در حال بارگذاری...</div>;
+  if (error) return <div className="text-center text-[13px] text-red-500">{error}</div>;
+
+  const stats = [
+    { label: "امتیاز", value: "—", bg: "#FFF3D6", text: "#8A5A00" },
+    { label: "تمرین‌ها", value: "—", bg: "#DDF3EC", text: "#0F6E56" },
+    { label: "دوره‌ها", value: coursesCount, bg: "#EDEAFB", text: "#3C3489" },
+  ];
 
   return (
-    <div className="flex justify-between bg-white p-3 rounded-md shadow-sm">
-      {/* XP و Tasks هنوز تو بک‌اند پیاده‌سازی نشدن (فیچر گیمیفیکیشن) */}
-      <div className="text-center">
-        <div className="text-sm text-gray-500">XP</div>
-        <div className="text-lg font-bold">—</div>
-      </div>
-      <div className="text-center">
-        <div className="text-sm text-gray-500">Tasks</div>
-        <div className="text-lg font-bold">—</div>
-      </div>
-      <div className="text-center">
-        <div className="text-sm text-gray-500">Courses</div>
-        <div className="text-lg font-bold">{coursesCount}</div>
-      </div>
+    <div className="grid grid-cols-3 gap-3">
+      {stats.map((s) => (
+        <div
+          key={s.label}
+          className="rounded-[16px] py-3 text-center"
+          style={{ background: s.bg }}
+        >
+          <div className="text-[12px]" style={{ color: s.text, opacity: 0.8 }}>
+            {s.label}
+          </div>
+          <div className="text-[20px] font-bold" style={{ color: s.text }}>
+            {s.value}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
 export default function StudentDashboard() {
-  const headerHeight = 150;
-  const bottomMenuHeight = 90;
   const navigate = useNavigate();
 
   const gotoCourses = () => navigate("/student/courses");
   const gotoComingSoon = () => navigate("/comingsoon");
   // بنر اسلایدر به دوره‌ی خاصی وصل نیست، فعلاً می‌بریم لیست دوره‌ها
   const gotoVideo = () => navigate("/student/courses");
-  // صفحه‌ی پکیج‌ها هنوز رو روتر ثبت نشده (تو اولویت بعدیه)
   const gotoStudentPack = () => navigate("/student/packages");
 
   return (
-    <div
-      className="font-[byekan]"
-      style={{
-        width: "412px",
-        margin: "0 auto",
-        background: "#FEF9FE",
-        position: "relative",
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
-      {/* fixed header (includes WelcomeBox) */}
+    <div className="font-[byekan] flex flex-col items-center pb-4">
+      <div className="w-full">
+        <WelcomeBox />
+      </div>
+
+      {/* Dashboard summary (XP / tasks / courses) */}
+      <div className="w-[90%] max-w-[348px] md:max-w-full mt-4">
+        <DashboardSummary />
+      </div>
+
+      {/* slider */}
+      <div className="mt-5 w-full flex justify-center">
+        <SliderBox onClick={gotoVideo} />
+      </div>
+
+      {/* search box */}
+      <div className="mt-6 w-[90%] max-w-[348px] md:max-w-[480px]">
+        <SearchBox />
+      </div>
+
+      {/* golden package */}
       <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          height: headerHeight + "px",
-          background: "#FEF9FE",
-          zIndex: 20,
-        }}
+        className="font-[byekan] mt-10 w-[90%] max-w-[348px] md:max-w-full h-[100px] rounded-[16px] flex items-center justify-center px-4 cursor-pointer text-center relative"
+        style={{ background: "linear-gradient(90deg, #FFCA28, #F5941F)" }}
+        onClick={gotoStudentPack}
       >
-        <HeaderDash />
-        <div style={{ width: "100%" }}>
-          <div style={{ width: "412px", margin: "0 auto" }}>
-            <WelcomeBox />
-          </div>
+        <div>
+          <p className="text-[21px] text-white font-bold">
+            پکیج‌های طلایی
+          </p>
+        </div>
+        <img src={GoldenPackage} alt="Golden Package" />
+      </div>
+
+      {/* cards */}
+      <div className="w-[90%] max-w-[348px] md:max-w-full md:w-full mt-6 flex items-start justify-center md:justify-start gap-3">
+        <div className="relative">
+          <img
+            src={VideoSymbol}
+            alt=""
+            className="absolute -top-3 left-1/2 -translate-x-1/2 w-[80px] h-[70px] pointer-events-none z-10"
+          />
+          <Card title="ویدیو آموزشی" onClick={gotoCourses} fontSize="16px" style={{ background: "#0F6E56" }} />
+        </div>
+        <div className="relative">
+          <img
+            src={NoteSymbol}
+            alt=""
+            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[65px] h-[55px] pointer-events-none z-10"
+          />
+          <Card title="نمونه سوال" onClick={gotoComingSoon} fontSize="16px" style={{ background: "#3C3489" }} />
         </div>
       </div>
 
-      {/* scrollable middle region */}
-      <div
-        style={{
-          position: "absolute",
-          top: headerHeight + "px",
-          bottom: bottomMenuHeight + "px",
-          left: 0,
-          right: 0,
-          overflowY: "auto",
-        }}
-      >
-        <div className="flex flex-col items-center">
-          {/* Dashboard summary (XP / tasks / courses) */}
-          <div className="w-[348px] mt-4">
-            <DashboardSummary />
-          </div>
-
-          {/* slider */}
-          <div className="mt-5">
-            <SliderBox onClick={gotoVideo} />
-          </div>
-
-          {/* search box */}
-          <div style={{ marginTop: "8.97px" }} className="mt-6 w-[348px]">
-            <SearchBox />
-          </div>
-
-          {/* golden package */}
-          <div
-            className="font-[byekan] mt-10 w-[348px] h-[100px] rounded-[12px] bg-[#C90BBCC9] shadow-[10px_10px_10px_2px_rgba(0,0,0,0.25)] flex items-center justify-center px-4 cursor-pointer text-center relative"
-            style={{ marginTop: "52px" }}
-            onClick={gotoStudentPack}
-          >
-            <div>
-              <p className="text-[21px] text-[#FEF9FE] font-bold">
-                پکیج‌های طلایی
-              </p>
-            </div>
-            <img src={GoldenPackage} alt="Golden Package" />
-          </div>
-
-          {/* cards */}
-          <div
-            className="relative w-full min-h-[220px] mt-10"
-            style={{ marginTop: "12px" }}
-          >
-            <Card
-              title="ویدیو آموزشی"
-              style={{
-                position: "absolute",
-                top: "40px",
-                left: "32px",
-                cursor: "pointer",
-              }}
-              onClick={gotoCourses}
-            />
-            <Card
-              title="نمونه سوال"
-              style={{
-                position: "absolute",
-                top: "40px",
-                left: "250px",
-                cursor: "pointer",
-              }}
-              onClick={gotoComingSoon}
-            />
-            <img
-              src={VideoSymbol}
-              alt="Video"
-              className="absolute top-[-10px] left-[34px] w-[130px] h-[112px] pointer-events-none"
-            />
-            <img
-              src={NoteSymbol}
-              alt="Note"
-              className="absolute top-[5px] left-[264px] w-[105px] h-[88px] pointer-events-none"
-            />
-          </div>
-          <div className="relative top-[127.33px]">
-            <ConsultationForm />
-            <ContactFooter />
-          </div>
-        </div>
-      </div>
-
-      {/* fixed footer */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          zIndex: 30,
-          background: "#FEF9FE",
-          height: bottomMenuHeight + "px",
-        }}
-      >
-        <BottomMenu />
+      <div className="w-full mt-8">
+        <ConsultationForm />
+        <ContactFooter />
       </div>
     </div>
   );

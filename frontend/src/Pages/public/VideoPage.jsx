@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import HeaderDash from "../../components/section/HeaderDash";
-import BottomMenu from "../../components/common/BottomMenu";
+import AppShell from "../../components/layout/AppShell";
 import ErrorBox from "../../components/common/ErrorBox";
 import api from "../../services/api";
 
@@ -15,11 +14,7 @@ import download from "../../assets/download.webp";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
 
-export default function VideoPage({
-  gotoDashboard,
-  gotoComingSoon,
-  gotoProfile,
-}) {
+export default function VideoPage() {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
@@ -27,8 +22,6 @@ export default function VideoPage({
   const [loading, setLoading] = useState(true);
   const [currentVideo, setCurrentVideo] = useState(null);
   const [error, setError] = useState("");
-  const headerHeight = 70;
-  const bottomMenuHeight = 90;
 
   useEffect(() => {
     // اگه توکن نداریم اصلا سمت بک‌اند نریم، مستقیم بفرستیم لاگین
@@ -77,54 +70,17 @@ export default function VideoPage({
   }
 
   return (
-    <div
-      className="font-[BYekan]"
-      style={{
-        width: "412px",
-        margin: "0 auto",
-        background: "#FEF9FE",
-        position: "relative",
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
+    <AppShell>
       {error && <ErrorBox message={error} onClose={() => setError("")} />}
 
-      {/* Header */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          height: `${headerHeight}px`,
-          background: "#FEF9FE",
-          zIndex: 20,
-        }}
-      >
-        <HeaderDash />
-      </div>
-
-      {/* Scroll Content */}
-      <div
-        style={{
-          position: "absolute",
-          top: `${headerHeight}px`,
-          bottom: `${bottomMenuHeight}px`,
-          left: 0,
-          right: 0,
-          overflowY: "auto",
-          textAlign: "right",
-        }}
-      >
+      <div style={{ textAlign: "right" }}>
         
         <div style={{ direction: "rtl", textAlign: "right" }}>
         {/* باکس ویدیو */}
         <div
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             height: "190px",
             margin: "0 auto",
             position: "relative",
@@ -138,9 +94,7 @@ export default function VideoPage({
               src={currentVideo}
               controls
               autoPlay
-              width="348px"
-              height="190px"
-              style={{ border: "none", borderRadius: "8px", background: "#000" }}
+              style={{ width: "100%", height: "100%", border: "none", borderRadius: "8px", background: "#000" }}
             />
           ) : (
             <>
@@ -175,7 +129,8 @@ export default function VideoPage({
         {/* ادامه متن‌ها و توضیحات */}
         <h2
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "20px auto 10px auto",
             fontSize: "20px",
             fontWeight: "bold",
@@ -187,7 +142,8 @@ export default function VideoPage({
 
         <div
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "0 auto",
             display: "flex",
             alignItems: "center",
@@ -201,7 +157,8 @@ export default function VideoPage({
 
         <p
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "15px auto",
             fontSize: "15px",
             color: "#C90BBCC9",
@@ -213,7 +170,8 @@ export default function VideoPage({
 
         <p
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "15px auto",
             fontSize: "14px",
             color: "#333",
@@ -245,7 +203,8 @@ export default function VideoPage({
 
         <div
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "80px auto 5px auto",
             display: "flex",
             alignItems: "center",
@@ -262,7 +221,8 @@ export default function VideoPage({
 
         <div
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             height: "1px",
             background: "#080609",
             margin: "0px auto 10px auto",
@@ -271,7 +231,8 @@ export default function VideoPage({
 
         <div
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "0 auto 20px auto",
             display: "flex",
             alignItems: "center",
@@ -286,7 +247,8 @@ export default function VideoPage({
 
         <h3
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "30px auto 10px auto",
             fontSize: "24px",
             fontWeight: "bold",
@@ -299,7 +261,8 @@ export default function VideoPage({
 
         <div
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "0 auto 10px auto",
             display: "flex",
             justifyContent: "flex-start",
@@ -315,7 +278,8 @@ export default function VideoPage({
         {/* لیست جلسات */}
         <div
           style={{
-            width: "348px",
+            width: "90%",
+            maxWidth: "348px",
             margin: "0 auto",
             borderRadius: "8px",
             overflow: "hidden",
@@ -377,33 +341,12 @@ export default function VideoPage({
             </div>
           ))}
         </div>
-        </div>
-        <div className="relative top-[180px]">          
+        <div>
           <ConsultationForm/>
           <ContactFooter/>
         </div>
       </div>
-
-      {/* Bottom menu */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          zIndex: 30,
-          background: "#FEF9FE",
-          height: `${bottomMenuHeight}px`,
-        }}
-      >
-      <BottomMenu
-        gotoDashboard={gotoDashboard}
-        gotoComingSoon={gotoComingSoon}
-        gotoProfile={gotoProfile}
-      />
       </div>
-    </div>
+    </AppShell>
   );
 }

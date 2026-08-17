@@ -1,40 +1,24 @@
+import AppShell from "../../components/layout/AppShell";
 import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
-import BottomMenu from "../../components/common/BottomMenu";
 
-export default function ComingSoon({ gotoDashboard }) {
+export default function ComingSoon() {
   return (
-    <div className="relative w-[412px] h-[917px] mx-auto bg-[#FEF9FE] font-[BYekan] flex flex-col items-center justify-center">
-      {/* لوگو */}
-      <img
-        src={LogoRiaziNovin}
-        alt="logo"
-        className="w-[202px] h-[140px] mb-8"
-      />
+    <AppShell>
+      <div className="flex flex-col items-center justify-center text-center px-4 py-10 min-h-[70vh]">
+        <img
+          src={LogoRiaziNovin}
+          alt="logo"
+          className="w-[160px] h-auto mb-8"
+        />
 
-      {/* تیتر */}
-      <h1 className="text-[32px] font-bold text-[#080609] text-center mb-4">
-        comming soon!
-      </h1>
+        <h1 className="text-[26px] font-bold text-[#080609] mb-4">
+          به‌زودی...
+        </h1>
 
-      {/* توضیح */}
-      <p className="text-[16px] text-center text-[#545454] mb-6 px-4">
-        این بخش در حال آماده‌سازی است. لطفاً بعداً دوباره بررسی کنید
-      </p>
-
-      {/* منوی پایین ثابت */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "412px",
-          background: "#FEF9FE",
-          zIndex: 20,
-        }}
-      >
-        <BottomMenu gotoDashboard={gotoDashboard} />
+        <p className="text-[15px] text-[#545454]">
+          این بخش در حال آماده‌سازی است. لطفاً بعداً دوباره بررسی کنید.
+        </p>
       </div>
-    </div>
+    </AppShell>
   );
 }

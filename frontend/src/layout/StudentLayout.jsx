@@ -1,7 +1,10 @@
 import { Outlet } from "react-router-dom";
+import AppShell from "../components/layout/AppShell";
 
-// هر صفحه‌ی دانش‌آموز (StudentDash, StudentCourses, PackagesList, Profile, ...)
-// خودش کامل HeaderDash + BottomMenu + عرض/ارتفاع صفحه رو مدیریت می‌کنه.
 export default function StudentLayout() {
-  return <Outlet />;
+  return (
+    <AppShell>
+      <Outlet />
+    </AppShell>
+  );
 }

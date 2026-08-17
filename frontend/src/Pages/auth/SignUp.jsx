@@ -1,12 +1,19 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
 import Guy from "../../assets/Guy.webp";
 import TopWave from "../../components/section/TopWave.jsx";
-import BottomWave from "../../components/section/BottomWave.jsx";
 import ErrorBox from "../../components/common/ErrorBox.jsx";
 import { BACKEND_ORIGIN } from "../../config.js";
 
-export default function Signup({ phone_email, role, onSignupComplete }) {
+export default function Signup() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // از صفحه‌ی Login با navigate state میان (همون‌جا شماره تلفن رو گرفتیم)
+  const phone_email = location.state?.phone_email || "";
+  const role = location.state?.role || "student";
+
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,10 +42,7 @@ export default function Signup({ phone_email, role, onSignupComplete }) {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          first_name: first,
-          last_name: last,
           phone_number: phone_email,
-          role: role || "student",
         }),
       });
 
@@ -50,7 +54,17 @@ export default function Signup({ phone_email, role, onSignupComplete }) {
         return;
       }
 
-      onSignupComplete();
+      // این مرحله فقط کد تایید می‌فرسته؛ ساخت واقعی حساب تو صفحه‌ی OTP
+      // (با action:"signup") انجام می‌شه
+      navigate("/otp", {
+        state: {
+          phone_email,
+          role,
+          fromPage: "signup",
+          first_name: first,
+          last_name: last,
+        },
+      });
     } catch {
       setError("مشکل در اتصال به سرور");
     }
@@ -59,68 +73,59 @@ export default function Signup({ phone_email, role, onSignupComplete }) {
   }
 
   return (
-    <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden bg-[#FEF9FE] font-[BYekan]">
+    <div className="relative w-full max-w-[412px] mx-auto bg-[#FEF9FE] font-[BYekan]">
       <TopWave />
       {error && <ErrorBox message={error} onClose={() => setError(null)} />}
-      <img
-        src={LogoRiaziNovin}
-        alt="logo"
-        className="absolute left-[105px] top-[105px] w-[202px] h-[140px]"
-      />
 
-      <h2 className="absolute left-[105px] top-[237px] w-[202px] text-[31px] font-bold text-center text-[#080609]">
-        ثبت نام
-      </h2>
+      <div className="flex flex-col items-center px-6 pb-10" dir="rtl">
+        <img src={LogoRiaziNovin} alt="logo" className="w-[150px] h-auto mt-2 mb-6" />
 
-      <p className="absolute left-[29px] top-[297px] w-[347px] text-center text-[#545454] text-[16px]">
-        لطفاً اطلاعات خود را وارد کنید
-      </p>
+        <h2 className="text-[24px] font-bold text-center text-[#080609] mb-2">
+          ثبت نام
+        </h2>
 
-      <div className="absolute left-[88px] top-[352px] w-[235px] h-[46px] flex items-center bg-[#F5C6F0] rounded-[24px] px-3">
-        <input
-          type="text"
-          value={first}
-          onChange={(e) => setFirst(e.target.value)}
-          placeholder="نام"
-          dir="rtl"
-          style={{ padding: "4px 10px" }}
-          className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
-        />
-      </div>
+        <p className="text-center text-[#545454] text-[14px] mb-6">
+          لطفاً اطلاعات خود را وارد کنید
+        </p>
 
-      <div className="absolute left-[89px] top-[408px] w-[235px] h-[46px] flex items-center bg-[#F5C6F0] rounded-[24px] px-3">
-        <input
-          type="text"
-          value={last}
-          onChange={(e) => setLast(e.target.value)}
-          placeholder="نام خانوادگی"
-          dir="rtl"
-          style={{ padding: "4px 10px" }}
-          className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
-        />
-      </div>
+        <div className="w-full max-w-[235px] h-[46px] flex items-center bg-[#F5C6F0] rounded-[24px] px-3 mb-3">
+          <input
+            type="text"
+            value={first}
+            onChange={(e) => setFirst(e.target.value)}
+            placeholder="نام"
+            dir="rtl"
+            style={{ padding: "4px 10px" }}
+            className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
+          />
+        </div>
 
-      <button
-        onClick={handleSignup}
-        disabled={loading}
-        className="absolute left-[89px] top-[513px] w-[234px] h-[44px] rounded-[18224px] font-[BYekan] font-bold text-black text-[16px]"
-        style={{
-          direction: "rtl",
-          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
-          border: "none",
-        }}
-      >
-        {loading ? "در حال ارسال ..." : "ثبت نام"}
-      </button>
+        <div className="w-full max-w-[235px] h-[46px] flex items-center bg-[#F5C6F0] rounded-[24px] px-3 mb-6">
+          <input
+            type="text"
+            value={last}
+            onChange={(e) => setLast(e.target.value)}
+            placeholder="نام خانوادگی"
+            dir="rtl"
+            style={{ padding: "4px 10px" }}
+            className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
+          />
+        </div>
 
-      <img
-        src={Guy}
-        alt="Guy"
-        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] object-contain z-20"
-      />
+        <button
+          onClick={handleSignup}
+          disabled={loading}
+          className="w-full max-w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-black text-[16px] mb-8"
+          style={{
+            direction: "rtl",
+            background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+            border: "none",
+          }}
+        >
+          {loading ? "در حال ارسال ..." : "ثبت نام"}
+        </button>
 
-      <div className="absolute top-[715px] bottom-0 left-0 w-full">
-        <BottomWave />
+        <img src={Guy} alt="Guy" className="w-[180px] h-auto object-contain" />
       </div>
     </div>
   );

@@ -1,0 +1,857 @@
+diff --git a/frontend/src/Pages/dashboard/PackagesList.jsx b/frontend/src/Pages/dashboard/PackagesList.jsx
+index 254bc4f..fd6f696 100644
+--- a/frontend/src/Pages/dashboard/PackagesList.jsx
++++ b/frontend/src/Pages/dashboard/PackagesList.jsx
+@@ -35,7 +35,7 @@ export default function PackagesList() {
+ 
+   return (
+     <div className="font-[BYekan] flex flex-col items-center pt-4 pb-4">
+-      <SearchBox style={{ width: "90%", maxWidth: "348px", margin: "0 auto 20px auto" }} />
++      <SearchBox style={{ width: "90%", maxWidth: "480px", margin: "0 auto 20px auto" }} />
+ 
+       <h2
+         style={{
+@@ -68,18 +68,23 @@ export default function PackagesList() {
+         </div>
+       )}
+ 
+-      {packages.map((pkg) => (
+-        <PackageCard
+-          key={pkg.id}
+-          img={resolveMediaUrl(pkg.thumbnail) || GoldenPackage}
+-          title={pkg.title}
+-          teacherName={pkg.teacher_name}
+-          coursesCount={pkg.courses_count}
+-          enrolledCount={pkg.enrolled_count}
+-          price={pkg.price}
+-          onClick={() => navigate(`/student/packages/${pkg.id}`)}
+-        />
+-      ))}
++      {!loading && !error && packages.length > 0 && (
++        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 md:px-0">
++          {packages.map((pkg, i) => (
++            <PackageCard
++              key={pkg.id}
++              index={i}
++              img={resolveMediaUrl(pkg.thumbnail) || GoldenPackage}
++              title={pkg.title}
++              teacherName={pkg.teacher_name}
++              coursesCount={pkg.courses_count}
++              enrolledCount={pkg.enrolled_count}
++              price={pkg.price}
++              onClick={() => navigate(`/student/packages/${pkg.id}`)}
++            />
++          ))}
++        </div>
++      )}
+ 
+       <div className="w-full mt-4">
+         <ConsultationForm />
+diff --git a/frontend/src/Pages/dashboard/StudentCourses.jsx b/frontend/src/Pages/dashboard/StudentCourses.jsx
+index 46c76f7..d634d66 100644
+--- a/frontend/src/Pages/dashboard/StudentCourses.jsx
++++ b/frontend/src/Pages/dashboard/StudentCourses.jsx
+@@ -34,7 +34,7 @@ export default function StudentCourses() {
+ 
+   return (
+     <div className="font-[BYekan] flex flex-col items-center pt-4 pb-4">
+-      <SearchBox style={{ width: "90%", maxWidth: "348px", margin: "0 auto 20px auto" }} />
++      <SearchBox style={{ width: "90%", maxWidth: "480px", margin: "0 auto 20px auto" }} />
+ 
+       {loading && (
+         <div style={{ textAlign: "center", padding: "20px" }}>
+@@ -54,17 +54,22 @@ export default function StudentCourses() {
+         </div>
+       )}
+ 
+-      {courses.map((course) => (
+-        <CourseCard
+-          key={course.id}
+-          img={course.thumbnail || videoCover}
+-          title={course.title}
+-          desc={course.description}
+-          sessionsCount={course.video_count}
+-          teacherName={course.teacher_name}
+-          onClick={() => navigate(`/video/${course.id}`)}
+-        />
+-      ))}
++      {!loading && !error && courses.length > 0 && (
++        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 md:px-0">
++          {courses.map((course, i) => (
++            <CourseCard
++              key={course.id}
++              index={i}
++              img={course.thumbnail || videoCover}
++              title={course.title}
++              desc={course.description}
++              sessionsCount={course.video_count}
++              teacherName={course.teacher_name}
++              onClick={() => navigate(`/video/${course.id}`)}
++            />
++          ))}
++        </div>
++      )}
+ 
+       <div className="w-full mt-4">
+         <ConsultationForm />
+diff --git a/frontend/src/Pages/dashboard/StudentDash.jsx b/frontend/src/Pages/dashboard/StudentDash.jsx
+index 264293e..7a2cf96 100644
+--- a/frontend/src/Pages/dashboard/StudentDash.jsx
++++ b/frontend/src/Pages/dashboard/StudentDash.jsx
+@@ -35,24 +35,31 @@ function DashboardSummary() {
+     return () => (mounted = false);
+   }, []);
+ 
+-  if (loading) return <div className="text-center">Loading dashboard...</div>;
+-  if (error) return <div className="text-center text-red-500">{error}</div>;
++  if (loading) return <div className="text-center text-[13px] text-[#888]">در حال بارگذاری...</div>;
++  if (error) return <div className="text-center text-[13px] text-red-500">{error}</div>;
++
++  const stats = [
++    { label: "امتیاز", value: "—", bg: "#FFF3D6", text: "#8A5A00" },
++    { label: "تمرین‌ها", value: "—", bg: "#DDF3EC", text: "#0F6E56" },
++    { label: "دوره‌ها", value: coursesCount, bg: "#EDEAFB", text: "#3C3489" },
++  ];
+ 
+   return (
+-    <div className="flex justify-between bg-white p-3 rounded-md shadow-sm">
+-      {/* XP و Tasks هنوز تو بک‌اند پیاده‌سازی نشدن (فیچر گیمیفیکیشن) */}
+-      <div className="text-center">
+-        <div className="text-sm text-gray-500">XP</div>
+-        <div className="text-lg font-bold">—</div>
+-      </div>
+-      <div className="text-center">
+-        <div className="text-sm text-gray-500">Tasks</div>
+-        <div className="text-lg font-bold">—</div>
+-      </div>
+-      <div className="text-center">
+-        <div className="text-sm text-gray-500">Courses</div>
+-        <div className="text-lg font-bold">{coursesCount}</div>
+-      </div>
++    <div className="grid grid-cols-3 gap-3">
++      {stats.map((s) => (
++        <div
++          key={s.label}
++          className="rounded-[16px] py-3 text-center"
++          style={{ background: s.bg }}
++        >
++          <div className="text-[12px]" style={{ color: s.text, opacity: 0.8 }}>
++            {s.label}
++          </div>
++          <div className="text-[20px] font-bold" style={{ color: s.text }}>
++            {s.value}
++          </div>
++        </div>
++      ))}
+     </div>
+   );
+ }
+@@ -73,7 +80,7 @@ export default function StudentDashboard() {
+       </div>
+ 
+       {/* Dashboard summary (XP / tasks / courses) */}
+-      <div className="w-[90%] max-w-[348px] mt-4">
++      <div className="w-[90%] max-w-[348px] md:max-w-full mt-4">
+         <DashboardSummary />
+       </div>
+ 
+@@ -83,17 +90,18 @@ export default function StudentDashboard() {
+       </div>
+ 
+       {/* search box */}
+-      <div className="mt-6 w-[90%] max-w-[348px]">
++      <div className="mt-6 w-[90%] max-w-[348px] md:max-w-[480px]">
+         <SearchBox />
+       </div>
+ 
+       {/* golden package */}
+       <div
+-        className="font-[byekan] mt-10 w-[90%] max-w-[348px] h-[100px] rounded-[12px] bg-[#C90BBCC9] shadow-[10px_10px_10px_2px_rgba(0,0,0,0.25)] flex items-center justify-center px-4 cursor-pointer text-center relative"
++        className="font-[byekan] mt-10 w-[90%] max-w-[348px] md:max-w-full h-[100px] rounded-[16px] flex items-center justify-center px-4 cursor-pointer text-center relative"
++        style={{ background: "linear-gradient(90deg, #FFCA28, #F5941F)" }}
+         onClick={gotoStudentPack}
+       >
+         <div>
+-          <p className="text-[21px] text-[#FEF9FE] font-bold">
++          <p className="text-[21px] text-white font-bold">
+             پکیج‌های طلایی
+           </p>
+         </div>
+@@ -101,14 +109,14 @@ export default function StudentDashboard() {
+       </div>
+ 
+       {/* cards */}
+-      <div className="w-[90%] max-w-[348px] mt-6 flex items-start justify-between gap-3">
++      <div className="w-[90%] max-w-[348px] md:max-w-full md:w-full mt-6 flex items-start justify-center md:justify-start gap-3">
+         <div className="relative">
+           <img
+             src={VideoSymbol}
+             alt=""
+             className="absolute -top-3 left-1/2 -translate-x-1/2 w-[80px] h-[70px] pointer-events-none z-10"
+           />
+-          <Card title="ویدیو آموزشی" onClick={gotoCourses} fontSize="16px" />
++          <Card title="ویدیو آموزشی" onClick={gotoCourses} fontSize="16px" style={{ background: "#0F6E56" }} />
+         </div>
+         <div className="relative">
+           <img
+@@ -116,7 +124,7 @@ export default function StudentDashboard() {
+             alt=""
+             className="absolute -top-2 left-1/2 -translate-x-1/2 w-[65px] h-[55px] pointer-events-none z-10"
+           />
+-          <Card title="نمونه سوال" onClick={gotoComingSoon} fontSize="16px" />
++          <Card title="نمونه سوال" onClick={gotoComingSoon} fontSize="16px" style={{ background: "#3C3489" }} />
+         </div>
+       </div>
+ 
+diff --git a/frontend/src/Pages/public/Home.jsx b/frontend/src/Pages/public/Home.jsx
+index aec6264..f96f850 100644
+--- a/frontend/src/Pages/public/Home.jsx
++++ b/frontend/src/Pages/public/Home.jsx
+@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
+ import api from "../../services/api";
+ import { resolveMediaUrl } from "../../utils/resolveMedia";
+ import ContactFooter from "../../components/section/ContactFooter.jsx";
++import PackageCard from "../../components/common/PackageCard.jsx";
+ import { useAuth } from "../../contexts/AuthContext.jsx";
+ import ROLE_ROUTES from "../../config/roleRoutes";
+ 
+@@ -130,17 +131,25 @@ export default function Home() {
+           چرا <span style={{ color: "#C90BBC" }}>ریاضی نوین</span>؟
+         </h2>
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+-          {VALUE_PROPS.map((item) => (
+-            <div
+-              key={item.title}
+-              className="rounded-[24px] p-6 text-center"
+-              style={{ background: "#E5A6E6" }}
+-            >
+-              <img src={item.icon} alt="" className="w-14 h-14 mx-auto mb-4" />
+-              <h3 className="font-bold text-[16px] mb-2">{item.title}</h3>
+-              <p className="text-[13px] leading-[1.8] text-[#333]">{item.desc}</p>
+-            </div>
+-          ))}
++          {VALUE_PROPS.map((item, i) => {
++            const accents = [
++              { bg: "#DDF3EC", text: "#0F6E56" },
++              { bg: "#FFF3D6", text: "#8A5A00" },
++              { bg: "#EDEAFB", text: "#3C3489" },
++            ];
++            const a = accents[i % accents.length];
++            return (
++              <div
++                key={item.title}
++                className="rounded-[24px] p-6 text-center"
++                style={{ background: a.bg }}
++              >
++                <img src={item.icon} alt="" className="w-14 h-14 mx-auto mb-4" />
++                <h3 className="font-bold text-[16px] mb-2" style={{ color: a.text }}>{item.title}</h3>
++                <p className="text-[13px] leading-[1.8]" style={{ color: a.text, opacity: 0.85 }}>{item.desc}</p>
++              </div>
++            );
++          })}
+         </div>
+       </section>
+ 
+@@ -189,33 +198,17 @@ export default function Home() {
+         )}
+ 
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+-          {packages.map((pkg) => (
+-            <div
++          {packages.map((pkg, i) => (
++            <PackageCard
+               key={pkg.id}
++              index={i}
++              img={resolveMediaUrl(pkg.thumbnail) || goldenPackage}
++              title={pkg.title}
++              teacherName={pkg.teacher_name}
++              coursesCount={pkg.courses_count}
++              price={pkg.price}
+               onClick={() => navigate("/login")}
+-              className="rounded-[20px] overflow-hidden cursor-pointer"
+-              style={{ background: "#E5A6E6" }}
+-            >
+-              <img
+-                src={resolveMediaUrl(pkg.thumbnail) || goldenPackage}
+-                alt={pkg.title}
+-                className="w-full h-[140px] object-cover"
+-              />
+-              <div className="p-4">
+-                <h3 className="font-bold text-[15px] mb-1">{pkg.title}</h3>
+-                <p className="text-[12px] text-[#333] mb-3">
+-                  مدرس: {pkg.teacher_name} — {pkg.courses_count} دوره
+-                </p>
+-                <div
+-                  className="font-bold text-[15px]"
+-                  style={{ color: pkg.price > 0 ? "#C90BBC" : "#0a8f3c" }}
+-                >
+-                  {pkg.price > 0
+-                    ? `${Number(pkg.price).toLocaleString("fa-IR")} تومان`
+-                    : "رایگان"}
+-                </div>
+-              </div>
+-            </div>
++            />
+           ))}
+         </div>
+       </section>
+diff --git a/frontend/src/Pages/teacher/TeacherDash.jsx b/frontend/src/Pages/teacher/TeacherDash.jsx
+index 6dfd27a..87cd2ed 100644
+--- a/frontend/src/Pages/teacher/TeacherDash.jsx
++++ b/frontend/src/Pages/teacher/TeacherDash.jsx
+@@ -36,15 +36,15 @@ export default function TeacherDashboard() {
+   const totalVideos = courses.reduce((sum, c) => sum + (c.video_count || 0), 0);
+ 
+   const stats = [
+-    { label: "دوره‌ها", value: totalCourses, bg: "#00C0D9A3" },
+-    { label: "دانش‌آموزان", value: totalStudents, bg: "#E5A6E6" },
+-    { label: "جلسات", value: totalVideos, bg: "#FFCA28A3" },
++    { label: "دوره‌ها", value: totalCourses, bg: "#DDF3EC", text: "#0F6E56" },
++    { label: "دانش‌آموزان", value: totalStudents, bg: "#EDEAFB", text: "#3C3489" },
++    { label: "جلسات", value: totalVideos, bg: "#FFF3D6", text: "#8A5A00" },
+   ];
+ 
+   return (
+     <div style={{ direction: "rtl" }}>
+       {/* عنوان و خوش‌آمد */}
+-      <div className="w-[90%] max-w-[348px] mx-auto mt-[16px]">
++      <div className="w-[90%] max-w-[348px] md:max-w-full mx-auto mt-[16px]">
+         <h2
+           style={{
+             fontSize: "22px",
+@@ -60,22 +60,22 @@ export default function TeacherDashboard() {
+       </div>
+ 
+       {/* کارت‌های آماری */}
+-      <div className="w-[90%] max-w-[348px] mx-auto mt-[16px] flex gap-2">
++      <div className="w-[90%] max-w-[348px] md:max-w-full mx-auto mt-[16px] flex gap-3">
+         {stats.map((s) => (
+           <div
+             key={s.label}
+-            className="flex-1 rounded-[10px] flex flex-col items-center justify-center"
++            className="flex-1 rounded-[16px] flex flex-col items-center justify-center"
+             style={{
+               backgroundColor: s.bg,
+-              height: "72px",
++              height: "80px",
+             }}
+           >
+             <div
+-              style={{ fontSize: "20px", fontWeight: "bold", color: "#080609" }}
++              style={{ fontSize: "22px", fontWeight: "bold", color: s.text }}
+             >
+               {loading ? "…" : s.value}
+             </div>
+-            <div style={{ fontSize: "11px", color: "#080609" }}>{s.label}</div>
++            <div style={{ fontSize: "12px", color: s.text, opacity: 0.85 }}>{s.label}</div>
+           </div>
+         ))}
+       </div>
+@@ -108,7 +108,7 @@ export default function TeacherDashboard() {
+ 
+       {/* عنوان لیست دوره‌ها */}
+       <h3
+-        className="w-[90%] max-w-[348px] mx-auto"
++        className="w-[90%] max-w-[348px] md:max-w-full mx-auto"
+         style={{
+           marginTop: "28px",
+           marginBottom: "10px",
+@@ -121,18 +121,18 @@ export default function TeacherDashboard() {
+       </h3>
+ 
+       {loading && (
+-        <div className="w-[90%] max-w-[348px] mx-auto text-sm text-[#C90BBCC9]">
++        <div className="w-[90%] max-w-[348px] md:max-w-full mx-auto text-sm text-[#C90BBCC9]">
+           در حال بارگذاری...
+         </div>
+       )}
+ 
+       {error && (
+-        <div className="w-[90%] max-w-[348px] mx-auto text-sm text-red-600">{error}</div>
++        <div className="w-[90%] max-w-[348px] md:max-w-full mx-auto text-sm text-red-600">{error}</div>
+       )}
+ 
+       {!loading && !error && totalCourses === 0 && (
+         <div
+-          className="w-[90%] max-w-[348px] mx-auto rounded-[10px] text-center"
++          className="w-[90%] max-w-[348px] md:max-w-full mx-auto rounded-[10px] text-center"
+           style={{
+             padding: "24px 12px",
+             backgroundColor: "#F5C6F0",
+@@ -145,7 +145,7 @@ export default function TeacherDashboard() {
+       )}
+ 
+       {!loading && !error && totalCourses > 0 && (
+-        <div className="w-[90%] max-w-[348px] mx-auto flex flex-col gap-2 mb-[16px]">
++        <div className="w-[90%] max-w-[348px] md:max-w-full mx-auto flex flex-col gap-2 mb-[16px]">
+           {courses.map((c) => (
+             <div
+               key={c.id}
+diff --git a/frontend/src/components/common/BottomMenu.jsx b/frontend/src/components/common/BottomMenu.jsx
+index 2a713b0..b04dcdf 100644
+--- a/frontend/src/components/common/BottomMenu.jsx
++++ b/frontend/src/components/common/BottomMenu.jsx
+@@ -1,60 +1,12 @@
+ import { useNavigate, useLocation } from "react-router-dom";
+-import { useAuth } from "../../contexts/AuthContext";
++import { useNavItems } from "../../hooks/useNavItems";
+ 
+-import ActiveHome from "../../assets/ActiveHome.svg";
+-import ActiveProfile from "../../assets/ActiveProfile.png";
+-import ActiveCourse from "../../assets/myCourses.svg";
+-import ActiveShop from "../../assets/ActiveShop.svg";
+-
+-import DeActiveHome from "../../assets/DeActiveHome.svg";
+-import DeActiveProfileCheck from "../../assets/DeActiveProfileCheck.svg";
+-import DeActiveShop from "../../assets/DeActiveShop.svg";
+-import DeActiveCourses from "../../assets/DeActiveCourses.svg";
+-
+-// این کامپوننت خودکفاست: خودش با useNavigate جابه‌جا می‌شه و دیگه
+-// به gotoDashboard/gotoComingSoon/gotoProfile ای که هیچ‌جا پاس داده نمی‌شدن نیاز نداره.
++// این کامپوننت فقط رو موبایل/تبلت دیده می‌شه (md:hidden از AppShell میاد)؛
++// رو دسکتاپ به‌جاش Sidebar.jsx هست.
+ export default function BottomMenu() {
+   const navigate = useNavigate();
+   const location = useLocation();
+-  const auth = useAuth();
+-  const role = auth?.role;
+-
+-  const homePath = role === "teacher" ? "/teacher" : "/student";
+-  const coursesPath = role === "teacher" ? "/teacher" : "/student/courses";
+-  const profilePath = role === "teacher" ? "/teacher/profile" : "/student/profile";
+-  // فروشگاه یعنی مرور/خرید پکیج‌ها؛ برای معلم فعلاً همون داشبورده (از اونجا پکیج می‌سازه)
+-  const shopPath = role === "teacher" ? "/teacher" : "/student/packages";
+-
+-  const menuItems = [
+-    {
+-      text: "خانه",
+-      icon: DeActiveHome,
+-      activeIcon: ActiveHome,
+-      size: 24,
+-      path: homePath,
+-    },
+-    {
+-      text: "دوره های من",
+-      icon: DeActiveCourses,
+-      activeIcon: ActiveCourse,
+-      size: 24,
+-      path: coursesPath,
+-    },
+-    {
+-      text: "فروشگاه",
+-      icon: DeActiveShop,
+-      activeIcon: ActiveShop,
+-      size: 20,
+-      path: shopPath,
+-    },
+-    {
+-      text: "پروفایل",
+-      icon: DeActiveProfileCheck,
+-      activeIcon: ActiveProfile,
+-      size: 24,
+-      path: profilePath,
+-    },
+-  ];
++  const menuItems = useNavItems();
+ 
+   return (
+     <div className="flex justify-center items-center h-full">
+diff --git a/frontend/src/components/common/CourseCard.jsx b/frontend/src/components/common/CourseCard.jsx
+index a9cb2e6..e92c732 100644
+--- a/frontend/src/components/common/CourseCard.jsx
++++ b/frontend/src/components/common/CourseCard.jsx
+@@ -1,3 +1,10 @@
++const ACCENTS = [
++  { bg: "#DDF3EC", text: "#0F6E56" },
++  { bg: "#FFF3D6", text: "#8A5A00" },
++  { bg: "#EDEAFB", text: "#3C3489" },
++  { bg: "#FBE3DB", text: "#993C1D" },
++];
++
+ export default function CourseCard({
+   img,
+   title,
+@@ -5,61 +12,38 @@ export default function CourseCard({
+   onClick,
+   sessionsCount,
+   teacherName,
++  index = 0,
+ }) {
++  const accent = ACCENTS[index % ACCENTS.length];
++
+   return (
+     <div
+-      onClick={onClick} // کلیک روی کل کارت
+-      style={{
+-        width: "90%",
+-        maxWidth: "348px",
+-        height: "276px",
+-        background: "#E5A6E6",
+-        borderRadius: "48px",
+-        display: "flex",
+-        flexDirection: "column",
+-        margin: "0 auto 15px auto",
+-        overflow: "hidden",
+-        cursor: "pointer",
+-      }}
++      onClick={onClick}
++      className="w-full flex flex-col overflow-hidden cursor-pointer transition-transform hover:-translate-y-0.5"
++      style={{ background: accent.bg, borderRadius: "24px" }}
+     >
+-      {/* تصویر بالای کارت */}
+-      <div style={{ height: "50%", width: "100%" }}>
++      <div style={{ height: "160px", width: "100%" }}>
+         <img
+           src={img}
+           alt={title}
+-          style={{
+-            width: "100%",
+-            height: "100%",
+-            objectFit: "cover",
+-          }}
++          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+         />
+       </div>
+ 
+-      {/* بخش متن */}
+-      <div style={{ padding: "12px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+-        <div>
+-          <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#000000", margin: 0 }}>
+-            {title}
+-          </h3>
+-          <p style={{ fontSize: "14px", color: "#000000", marginTop: "6px", marginBottom: 0 }}>
+-            {desc}
+-          </p>
+-        </div>
++      <div className="p-4 flex flex-col gap-2 flex-1">
++        <h3 style={{ fontSize: "16px", fontWeight: "bold", color: accent.text, margin: 0 }}>
++          {title}
++        </h3>
++        <p style={{ fontSize: "13px", color: accent.text, opacity: 0.85, margin: 0 }}>
++          {desc}
++        </p>
+ 
+-        {/* ردیف پایین کارت: 8 جلسه و مدرس */}
+         <div
+-          style={{
+-            marginTop: "12px",
+-            display: "flex",
+-            justifyContent: "space-between",
+-            alignItems: "center",
+-            fontSize: "16px",
+-            fontWeight: "bold",
+-            padding: "0 12px",
+-          }}
++          className="mt-auto pt-2 flex items-center justify-between"
++          style={{ fontSize: "13px", fontWeight: "bold", color: accent.text }}
+         >
+-          <span style={{direction:"rtl", color: "#C90BBC" }}>{sessionsCount ?? 0} جلسه</span>
+-          <span style={{ color: "#00C0D9" }}>مدرس: {teacherName || "—"}</span>
++          <span>{sessionsCount ?? 0} جلسه</span>
++          <span style={{ opacity: 0.85 }}>مدرس: {teacherName || "—"}</span>
+         </div>
+       </div>
+     </div>
+diff --git a/frontend/src/components/common/PackageCard.jsx b/frontend/src/components/common/PackageCard.jsx
+index 8f5bf90..d184d9d 100644
+--- a/frontend/src/components/common/PackageCard.jsx
++++ b/frontend/src/components/common/PackageCard.jsx
+@@ -1,3 +1,10 @@
++const ACCENTS = [
++  { bg: "#FFF3D6", text: "#8A5A00", chip: "#FFE1A3" },
++  { bg: "#DDF3EC", text: "#0F6E56", chip: "#A9E5D3" },
++  { bg: "#FBE3DB", text: "#993C1D", chip: "#F5C0A9" },
++  { bg: "#EDEAFB", text: "#3C3489", chip: "#CECBF6" },
++];
++
+ export default function PackageCard({
+   img,
+   title,
+@@ -5,25 +12,21 @@ export default function PackageCard({
+   coursesCount,
+   enrolledCount,
+   price,
++  index = 0,
+   onClick,
+ }) {
++  const accent = ACCENTS[index % ACCENTS.length];
++
+   return (
+     <div
+       onClick={onClick}
++      className="w-full flex flex-col overflow-hidden cursor-pointer transition-transform hover:-translate-y-0.5"
+       style={{
+-        width: "90%",
+-        maxWidth: "348px",
+-        height: "276px",
+-        background: "#E5A6E6",
+-        borderRadius: "48px",
+-        display: "flex",
+-        flexDirection: "column",
+-        margin: "0 auto 15px auto",
+-        overflow: "hidden",
+-        cursor: "pointer",
++        background: accent.bg,
++        borderRadius: "24px",
+       }}
+     >
+-      <div style={{ height: "50%", width: "100%" }}>
++      <div style={{ height: "160px", width: "100%" }}>
+         <img
+           src={img}
+           alt={title}
+@@ -31,53 +34,35 @@ export default function PackageCard({
+         />
+       </div>
+ 
+-      <div
+-        style={{
+-          padding: "12px",
+-          flex: 1,
+-          display: "flex",
+-          flexDirection: "column",
+-          justifyContent: "space-between",
+-        }}
+-      >
+-        <div>
+-          <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#000000", margin: 0 }}>
+-            {title}
+-          </h3>
+-        </div>
++      <div className="p-4 flex flex-col gap-2 flex-1">
++        <h3 style={{ fontSize: "16px", fontWeight: "bold", color: accent.text, margin: 0 }}>
++          {title}
++        </h3>
+ 
+-        <div
+-          style={{
+-            marginTop: "12px",
+-            display: "flex",
+-            justifyContent: "space-between",
+-            alignItems: "center",
+-            fontSize: "16px",
+-            fontWeight: "bold",
+-            padding: "0 12px",
+-          }}
+-        >
+-          <span style={{ direction: "rtl", color: "#C90BBC" }}>
+-            {coursesCount ?? 0} دوره
+-          </span>
+-          <span style={{ color: "#00C0D9" }}>مدرس: {teacherName || "—"}</span>
++        <div style={{ fontSize: "13px", color: accent.text, opacity: 0.85 }}>
++          {coursesCount ?? 0} دوره · مدرس: {teacherName || "—"}
+         </div>
+ 
+         {typeof enrolledCount === "number" && (
+-          <div style={{ fontSize: "13px", color: "#555", marginTop: "4px" }}>
++          <div style={{ fontSize: "12px", color: accent.text, opacity: 0.7 }}>
+             {enrolledCount} دانش‌آموز ثبت‌نام کرده
+           </div>
+         )}
+ 
+         <div
+-          style={{
+-            marginTop: "8px",
+-            fontSize: "16px",
+-            fontWeight: "bold",
+-            color: price > 0 ? "#C90BBC" : "#0a8f3c",
+-          }}
++          className="mt-auto pt-2 flex items-center justify-between"
++          style={{ fontSize: "15px", fontWeight: "bold", color: accent.text }}
+         >
+-          {price > 0 ? `${price.toLocaleString("fa-IR")} تومان` : "رایگان"}
++          <span
++            style={{
++              background: accent.chip,
++              borderRadius: "999px",
++              padding: "4px 12px",
++              fontSize: "13px",
++            }}
++          >
++            {price > 0 ? `${Number(price).toLocaleString("fa-IR")} تومان` : "رایگان"}
++          </span>
+         </div>
+       </div>
+     </div>
+diff --git a/frontend/src/components/common/Sidebar.jsx b/frontend/src/components/common/Sidebar.jsx
+new file mode 100644
+index 0000000..af34437
+--- /dev/null
++++ b/frontend/src/components/common/Sidebar.jsx
+@@ -0,0 +1,46 @@
++import { useNavigate, useLocation } from "react-router-dom";
++import { useNavItems } from "../../hooks/useNavItems";
++import logo from "../../assets/logoRiazinovin.webp";
++
++export default function Sidebar() {
++  const navigate = useNavigate();
++  const location = useLocation();
++  const menuItems = useNavItems();
++
++  return (
++    <div
++      dir="rtl"
++      className="h-full flex flex-col gap-1 py-6 px-3"
++      style={{ borderLeft: "0.5px solid #0000001a" }}
++    >
++      <div className="flex items-center gap-2 px-2 pb-6">
++        <img src={logo} alt="ریاضی نوین" className="w-8 h-8" />
++        <span className="font-bold text-[15px] text-[#080609]">ریاضی نوین</span>
++      </div>
++
++      {menuItems.map((item, i) => {
++        const isActive = location.pathname === item.path;
++        return (
++          <div
++            key={i}
++            onClick={() => navigate(item.path)}
++            className="flex items-center gap-3 px-3 py-2.5 rounded-[10px] cursor-pointer transition-colors"
++            style={{
++              background: isActive ? "#FCE9FC" : "transparent",
++              color: isActive ? "#C90BBC" : "#545454",
++            }}
++          >
++            <img
++              src={isActive ? item.activeIcon : item.icon}
++              style={{ width: "20px" }}
++              alt=""
++            />
++            <span className={`text-[14px] ${isActive ? "font-bold" : ""}`}>
++              {item.text}
++            </span>
++          </div>
++        );
++      })}
++    </div>
++  );
++}
+diff --git a/frontend/src/components/layout/AppShell.jsx b/frontend/src/components/layout/AppShell.jsx
+index 4715fd1..284d7e4 100644
+--- a/frontend/src/components/layout/AppShell.jsx
++++ b/frontend/src/components/layout/AppShell.jsx
+@@ -1,57 +1,55 @@
+ import HeaderDash from "../section/HeaderDash";
+ import BottomMenu from "../common/BottomMenu";
++import Sidebar from "../common/Sidebar";
+ 
+ /**
+- * پوسته‌ی مشترک همه‌ی صفحات داخلی (داشبورد، دوره‌ها، پکیج‌ها، پروفایل...).
++ * پوسته‌ی مشترک همه‌ی صفحات داخلی.
+  *
+- * به‌جای اینکه هر صفحه خودش هدر/فوتر رو با position:fixed و محاسبه‌ی
+- * دستی ارتفاع (headerHeight + bottomMenuHeight) پیاده کنه — که هم تکراریه
+- * هم با هر تغییر اندازه‌ی صفحه راحت به‌هم می‌ریزه — این کامپوننت با یه
+- * flex column ساده مدیریتش می‌کنه: هدر و فوتر ارتفاع طبیعی خودشون رو
+- * می‌گیرن (flex-shrink-0)، محتوا هرچقدر فضای باقی‌مونده هست رو پر می‌کنه
+- * و خودش اسکرول می‌شه (flex-1 + overflow-y-auto).
++ * موبایل/تبلت (زیر md): همون چیدمان کارتی که بود — هدر بالا، محتوا،
++ * منوی پایین.
+  *
+- * عرض هم به‌جای هاردکد 412px، `w-full max-w-[412px]` هست: رو گوشی‌های
+- * باریک‌تر از 412 (خیلی از اندرویدها 360-390 هستن) جمع می‌شه و اورفلو
+- * افقی نمی‌ده؛ رو صفحه‌ی بزرگ‌تر (دسکتاپ) هم از 412 بیشتر کش نمیاد و
+- * وسط صفحه می‌مونه.
+- *
+- * showHeader/showBottomMenu برای صفحاتی مثل ComingSoon یا خطاها که
+- * نمی‌خوان منوی پایین داشته باشن.
++ * دسکتاپ (md به بالا): دیگه شبیه‌سازی موبایل نیست. یه سایدبار ثابت
++ * کنار صفحه میاد (به‌جای منوی پایین)، و محتوا به‌جای اینکه تو یه
++ * ستون ۴۱۲px باریک گیر بیفته، تا عرض معقولی (۱۱۰۰px) پهن می‌شه.
+  */
+ export default function AppShell({
+   children,
+   showHeader = true,
+   showBottomMenu = true,
+-  headerHeight = 70,
+-  bottomMenuHeight = 90,
+ }) {
+   return (
+-    <div
+-      className="font-[byekan] mx-auto w-full max-w-[412px] bg-[#FEF9FE]"
+-      style={{
+-        minHeight: "100dvh",
+-        display: "flex",
+-        flexDirection: "column",
+-      }}
+-    >
+-      {showHeader && (
+-        <div
+-          className="relative w-full flex-shrink-0"
+-          style={{ height: `${headerHeight}px` }}
+-        >
+-          <HeaderDash />
+-        </div>
+-      )}
++    <div className="min-h-dvh bg-[#FEF9FE] font-[byekan]">
++      <div className="md:flex md:min-h-dvh" dir="rtl">
++        {showBottomMenu && (
++          <div className="hidden md:block md:w-[240px] md:flex-shrink-0">
++            <div className="md:fixed md:h-dvh md:w-[240px] bg-[#FEF9FE]">
++              <Sidebar />
++            </div>
++          </div>
++        )}
++
++        <div className="md:flex-1 md:min-w-0">
++          {showHeader && (
++            <div className="md:hidden h-[70px] sticky top-0 z-10 bg-[#FEF9FE]">
++              <HeaderDash />
++            </div>
++          )}
+ 
+-      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full">
+-        {children}
++          <div
++            className="mx-auto w-full max-w-[412px] md:max-w-[1100px] md:px-10 md:py-8"
++            style={{
++              paddingBottom: showBottomMenu ? "90px" : "0",
++            }}
++          >
++            {children}
++          </div>
++        </div>
+       </div>
+ 
+       {showBottomMenu && (
+         <div
+-          className="w-full flex-shrink-0"
+-          style={{ height: `${bottomMenuHeight}px` }}
++          className="md:hidden fixed bottom-0 left-0 right-0 mx-auto w-full max-w-[412px] bg-[#FEF9FE] h-[90px] z-30"
++          style={{ borderTop: "0.5px solid #0000001a" }}
+         >
+           <BottomMenu />
+         </div>
+diff --git a/frontend/src/hooks/useNavItems.js b/frontend/src/hooks/useNavItems.js
+new file mode 100644
+index 0000000..1cf290a
+--- /dev/null
++++ b/frontend/src/hooks/useNavItems.js
+@@ -0,0 +1,28 @@
++import { useAuth } from "../contexts/AuthContext";
++
++import ActiveHome from "../assets/ActiveHome.svg";
++import ActiveProfile from "../assets/ActiveProfile.png";
++import ActiveCourse from "../assets/myCourses.svg";
++import ActiveShop from "../assets/ActiveShop.svg";
++
++import DeActiveHome from "../assets/DeActiveHome.svg";
++import DeActiveProfileCheck from "../assets/DeActiveProfileCheck.svg";
++import DeActiveShop from "../assets/DeActiveShop.svg";
++import DeActiveCourses from "../assets/DeActiveCourses.svg";
++
++export function useNavItems() {
++  const auth = useAuth();
++  const role = auth?.role;
++
++  const homePath = role === "teacher" ? "/teacher" : "/student";
++  const coursesPath = role === "teacher" ? "/teacher" : "/student/courses";
++  const profilePath = role === "teacher" ? "/teacher/profile" : "/student/profile";
++  const shopPath = role === "teacher" ? "/teacher" : "/student/packages";
++
++  return [
++    { text: "خانه", icon: DeActiveHome, activeIcon: ActiveHome, size: 24, path: homePath },
++    { text: "دوره های من", icon: DeActiveCourses, activeIcon: ActiveCourse, size: 24, path: coursesPath },
++    { text: "فروشگاه", icon: DeActiveShop, activeIcon: ActiveShop, size: 20, path: shopPath },
++    { text: "پروفایل", icon: DeActiveProfileCheck, activeIcon: ActiveProfile, size: 24, path: profilePath },
++  ];
++}

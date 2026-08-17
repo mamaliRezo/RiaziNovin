@@ -1,6 +1,4 @@
 import { useState } from "react";
-import HeaderDash from "../../components/section/HeaderDash";
-import BottomMenu from "../../components/common/BottomMenu";
 import guguli from "../../assets/guguliVideo.svg";
 import upload from "../../assets/upload.webp";
 import pen from "../../assets/editPen.webp";
@@ -12,14 +10,7 @@ const COURSE_TYPES = [
   { value: "sample_questions", label: "نمونه سوال" },
 ];
 
-export default function CreateCourse({
-  gotoDashboard,
-  gotoComingSoon,
-  gotoProfile,
-}) {
-  const headerHeight = 70;
-  const bottomMenuHeight = 90;
-
+export default function CreateCourse() {
   // ---- فیلدهای فرم (دقیقا مطابق چیزی که create_course تو بک‌اند می‌خواد) ----
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
@@ -109,49 +100,12 @@ export default function CreateCourse({
   };
 
   return (
-    <div
-      className="font-[byekan]"
-      style={{
-        width: "412px",
-        margin: "0 auto",
-        background: "#FEF9FE",
-        height: "100vh",
-        overflow: "hidden",
-        position: "relative",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          height: headerHeight + "px",
-          background: "#FEF9FE",
-          zIndex: 20,
-        }}
-      >
-        <HeaderDash />
-      </div>
-
-      {/* Scrollable content */}
-      <div
-        style={{
-          position: "absolute",
-          top: headerHeight + "px",
-          bottom: bottomMenuHeight + "px",
-          overflowY: "auto",
-          width: "100%",
-        }}
-      >
-        <div style={{ direction: "rtl" }}>
+    <div className="font-[byekan]">
+      <div style={{ direction: "rtl" }}>
           {/* ------------------ بخش کاور دوره ------------------ */}
-          <div className="w-[348px] mx-auto mt-[1px]">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[1px]">
             <div
-              className="relative w-[348px] h-[172px] rounded-[8px] overflow-hidden"
+              className="relative w-[90%] max-w-[348px] h-[172px] rounded-[8px] overflow-hidden"
               style={{ backgroundColor: "#080609A3" }}
             >
               {coverPreview && (
@@ -170,7 +124,7 @@ export default function CreateCourse({
 
             <label
               htmlFor="cover-upload"
-              className="w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
+              className="w-[90%] max-w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
               style={{ direction: "rtl" }}
             >
               <img src={upload} alt="upload" />
@@ -187,7 +141,7 @@ export default function CreateCourse({
           </div>
 
           {/* عنوان دوره */}
-          <div className="w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
             <img src={pen} alt="pen" />
             <input
               type="text"
@@ -211,7 +165,7 @@ export default function CreateCourse({
               توضیحات در مورد دوره:
             </p>
           </div>
-          <div className="w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
             <img src={pen} alt="pen" />
             <textarea
               className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[12px] font-[byekan] focus:outline-none"
@@ -223,7 +177,7 @@ export default function CreateCourse({
           </div>
 
           {/* نوع دوره */}
-          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
             <span>📌</span>
             <span>نوع دوره:</span>
             <select
@@ -240,7 +194,7 @@ export default function CreateCourse({
           </div>
 
           {/* پایه تحصیلی */}
-          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
             <span>🎓</span>
             <span>پایه:</span>
             <input
@@ -253,7 +207,7 @@ export default function CreateCourse({
           </div>
 
           {/* درس */}
-          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
             <span>📚</span>
             <span>درس:</span>
             <input
@@ -266,7 +220,7 @@ export default function CreateCourse({
           </div>
 
           {formError && (
-            <div className="w-[348px] mx-auto mt-[12px] text-sm text-red-600">
+            <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-red-600">
               {formError}
             </div>
           )}
@@ -276,13 +230,13 @@ export default function CreateCourse({
             <button
               onClick={handleSaveCourse}
               disabled={saving}
-              className="w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
+              className="w-[90%] max-w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
               style={{ display: "flex" }}
             >
               {saving ? "در حال ذخیره..." : "ذخیره دوره"}
             </button>
           ) : (
-            <div className="w-[348px] mx-auto mt-[16px] text-sm text-green-700">
+            <div className="w-[90%] max-w-[348px] mx-auto mt-[16px] text-sm text-green-700">
               دوره ذخیره شد ✅ حالا می‌تونی جلسات ویدیویی اضافه کنی.
             </div>
           )}
@@ -302,7 +256,7 @@ export default function CreateCourse({
 
           {/* لیست جلسات اضافه‌شده */}
           {videos.length > 0 && (
-            <div className="w-[348px] mx-auto mb-[10px] text-sm text-[#333]">
+            <div className="w-[90%] max-w-[348px] mx-auto mb-[10px] text-sm text-[#333]">
               {videos.map((v) => (
                 <div key={v.order} className="flex justify-between py-1 border-b border-[#eee]">
                   <span>جلسه {v.order}</span>
@@ -314,7 +268,7 @@ export default function CreateCourse({
 
           {/* سطر اضافه کردن جلسه ویدیویی */}
           <div
-            className="w-[348px] mx-auto mt-[20px] flex items-start justify-start border border-[#080609] rounded-[8px] px-3 py-2 bg-[#E5A6E6]"
+            className="w-[90%] max-w-[348px] mx-auto mt-[20px] flex items-start justify-start border border-[#080609] rounded-[8px] px-3 py-2 bg-[#E5A6E6]"
             style={{ direction: "rtl", opacity: courseId ? 1 : 0.5 }}
           >
             <span
@@ -338,27 +292,5 @@ export default function CreateCourse({
           />
         </div>
       </div>
-
-      {/* Bottom Menu */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          zIndex: 30,
-          background: "#FEF9FE",
-          height: bottomMenuHeight + "px",
-        }}
-      >
-        <BottomMenu
-          gotoDashboard={gotoDashboard}
-          gotoComingSoon={gotoComingSoon}
-          gotoProfile={gotoProfile}
-        />
-      </div>
-    </div>
   );
 }

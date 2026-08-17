@@ -1,3 +1,10 @@
+const ACCENTS = [
+  { bg: "#FFF3D6", text: "#8A5A00", chip: "#FFE1A3" },
+  { bg: "#DDF3EC", text: "#0F6E56", chip: "#A9E5D3" },
+  { bg: "#FBE3DB", text: "#993C1D", chip: "#F5C0A9" },
+  { bg: "#EDEAFB", text: "#3C3489", chip: "#CECBF6" },
+];
+
 export default function PackageCard({
   img,
   title,
@@ -5,24 +12,21 @@ export default function PackageCard({
   coursesCount,
   enrolledCount,
   price,
+  index = 0,
   onClick,
 }) {
+  const accent = ACCENTS[index % ACCENTS.length];
+
   return (
     <div
       onClick={onClick}
+      className="w-full flex flex-col overflow-hidden cursor-pointer transition-transform hover:-translate-y-0.5"
       style={{
-        width: "348px",
-        height: "276px",
-        background: "#E5A6E6",
-        borderRadius: "48px",
-        display: "flex",
-        flexDirection: "column",
-        margin: "-8px 32px 15px auto",
-        overflow: "hidden",
-        cursor: "pointer",
+        background: accent.bg,
+        borderRadius: "24px",
       }}
     >
-      <div style={{ height: "50%", width: "100%" }}>
+      <div style={{ height: "160px", width: "100%" }}>
         <img
           src={img}
           alt={title}
@@ -30,53 +34,35 @@ export default function PackageCard({
         />
       </div>
 
-      <div
-        style={{
-          padding: "12px",
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
-          <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#000000", margin: 0 }}>
-            {title}
-          </h3>
-        </div>
+      <div className="p-4 flex flex-col gap-2 flex-1">
+        <h3 style={{ fontSize: "16px", fontWeight: "bold", color: accent.text, margin: 0 }}>
+          {title}
+        </h3>
 
-        <div
-          style={{
-            marginTop: "12px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            fontSize: "16px",
-            fontWeight: "bold",
-            padding: "0 12px",
-          }}
-        >
-          <span style={{ direction: "rtl", color: "#C90BBC" }}>
-            {coursesCount ?? 0} دوره
-          </span>
-          <span style={{ color: "#00C0D9" }}>مدرس: {teacherName || "—"}</span>
+        <div style={{ fontSize: "13px", color: accent.text, opacity: 0.85 }}>
+          {coursesCount ?? 0} دوره · مدرس: {teacherName || "—"}
         </div>
 
         {typeof enrolledCount === "number" && (
-          <div style={{ fontSize: "13px", color: "#555", marginTop: "4px" }}>
+          <div style={{ fontSize: "12px", color: accent.text, opacity: 0.7 }}>
             {enrolledCount} دانش‌آموز ثبت‌نام کرده
           </div>
         )}
 
         <div
-          style={{
-            marginTop: "8px",
-            fontSize: "16px",
-            fontWeight: "bold",
-            color: price > 0 ? "#C90BBC" : "#0a8f3c",
-          }}
+          className="mt-auto pt-2 flex items-center justify-between"
+          style={{ fontSize: "15px", fontWeight: "bold", color: accent.text }}
         >
-          {price > 0 ? `${price.toLocaleString("fa-IR")} تومان` : "رایگان"}
+          <span
+            style={{
+              background: accent.chip,
+              borderRadius: "999px",
+              padding: "4px 12px",
+              fontSize: "13px",
+            }}
+          >
+            {price > 0 ? `${Number(price).toLocaleString("fa-IR")} تومان` : "رایگان"}
+          </span>
         </div>
       </div>
     </div>

@@ -115,6 +115,46 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // credentials: { phone_email, otp, action, role, first_name?, last_name? }
+  async function verifyOtp(payload) {
+    setLoading(true);
+    try {
+      const res = await api.post("/verify-otp/", payload);
+
+      const token = res?.data?.tokens?.access;
+      if (!token) throw new Error("توکنی از سرور دریافت نشد");
+
+      localStorage.setItem("access_token", token);
+      const refreshToken = res?.data?.tokens?.refresh;
+      if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
+      setAuthToken(token);
+
+      const me = await api.get("/me/");
+      const profile = me.data;
+      setUser(profile);
+      const resolvedRole = profile?.role || res?.data?.role || null;
+      setRole(resolvedRole);
+      setIsAuthenticated(true);
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({
+          isAuthenticated: true,
+          user: profile,
+          role: resolvedRole,
+        }),
+      );
+
+      const dest = ROLE_ROUTES[resolvedRole] || "/unauthorized";
+      navigate(dest, { replace: true });
+      return profile;
+    } catch (err) {
+      clearAuthState();
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function logout() {
     clearAuthState();
     navigate("/login", { replace: true });
@@ -137,6 +177,7 @@ export function AuthProvider({ children }) {
     role,
     loading,
     login,
+    verifyOtp,
     logout,
     getCurrentUser,
   };

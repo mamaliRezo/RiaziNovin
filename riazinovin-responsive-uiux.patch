@@ -1,0 +1,2763 @@
+diff --git a/frontend/src/Pages/auth/Login.jsx b/frontend/src/Pages/auth/Login.jsx
+index 062c863..10c2e88 100644
+--- a/frontend/src/Pages/auth/Login.jsx
++++ b/frontend/src/Pages/auth/Login.jsx
+@@ -4,7 +4,6 @@ import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+ import Guy from "../../assets/Guy.webp";
+ import TelephoneIcon from "../../assets/TelephoneIcon.svg";
+ import TopWave from "../../components/section/TopWave.jsx";
+-import BottomWave from "../../components/section/BottomWave.jsx";
+ import ErrorBox from "../../components/common/ErrorBox.jsx";
+ import { BACKEND_ORIGIN } from "../../config.js";
+ 
+@@ -47,7 +46,7 @@ export default function Login() {
+         state: {
+           phone_email: phone,
+           role: "student",
+-          data,
++          fromPage: "login",
+         },
+       });
+     } catch (err) {
+@@ -88,77 +87,63 @@ export default function Login() {
+   }
+ 
+   return (
+-    <div className="relative w-[412px] h-[917px] mx-auto bg-[#FEF9FE] font-[BYekan]">
++    <div className="relative w-full max-w-[412px] mx-auto bg-[#FEF9FE] font-[BYekan]">
+       <TopWave />
+       {error && <ErrorBox message={error} onClose={() => setError(null)} />}
+-      <img
+-        src={LogoRiaziNovin}
+-        alt="logo"
+-        className="absolute left-[105px] top-[145px] w-[202px] h-[140px]"
+-      />
+-
+-      <h2 className="absolute left-[105px] top-[281px] w-[202px] h-[69px] font-bold text-[31px] text-[#080609] text-center leading-[100%]">
+-        ورود
+-      </h2>
+-
+-      <p className="absolute left-[32px] top-[353px] w-[347px] h-[60px] text-center text-[#545454] text-[16px] leading-[24px]">
+-        لطفا شماره تلفن همراه خود را وارد کنید
+-      </p>
+-
+-      <div className="absolute left-[88px] top-[416px] w-[235px] h-[46px] flex items-center justify-center bg-[#F5C6F0] rounded-full px-3">
+-        <input
+-          type="text"
+-          value={phone}
+-          onChange={(e) => setPhone(e.target.value)}
+-          placeholder="شماره تلفن همراه"
+-          style={{ padding: "4px 7px" }}
+-          className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
+-        />
+-        <img
+-          src={TelephoneIcon}
+-          alt="phone"
+-          style={{ padding: "4px 10px" }}
+-          className="w-5 h-5 ml-2"
+-        />
+-      </div>
+ 
+-      <button
+-        onClick={handleOTPLogin}
+-        className="absolute cursor-pointer left-[89px] top-[481px] w-[234px] h-[44px] rounded-full font-bold text-black text-[16px] text-center font-[BYekan]"
+-        style={{
+-          direction: "rtl",
+-          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+-          border: "none",
+-        }}
+-      >
+-        {loading ? "در حال بررسی..." : "ورود با رمز یکبار مصرف"}
+-      </button>
+-
+-      <button
+-        onClick={goToPasswordLogin}
+-        className="absolute left-[89px] cursor-pointer top-[529px] w-[234px] h-[44px] rounded-[24px] text-[16px] font-[400] text-center border border-black font-[BYekan]"
+-        style={{ background: "#FEF9FE" }}
+-      >
+-        ورود با رمز عبور
+-      </button>
+-      <div className="absolute left-[178px] top-[585px] w-[129px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
++      <div className="flex flex-col items-center px-6 pb-10" dir="rtl">
++        <img src={LogoRiaziNovin} alt="logo" className="w-[150px] h-auto mt-2 mb-6" />
++
++        <h2 className="font-bold text-[26px] text-[#080609] text-center mb-2">
++          ورود
++        </h2>
++
++        <p className="text-center text-[#545454] text-[15px] leading-[24px] mb-6">
++          لطفا شماره تلفن همراه خود را وارد کنید
++        </p>
++
++        <div className="w-full max-w-[235px] h-[46px] flex items-center justify-center bg-[#F5C6F0] rounded-full px-3 mb-4">
++          <input
++            type="text"
++            value={phone}
++            onChange={(e) => setPhone(e.target.value)}
++            placeholder="شماره تلفن همراه"
++            style={{ padding: "4px 7px" }}
++            className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
++          />
++          <img src={TelephoneIcon} alt="phone" style={{ padding: "4px 10px" }} className="w-5 h-5 ml-2" />
++        </div>
++
++        <button
++          onClick={handleOTPLogin}
++          disabled={loading}
++          className="w-full max-w-[234px] h-[44px] rounded-full font-bold text-black text-[16px] text-center font-[BYekan] mb-3"
++          style={{
++            direction: "rtl",
++            background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
++            border: "none",
++          }}
++        >
++          {loading ? "در حال بررسی..." : "ورود با رمز یکبار مصرف"}
++        </button>
++
++        <button
++          onClick={goToPasswordLogin}
++          className="w-full max-w-[234px] h-[44px] rounded-[24px] text-[16px] font-[400] text-center border border-black font-[BYekan] mb-4"
++          style={{ background: "#FEF9FE" }}
++        >
++          ورود با رمز عبور
++        </button>
++
+         <p
+-          className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline"
++          className="text-right text-[#00C0D9] text-sm cursor-pointer hover:underline mb-6"
+           style={{ direction: "rtl" }}
+           onClick={goToSignUpLogin}
+         >
+           ایجاد حساب کاربری &gt;
+         </p>
+-      </div>
+-
+-      <img
+-        src={Guy}
+-        alt="Guy"
+-        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] z-20 object-contain"
+-      />
+ 
+-      <div className="absolute top-[715px] bottom-0 left-0 w-full">
+-        <BottomWave />
++        <img src={Guy} alt="Guy" className="w-[180px] h-auto object-contain" />
+       </div>
+     </div>
+   );
+diff --git a/frontend/src/Pages/auth/OTP.jsx b/frontend/src/Pages/auth/OTP.jsx
+index 8903f33..462afc3 100644
+--- a/frontend/src/Pages/auth/OTP.jsx
++++ b/frontend/src/Pages/auth/OTP.jsx
+@@ -1,18 +1,25 @@
+ import { useState, useEffect } from "react";
++import { useNavigate, useLocation } from "react-router-dom";
+ import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+ import Guy from "../../assets/Guy.webp";
+ import TopWave from "../../components/section/TopWave.jsx";
+-import BottomWave from "../../components/section/BottomWave.jsx";
+ import ErrorBox from "../../components/common/ErrorBox.jsx";
+ import { BACKEND_ORIGIN } from "../../config.js";
++import { useAuth } from "../../contexts/AuthContext.jsx";
++
++export default function OTP() {
++  const navigate = useNavigate();
++  const location = useLocation();
++  const { verifyOtp } = useAuth();
++
++  // اینا همه از صفحه‌ی قبل (Login یا SignUp) با navigate state میان،
++  // نه به‌عنوان prop مستقیم (چون AppRoutes بدون prop رندرش می‌کنه)
++  const phone_email = location.state?.phone_email || "";
++  const role = location.state?.role || "student";
++  const fromPage = location.state?.fromPage || "login";
++  const first_name = location.state?.first_name || "";
++  const last_name = location.state?.last_name || "";
+ 
+-export default function OTP({
+-  phone_email,
+-  role,
+-  onVerified,
+-  fromPage,
+-  onToPassword,
+-}) {
+   const [timeLeft, setTimeLeft] = useState(120);
+   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
+   const [loading, setLoading] = useState(false);
+@@ -38,39 +45,28 @@ export default function OTP({
+   async function submitOTP() {
+     if (!otpComplete) return;
+ 
++    if (!phone_email) {
++      setError("شماره تلفن مشخص نیست، لطفا از اول شروع کنید");
++      return;
++    }
++
+     setLoading(true);
+     setError(null);
+ 
+     try {
+-      const res = await fetch(`${BACKEND}/api/verify-otp/`, {
+-        method: "POST",
+-        headers: { "Content-Type": "application/json" },
+-        body: JSON.stringify({
+-          phone_email,
+-          otp: otpCode,
+-          action: fromPage === "signup" ? "signup" : "login",
+-          role: role || "student",
+-        }),
++      await verifyOtp({
++        phone_email,
++        otp: otpCode,
++        action: fromPage === "signup" ? "signup" : "login",
++        role,
++        first_name,
++        last_name,
+       });
+-
+-      const data = await res.json();
+-
+-      if (!res.ok) {
+-        setError(data.message || "خطا");
+-        setLoading(false);
+-        return;
+-      }
+-
+-      if (data.access) {
+-        localStorage.setItem("access_token", data.access);
+-      }
+-      if (data.refresh) {
+-        localStorage.setItem("refresh_token", data.refresh);
+-      }
+-
+-      onVerified();
+-    } catch {
+-      setError("مشکل در اتصال به سرور");
++      // verifyOtp خودش بر اساس نقش به داشبورد درست هدایت می‌کنه
++    } catch (err) {
++      setError(
++        err?.response?.data?.message || "کد اشتباه یا منقضی شده است"
++      );
+     }
+ 
+     setLoading(false);
+@@ -85,121 +81,108 @@ export default function OTP({
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({
+         phone_email,
+-        role: role || "student",
++        role,
+       }),
+     });
+   }
+ 
+   return (
+-    <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden bg-[#FEF9FE] font-[BYekan]">
+-      {error && <ErrorBox message={error} onClose={() => setError(null)} />}
++    <div className="relative w-full max-w-[412px] mx-auto bg-[#FEF9FE] font-[BYekan]">
+       <TopWave />
+-      <img
+-        src={LogoRiaziNovin}
+-        alt="logo"
+-        className="absolute left-[105px] top-[177px] w-[202px] h-[140px]"
+-      />
+-
+-      <h2 className="absolute left-[32px] top-[313px] w-[348px] text-center font-bold text-[26px] text-[#080609]">
+-        کد فعال سازی را وارد کنید
+-      </h2>
+-
+-      {fromPage === "login" && (
+-        <p className="absolute left-[32px] top-[377px] w-[347px] text-center text-[#545454] text-[16px]">
+-          کد تایید ارسال شده را وارد کنید
+-        </p>
+-      )}
+-
+-      {fromPage === "signup" && (
+-        <p className="absolute left-[32px] top-[377px] w-[347px] text-center text-[#545454] text-[16px]">
+-          برای ثبت نام کد تایید را وارد کنید
+-        </p>
+-      )}
+-
+-      <div className="absolute left-[32px] top-[433px] w-[348px] flex justify-between">
+-        {otpValues.map((val, idx) => (
+-          <input
+-            key={idx}
+-            id={`otp-${idx}`}
+-            maxLength={1}
+-            value={val}
+-            type="text"
+-            onChange={(e) => {
+-              const v = e.target.value.replace(/[^0-9]/g, "");
+-              const newOtp = [...otpValues];
+-
+-              if (v) {
+-                newOtp[idx] = v[0];
+-                setOtpValues(newOtp);
+-                if (idx < 4) document.getElementById(`otp-${idx + 1}`)?.focus();
+-              } else {
+-                newOtp[idx] = "";
+-                setOtpValues(newOtp);
+-              }
+-            }}
+-            onKeyDown={(e) => {
+-              if (e.key === "Backspace" && !otpValues[idx] && idx > 0) {
++      {error && <ErrorBox message={error} onClose={() => setError(null)} />}
++
++      <div className="flex flex-col items-center px-6 pb-10" dir="rtl">
++        <img src={LogoRiaziNovin} alt="logo" className="w-[150px] h-auto mt-2 mb-6" />
++
++        <h2 className="text-center font-bold text-[22px] text-[#080609] mb-2">
++          کد فعال سازی را وارد کنید
++        </h2>
++
++        {fromPage === "login" && (
++          <p className="text-center text-[#545454] text-[14px] mb-6">
++            کد تایید ارسال شده را وارد کنید
++          </p>
++        )}
++
++        {fromPage === "signup" && (
++          <p className="text-center text-[#545454] text-[14px] mb-6">
++            برای ثبت نام کد تایید را وارد کنید
++          </p>
++        )}
++
++        <div className="w-full max-w-[348px] flex justify-between mb-4" dir="ltr">
++          {otpValues.map((val, idx) => (
++            <input
++              key={idx}
++              id={`otp-${idx}`}
++              maxLength={1}
++              value={val}
++              type="text"
++              onChange={(e) => {
++                const v = e.target.value.replace(/[^0-9]/g, "");
+                 const newOtp = [...otpValues];
+-                newOtp[idx - 1] = "";
+-                setOtpValues(newOtp);
+-                document.getElementById(`otp-${idx - 1}`)?.focus();
+-              }
+-            }}
+-            style={{ border: "none" }}
+-            className="w-[57px] h-[52px] text-center text-[24px] bg-[#F5C6F0] rounded-[19px] focus:outline-none"
+-          />
+-        ))}
+-      </div>
+ 
+-      {timeLeft > 0 ? (
+-        <div className="absolute left-[105px] top-[497px] w-[202px] text-center text-[13px] text-[#2C0528]">
+-          تا دریافت مجدد کد {formatTime(timeLeft)}
++                if (v) {
++                  newOtp[idx] = v[0];
++                  setOtpValues(newOtp);
++                  if (idx < 4) document.getElementById(`otp-${idx + 1}`)?.focus();
++                } else {
++                  newOtp[idx] = "";
++                  setOtpValues(newOtp);
++                }
++              }}
++              onKeyDown={(e) => {
++                if (e.key === "Backspace" && !otpValues[idx] && idx > 0) {
++                  const newOtp = [...otpValues];
++                  newOtp[idx - 1] = "";
++                  setOtpValues(newOtp);
++                  document.getElementById(`otp-${idx - 1}`)?.focus();
++                }
++              }}
++              style={{ border: "none" }}
++              className="w-[15%] max-w-[57px] h-[52px] text-center text-[22px] bg-[#F5C6F0] rounded-[19px] focus:outline-none"
++            />
++          ))}
+         </div>
+-      ) : (
+-        <div
+-          onClick={resendOTP}
+-          className="absolute left-[105px] top-[497px] w-[202px] text-center text-[#00C0D9] text-[13px] cursor-pointer hover:underline"
++
++        {timeLeft > 0 ? (
++          <div className="text-center text-[13px] text-[#2C0528] mb-6">
++            تا دریافت مجدد کد {formatTime(timeLeft)}
++          </div>
++        ) : (
++          <div
++            onClick={resendOTP}
++            className="text-center text-[#00C0D9] text-[13px] cursor-pointer hover:underline mb-6"
++          >
++            ارسال مجدد کد
++          </div>
++        )}
++
++        <button
++          onClick={submitOTP}
++          disabled={!otpComplete || loading}
++          className="w-full max-w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-[16px] mb-4"
++          style={{
++            direction: "rtl",
++            background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
++            border: "none",
++            opacity: !otpComplete ? 0.5 : 1,
++            cursor: !otpComplete ? "not-allowed" : "pointer",
++          }}
+         >
+-          ارسال مجدد کد
+-        </div>
+-      )}
+-
+-      <button
+-        onClick={submitOTP}
+-        disabled={!otpComplete || loading}
+-        className="absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-[16px]"
+-        style={{
+-          direction: "rtl",
+-          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+-          border: "none",
+-          opacity: !otpComplete ? 0.5 : 1,
+-          cursor: !otpComplete ? "not-allowed" : "pointer",
+-        }}
+-      >
+-        {loading ? "در حال بررسی..." : "ورود"}
+-      </button>
+-
+-      {/* لینک  شرطی  > */}
+-      <div className="absolute left-[250px] top-[585px] w-[130px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
++          {loading ? "در حال بررسی..." : "ورود"}
++        </button>
++
+         {fromPage === "login" && (
+           <p
+-            className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline"
+-            style={{ direction: "rtl" }}
+-            onClick={onToPassword}
++            className="text-[#00C0D9] text-sm cursor-pointer hover:underline mb-6"
++            onClick={() => navigate("/password", { state: { phone_email, role } })}
+           >
+             ورود با رمز عبور &gt;
+           </p>
+         )}
+-      </div>
+-
+-      <img
+-        src={Guy}
+-        alt="Guy"
+-        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] z-20"
+-      />
+ 
+-      <div className="absolute top-[715px] bottom-0 left-0 w-full">
+-        <BottomWave />
++        <img src={Guy} alt="Guy" className="w-[180px] h-auto object-contain" />
+       </div>
+     </div>
+   );
+diff --git a/frontend/src/Pages/auth/SignUp.jsx b/frontend/src/Pages/auth/SignUp.jsx
+index 75f632c..4da6a65 100644
+--- a/frontend/src/Pages/auth/SignUp.jsx
++++ b/frontend/src/Pages/auth/SignUp.jsx
+@@ -1,12 +1,19 @@
+ import { useState } from "react";
++import { useNavigate, useLocation } from "react-router-dom";
+ import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+ import Guy from "../../assets/Guy.webp";
+ import TopWave from "../../components/section/TopWave.jsx";
+-import BottomWave from "../../components/section/BottomWave.jsx";
+ import ErrorBox from "../../components/common/ErrorBox.jsx";
+ import { BACKEND_ORIGIN } from "../../config.js";
+ 
+-export default function Signup({ phone_email, role, onSignupComplete }) {
++export default function Signup() {
++  const navigate = useNavigate();
++  const location = useLocation();
++
++  // از صفحه‌ی Login با navigate state میان (همون‌جا شماره تلفن رو گرفتیم)
++  const phone_email = location.state?.phone_email || "";
++  const role = location.state?.role || "student";
++
+   const [first, setFirst] = useState("");
+   const [last, setLast] = useState("");
+   const [loading, setLoading] = useState(false);
+@@ -35,10 +42,7 @@ export default function Signup({ phone_email, role, onSignupComplete }) {
+         credentials: "include",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({
+-          first_name: first,
+-          last_name: last,
+           phone_number: phone_email,
+-          role: role || "student",
+         }),
+       });
+ 
+@@ -50,7 +54,17 @@ export default function Signup({ phone_email, role, onSignupComplete }) {
+         return;
+       }
+ 
+-      onSignupComplete();
++      // این مرحله فقط کد تایید می‌فرسته؛ ساخت واقعی حساب تو صفحه‌ی OTP
++      // (با action:"signup") انجام می‌شه
++      navigate("/otp", {
++        state: {
++          phone_email,
++          role,
++          fromPage: "signup",
++          first_name: first,
++          last_name: last,
++        },
++      });
+     } catch {
+       setError("مشکل در اتصال به سرور");
+     }
+@@ -59,68 +73,59 @@ export default function Signup({ phone_email, role, onSignupComplete }) {
+   }
+ 
+   return (
+-    <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden bg-[#FEF9FE] font-[BYekan]">
++    <div className="relative w-full max-w-[412px] mx-auto bg-[#FEF9FE] font-[BYekan]">
+       <TopWave />
+       {error && <ErrorBox message={error} onClose={() => setError(null)} />}
+-      <img
+-        src={LogoRiaziNovin}
+-        alt="logo"
+-        className="absolute left-[105px] top-[105px] w-[202px] h-[140px]"
+-      />
+-
+-      <h2 className="absolute left-[105px] top-[237px] w-[202px] text-[31px] font-bold text-center text-[#080609]">
+-        ثبت نام
+-      </h2>
+-
+-      <p className="absolute left-[29px] top-[297px] w-[347px] text-center text-[#545454] text-[16px]">
+-        لطفاً اطلاعات خود را وارد کنید
+-      </p>
+-
+-      <div className="absolute left-[88px] top-[352px] w-[235px] h-[46px] flex items-center bg-[#F5C6F0] rounded-[24px] px-3">
+-        <input
+-          type="text"
+-          value={first}
+-          onChange={(e) => setFirst(e.target.value)}
+-          placeholder="نام"
+-          dir="rtl"
+-          style={{ padding: "4px 10px" }}
+-          className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
+-        />
+-      </div>
+-
+-      <div className="absolute left-[89px] top-[408px] w-[235px] h-[46px] flex items-center bg-[#F5C6F0] rounded-[24px] px-3">
+-        <input
+-          type="text"
+-          value={last}
+-          onChange={(e) => setLast(e.target.value)}
+-          placeholder="نام خانوادگی"
+-          dir="rtl"
+-          style={{ padding: "4px 10px" }}
+-          className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
+-        />
+-      </div>
+ 
+-      <button
+-        onClick={handleSignup}
+-        disabled={loading}
+-        className="absolute left-[89px] top-[513px] w-[234px] h-[44px] rounded-[18224px] font-[BYekan] font-bold text-black text-[16px]"
+-        style={{
+-          direction: "rtl",
+-          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+-          border: "none",
+-        }}
+-      >
+-        {loading ? "در حال ارسال ..." : "ثبت نام"}
+-      </button>
+-
+-      <img
+-        src={Guy}
+-        alt="Guy"
+-        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] object-contain z-20"
+-      />
+-
+-      <div className="absolute top-[715px] bottom-0 left-0 w-full">
+-        <BottomWave />
++      <div className="flex flex-col items-center px-6 pb-10" dir="rtl">
++        <img src={LogoRiaziNovin} alt="logo" className="w-[150px] h-auto mt-2 mb-6" />
++
++        <h2 className="text-[24px] font-bold text-center text-[#080609] mb-2">
++          ثبت نام
++        </h2>
++
++        <p className="text-center text-[#545454] text-[14px] mb-6">
++          لطفاً اطلاعات خود را وارد کنید
++        </p>
++
++        <div className="w-full max-w-[235px] h-[46px] flex items-center bg-[#F5C6F0] rounded-[24px] px-3 mb-3">
++          <input
++            type="text"
++            value={first}
++            onChange={(e) => setFirst(e.target.value)}
++            placeholder="نام"
++            dir="rtl"
++            style={{ padding: "4px 10px" }}
++            className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
++          />
++        </div>
++
++        <div className="w-full max-w-[235px] h-[46px] flex items-center bg-[#F5C6F0] rounded-[24px] px-3 mb-6">
++          <input
++            type="text"
++            value={last}
++            onChange={(e) => setLast(e.target.value)}
++            placeholder="نام خانوادگی"
++            dir="rtl"
++            style={{ padding: "4px 10px" }}
++            className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
++          />
++        </div>
++
++        <button
++          onClick={handleSignup}
++          disabled={loading}
++          className="w-full max-w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-black text-[16px] mb-8"
++          style={{
++            direction: "rtl",
++            background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
++            border: "none",
++          }}
++        >
++          {loading ? "در حال ارسال ..." : "ثبت نام"}
++        </button>
++
++        <img src={Guy} alt="Guy" className="w-[180px] h-auto object-contain" />
+       </div>
+     </div>
+   );
+diff --git a/frontend/src/Pages/auth/passwordIN.jsx b/frontend/src/Pages/auth/passwordIN.jsx
+index 21cf768..fb02d1b 100644
+--- a/frontend/src/Pages/auth/passwordIN.jsx
++++ b/frontend/src/Pages/auth/passwordIN.jsx
+@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
+ import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+ import Guy from "../../assets/Guy.webp";
+ import TopWave from "../../components/section/TopWave.jsx";
+-import BottomWave from "../../components/section/BottomWave.jsx";
+ import ErrorBox from "../../components/common/ErrorBox.jsx";
+ import { BACKEND_ORIGIN } from "../../config.js";
+ import { useAuth } from "../../contexts/AuthContext.jsx";
+@@ -77,8 +76,8 @@ export default function PasswordIN() {
+       navigate("/otp", {
+         state: {
+           phone_email,
+-          role: data.role,
+-          data,
++          role: data.role || "student",
++          fromPage: "login",
+         },
+       });
+     } catch (err) {
+@@ -90,61 +89,50 @@ export default function PasswordIN() {
+   };
+ 
+   return (
+-    <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden font-[BYekan] bg-[#FEF9FE]">
++    <div className="relative w-full max-w-[412px] mx-auto bg-[#FEF9FE] font-[BYekan]">
+       <TopWave />
+       {error && <ErrorBox message={error} onClose={() => setError(null)} />}
+ 
+-      <img
+-        src={LogoRiaziNovin}
+-        alt="logo"
+-        className="absolute left-[105px] top-[177px] w-[202px] h-[140px]"
+-      />
+-
+-      <h2 className="absolute left-[105px] top-[353px] w-[202px] h-[60px] text-[31px] font-bold text-[#080609] text-center leading-[100%]">
+-        ورود با رمز عبور
+-      </h2>
+-
+-      <div className="absolute left-[88px] top-[433px] w-[235px] h-[46px] flex items-center bg-[#F5C6F0] border-none rounded-[24px] px-3">
+-        <input
+-          type="password"
+-          placeholder="رمز عبور"
+-          value={password}
+-          onChange={(e) => setPassword(e.target.value)}
+-          className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
+-          style={{ padding: "4px 10px" }}
+-        />
+-      </div>
++      <div className="flex flex-col items-center px-6 pb-10" dir="rtl">
++        <img src={LogoRiaziNovin} alt="logo" className="w-[150px] h-auto mt-2 mb-6" />
++
++        <h2 className="text-[24px] font-bold text-[#080609] text-center mb-6">
++          ورود با رمز عبور
++        </h2>
++
++        <div className="w-full max-w-[235px] h-[46px] flex items-center bg-[#F5C6F0] border-none rounded-full px-3 mb-4">
++          <input
++            type="password"
++            placeholder="رمز عبور"
++            value={password}
++            onChange={(e) => setPassword(e.target.value)}
++            className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
++            style={{ padding: "4px 10px" }}
++          />
++        </div>
++
++        <button
++          onClick={handleLogin}
++          disabled={loading}
++          className="w-full max-w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-black text-[16px] text-center mb-4"
++          style={{
++            direction: "rtl",
++            background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
++            border: "none",
++          }}
++        >
++          {loading ? "در حال بررسی..." : "ورود"}
++        </button>
+ 
+-      <button
+-        onClick={handleLogin}
+-        disabled={loading}
+-        className="absolute left-[89px] top-[487px] w-[234px] h-[44px] rounded-[18224px] font-[BYekan] font-bold text-black text-[16px] leading-[100%] text-center"
+-        style={{
+-          direction: "rtl",
+-          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+-          border: "none",
+-        }}
+-      >
+-        {loading ? "در حال بررسی..." : "ورود"}
+-      </button>
+-      {/* لینک ورود با کد تایید > */}
+-      <div className="absolute left-[240px] top-[569px] w-[130px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
+         <p
+-          className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline"
++          className="text-right text-[#00C0D9] text-sm cursor-pointer hover:underline mb-6"
+           style={{ direction: "rtl" }}
+           onClick={handleGoToOTP}
+         >
+           ورود با کد تایید &gt;
+         </p>
+-      </div>
+-      <img
+-        src={Guy}
+-        alt="Guy"
+-        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] z-20 object-contain"
+-      />
+-
+-      <div className="absolute top-[715px] bottom-0 left-0 w-full">
+-        <BottomWave />
++
++        <img src={Guy} alt="Guy" className="w-[180px] h-auto object-contain" />
+       </div>
+     </div>
+   );
+diff --git a/frontend/src/Pages/dashboard/PackageDetail.jsx b/frontend/src/Pages/dashboard/PackageDetail.jsx
+index 84a098a..211ce40 100644
+--- a/frontend/src/Pages/dashboard/PackageDetail.jsx
++++ b/frontend/src/Pages/dashboard/PackageDetail.jsx
+@@ -1,7 +1,5 @@
+ import { useState, useEffect } from "react";
+ import { useParams, useNavigate } from "react-router-dom";
+-import HeaderDash from "../../components/section/HeaderDash";
+-import BottomMenu from "../../components/common/BottomMenu";
+ import ErrorBox from "../../components/common/ErrorBox";
+ import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+ import ContactFooter from "../../components/section/ContactFooter.jsx";
+@@ -13,7 +11,6 @@ import { resolveMediaUrl } from "../../utils/resolveMedia";
+ export default function PackageDetail() {
+   const { packageId } = useParams();
+   const navigate = useNavigate();
+-  const headerHeight = 70;
+ 
+   const [pkg, setPkg] = useState(null);
+   const [loading, setLoading] = useState(true);
+@@ -85,37 +82,13 @@ export default function PackageDetail() {
+   }
+ 
+   return (
+-    <div
+-      className="font-[BYekan]"
+-      style={{
+-        width: "412px",
+-        overflow: "hidden",
+-        position: "relative",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-      }}
+-    >
+-      <div
+-        style={{
+-          position: "fixed",
+-          top: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          height: `${headerHeight}px`,
+-          zIndex: 10,
+-          background: "#FEF9FE",
+-        }}
+-      >
+-        <HeaderDash />
+-      </div>
+-
++    <div className="font-[BYekan]">
+       {error && <ErrorBox message={error} onClose={() => setError("")} />}
+ 
+       <div
+         style={{
+-          paddingTop: "80px",
+-          paddingBottom: "110px",
++          paddingTop: "16px",
++          paddingBottom: "16px",
+           direction: "rtl",
+           textAlign: "right",
+         }}
+@@ -231,7 +204,8 @@ export default function PackageDetail() {
+ 
+             <div
+               style={{
+-                width: "348px",
++                width: "90%",
++                maxWidth: "348px",
+                 height: "1px",
+                 background: "#080609",
+                 margin: "0 auto 16px auto",
+@@ -273,24 +247,10 @@ export default function PackageDetail() {
+         )}
+       </div>
+ 
+-      <div className="relative top-[-20px]">
++      <div className="w-full mt-2">
+         <ConsultationForm />
+         <ContactFooter />
+       </div>
+-
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <BottomMenu />
+-      </div>
+     </div>
+   );
+ }
+diff --git a/frontend/src/Pages/dashboard/PackagesList.jsx b/frontend/src/Pages/dashboard/PackagesList.jsx
+index 49a1819..254bc4f 100644
+--- a/frontend/src/Pages/dashboard/PackagesList.jsx
++++ b/frontend/src/Pages/dashboard/PackagesList.jsx
+@@ -1,8 +1,6 @@
+ import { useState, useEffect } from "react";
+ import { useNavigate } from "react-router-dom";
+-import HeaderDash from "../../components/section/HeaderDash";
+ import SearchBox from "../../components/common/SearchBox";
+-import BottomMenu from "../../components/common/BottomMenu";
+ import PackageCard from "../../components/common/PackageCard";
+ import GoldenPackage from "../../assets/GoldenPackage.webp";
+ import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+@@ -11,7 +9,6 @@ import api from "../../services/api";
+ import { resolveMediaUrl } from "../../utils/resolveMedia";
+ 
+ export default function PackagesList() {
+-  const headerHeight = 100;
+   const navigate = useNavigate();
+ 
+   const [packages, setPackages] = useState([]);
+@@ -37,104 +34,57 @@ export default function PackagesList() {
+   }, []);
+ 
+   return (
+-    <div
+-      className="font-[BYekan]"
+-      style={{
+-        width: "412px",
+-        overflow: "hidden",
+-        position: "relative",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-      }}
+-    >
+-      {/* هدر sticky */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          top: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          height: `${headerHeight}px`,
+-          zIndex: 10,
+-          background: "#FEF9FE",
+-        }}
+-      >
+-        <HeaderDash />
+-      </div>
++    <div className="font-[BYekan] flex flex-col items-center pt-4 pb-4">
++      <SearchBox style={{ width: "90%", maxWidth: "348px", margin: "0 auto 20px auto" }} />
+ 
+-      <div
++      <h2
+         style={{
+-          flex: 1,
+-          overflowY: "auto",
+-          paddingTop: "60px",
+-          paddingBottom: "90px",
++          width: "90%",
++          maxWidth: "348px",
++          margin: "0 auto 15px auto",
++          fontSize: "18px",
++          fontWeight: "bold",
++          color: "#C90BBC",
+         }}
+       >
+-        <SearchBox style={{ width: "348px", margin: "0 auto 20px auto" }} />
+-
+-        <h2
+-          style={{
+-            width: "348px",
+-            margin: "0 auto 15px auto",
+-            fontSize: "18px",
+-            fontWeight: "bold",
+-            color: "#C90BBC",
+-          }}
+-        >
+-          پکیج‌های طلایی
+-        </h2>
++        پکیج‌های طلایی
++      </h2>
+ 
+-        {loading && (
+-          <div style={{ textAlign: "center", padding: "20px" }}>
+-            در حال بارگذاری پکیج‌ها...
+-          </div>
+-        )}
++      {loading && (
++        <div style={{ textAlign: "center", padding: "20px" }}>
++          در حال بارگذاری پکیج‌ها...
++        </div>
++      )}
+ 
+-        {!loading && error && (
+-          <div style={{ textAlign: "center", padding: "20px", color: "#c00" }}>
+-            {error}
+-          </div>
+-        )}
++      {!loading && error && (
++        <div style={{ textAlign: "center", padding: "20px", color: "#c00" }}>
++          {error}
++        </div>
++      )}
+ 
+-        {!loading && !error && packages.length === 0 && (
+-          <div style={{ textAlign: "center", padding: "20px" }}>
+-            فعلاً پکیجی موجود نیست.
+-          </div>
+-        )}
++      {!loading && !error && packages.length === 0 && (
++        <div style={{ textAlign: "center", padding: "20px" }}>
++          فعلاً پکیجی موجود نیست.
++        </div>
++      )}
+ 
+-        {packages.map((pkg) => (
+-          <PackageCard
+-            key={pkg.id}
+-            img={resolveMediaUrl(pkg.thumbnail) || GoldenPackage}
+-            title={pkg.title}
+-            teacherName={pkg.teacher_name}
+-            coursesCount={pkg.courses_count}
+-            enrolledCount={pkg.enrolled_count}
+-            price={pkg.price}
+-            onClick={() => navigate(`/student/packages/${pkg.id}`)}
+-          />
+-        ))}
+-      </div>
++      {packages.map((pkg) => (
++        <PackageCard
++          key={pkg.id}
++          img={resolveMediaUrl(pkg.thumbnail) || GoldenPackage}
++          title={pkg.title}
++          teacherName={pkg.teacher_name}
++          coursesCount={pkg.courses_count}
++          enrolledCount={pkg.enrolled_count}
++          price={pkg.price}
++          onClick={() => navigate(`/student/packages/${pkg.id}`)}
++        />
++      ))}
+ 
+-      <div className="relative top-[-20px]">
++      <div className="w-full mt-4">
+         <ConsultationForm />
+         <ContactFooter />
+       </div>
+-
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <BottomMenu />
+-      </div>
+     </div>
+   );
+ }
+diff --git a/frontend/src/Pages/dashboard/PaymentResult.jsx b/frontend/src/Pages/dashboard/PaymentResult.jsx
+index 18a9eca..251e145 100644
+--- a/frontend/src/Pages/dashboard/PaymentResult.jsx
++++ b/frontend/src/Pages/dashboard/PaymentResult.jsx
+@@ -1,7 +1,6 @@
+ import { useEffect, useState } from "react";
+ import { useNavigate, useSearchParams } from "react-router-dom";
+-import HeaderDash from "../../components/section/HeaderDash";
+-import BottomMenu from "../../components/common/BottomMenu";
++import AppShell from "../../components/layout/AppShell";
+ 
+ const STATUS_CONTENT = {
+   success: {
+@@ -29,7 +28,6 @@ const STATUS_CONTENT = {
+ export default function PaymentResult() {
+   const [searchParams] = useSearchParams();
+   const navigate = useNavigate();
+-  const headerHeight = 70;
+ 
+   const status = searchParams.get("status") || "error";
+   const packageId = searchParams.get("package");
+@@ -46,36 +44,11 @@ export default function PaymentResult() {
+   }, [navigate]);
+ 
+   return (
+-    <div
+-      className="font-[BYekan]"
+-      style={{
+-        width: "412px",
+-        overflow: "hidden",
+-        position: "relative",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-        minHeight: "100vh",
+-      }}
+-    >
++    <AppShell>
+       <div
+         style={{
+-          position: "fixed",
+-          top: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          height: `${headerHeight}px`,
+-          zIndex: 10,
+-          background: "#FEF9FE",
+-        }}
+-      >
+-        <HeaderDash />
+-      </div>
+-
+-      <div
+-        style={{
+-          paddingTop: "120px",
+-          paddingBottom: "110px",
++          paddingTop: "60px",
++          paddingBottom: "20px",
+           direction: "rtl",
+           textAlign: "center",
+         }}
+@@ -101,7 +74,16 @@ export default function PaymentResult() {
+           </p>
+         )}
+ 
+-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "280px", margin: "20px auto 0 auto" }}>
++        <div
++          style={{
++            display: "flex",
++            flexDirection: "column",
++            gap: "10px",
++            width: "90%",
++            maxWidth: "280px",
++            margin: "20px auto 0 auto",
++          }}
++        >
+           {status === "success" && packageId && (
+             <button
+               onClick={() => {
+@@ -159,20 +141,6 @@ export default function PaymentResult() {
+           </button>
+         </div>
+       </div>
+-
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <BottomMenu />
+-      </div>
+-    </div>
++    </AppShell>
+   );
+ }
+diff --git a/frontend/src/Pages/dashboard/Profile.jsx b/frontend/src/Pages/dashboard/Profile.jsx
+index 8913aaa..5c3be89 100644
+--- a/frontend/src/Pages/dashboard/Profile.jsx
++++ b/frontend/src/Pages/dashboard/Profile.jsx
+@@ -1,7 +1,5 @@
+ import { useEffect, useState } from "react";
+ import { useNavigate } from "react-router-dom";
+-import HeaderDash from "../../components/section/HeaderDash";
+-import BottomMenu from "../../components/common/BottomMenu";
+ import { useAuth } from "../../contexts/AuthContext";
+ import api from "../../services/api";
+ 
+@@ -12,8 +10,6 @@ import logOut from "../../assets/exit logo.svg";
+ export default function Profile() {
+   const navigate = useNavigate();
+   const { role, logout } = useAuth();
+-  const headerHeight = 70;
+-  const bottomMenuHeight = 90;
+ 
+   const [loading, setLoading] = useState(true);
+   const [saving, setSaving] = useState(false);
+@@ -117,44 +113,9 @@ export default function Profile() {
+   }
+ 
+   return (
+-    <div
+-      className="font-[byekan]"
+-      style={{
+-        width: "412px",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-        height: "100vh",
+-        overflow: "hidden",
+-        position: "relative",
+-      }}
+-    >
+-      <div
+-        style={{
+-          position: "fixed",
+-          top: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          height: headerHeight + "px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <HeaderDash />
+-      </div>
+-
+-      <div
+-        style={{
+-          position: "absolute",
+-          top: headerHeight + "px",
+-          bottom: bottomMenuHeight + "px",
+-          overflowY: "auto",
+-          width: "100%",
+-        }}
+-      >
+-        <div dir="rtl" style={{ padding: "16px" }}>
+-          <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center gap-3">
++    <div className="font-[byekan]">
++      <div dir="rtl" style={{ padding: "16px" }}>
++        <div className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center gap-3">
+             <img src={profile} alt="پروفایل" className="w-12 h-12" />
+             <div className="flex-1">
+               <p className="text-[14px] font-bold">پروفایل کاربری</p>
+@@ -172,18 +133,18 @@ export default function Profile() {
+           {!loading && (
+             <>
+               {message && (
+-                <div className="w-[348px] mx-auto mb-3 text-[13px] text-green-700">
++                <div className="w-[90%] max-w-[348px] mx-auto mb-3 text-[13px] text-green-700">
+                   {message}
+                 </div>
+               )}
+               {error && (
+-                <div className="w-[348px] mx-auto mb-3 text-[13px] text-red-600">
++                <div className="w-[90%] max-w-[348px] mx-auto mb-3 text-[13px] text-red-600">
+                   {error}
+                 </div>
+               )}
+ 
+               {/* رمز عبور */}
+-              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
++              <div className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+                 <p className="text-[13px] font-bold mb-2">رمز عبور</p>
+                 {!showPasswordForm ? (
+                   <button
+@@ -224,7 +185,7 @@ export default function Profile() {
+               </div>
+ 
+               {/* اطلاعات تکمیلی */}
+-              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
++              <div className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+                 <p className="text-[13px] font-bold mb-1">اطلاعات تکمیلی</p>
+                 <p className="text-[11px] text-[#666] mb-3 leading-[1.8]">
+                   برای تکمیل اطلاعات پروفایل خود، لطفا کد ملی و تاریخ تولد
+@@ -270,7 +231,7 @@ export default function Profile() {
+               </div>
+ 
+               {/* اطلاعات تحصیلی */}
+-              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
++              <div className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+                 <p className="text-[13px] font-bold mb-1">اطلاعات تحصیلی</p>
+                 <p className="text-[11px] text-[#666] mb-3 leading-[1.8]">
+                   لطفا قبل از ادامه‌ی کار با پنل کاربری‌تان، این اطلاعات را
+@@ -327,7 +288,7 @@ export default function Profile() {
+               {/* خروج */}
+               <div
+                 onClick={handleLogout}
+-                className="rounded-[8px] w-[348px] mx-auto p-4 mb-6 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 cursor-pointer"
++                className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-6 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 cursor-pointer"
+               >
+                 <img src={logOut} alt="خروج" className="w-5 h-5" />
+                 <p className="text-[13px] font-bold">خروج از حساب کاربری</p>
+@@ -335,23 +296,6 @@ export default function Profile() {
+             </>
+           )}
+         </div>
+-      </div>
+-
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          zIndex: 30,
+-          background: "#FEF9FE",
+-          height: bottomMenuHeight + "px",
+-        }}
+-      >
+-        <BottomMenu />
+-      </div>
+     </div>
+   );
+ }
+diff --git a/frontend/src/Pages/dashboard/StudentCourses.jsx b/frontend/src/Pages/dashboard/StudentCourses.jsx
+index 0c0bc38..46c76f7 100644
+--- a/frontend/src/Pages/dashboard/StudentCourses.jsx
++++ b/frontend/src/Pages/dashboard/StudentCourses.jsx
+@@ -1,19 +1,13 @@
+ import { useState, useEffect } from "react";
+ import { useNavigate } from "react-router-dom";
+-import HeaderDash from "../../components/section/HeaderDash";
+ import SearchBox from "../../components/common/SearchBox";
+-import BottomMenu from "../../components/common/BottomMenu";
+ import CourseCard from "../../components/common/CourseCard";
+ import videoCover from "../../assets/videoCover.webp";
+ import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+ import ContactFooter from "../../components/section/ContactFooter.jsx";
+ import api from "../../services/api";
+ 
+-export default function StudentCourses({
+-  gotoDashboard,
+-  gotoComingSoon,
+-  gotoProfile, }) {
+-  const headerHeight = 100;
++export default function StudentCourses() {
+   const navigate = useNavigate();
+ 
+   const [courses, setCourses] = useState([]);
+@@ -37,99 +31,44 @@ export default function StudentCourses({
+       isMounted = false;
+     };
+   }, []);
+-  return (
+-    <div
+-      className="font-[BYekan]"
+-      style={{
+-        width: "412px",
+-        overflow: "hidden",
+-        position: "relative",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-      }}
+-    >
+-      {/* هدر sticky */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          top: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          height: `${headerHeight}px`,
+-          zIndex: 10,
+-          background: "#FEF9FE",
+-        }}
+-      >
+-        <HeaderDash />
+-      </div>
+ 
+-      {/* بخش اسکرول کارت‌ها */}
+-      <div
+-        style={{
+-          flex: 1,
+-          overflowY: "auto",
+-          paddingTop: "60px",
+-          paddingBottom: "90px",
+-        }}
+-      >
+-        {/* SearchBox */}
+-        <SearchBox style={{ width: "348px", margin: "0 auto 20px auto" }} />
++  return (
++    <div className="font-[BYekan] flex flex-col items-center pt-4 pb-4">
++      <SearchBox style={{ width: "90%", maxWidth: "348px", margin: "0 auto 20px auto" }} />
+ 
+-        {/* کارت‌ها */}
+-        {loading && (
+-          <div style={{ textAlign: "center", padding: "20px" }}>
+-            در حال بارگذاری دوره‌ها...
+-          </div>
+-        )}
++      {loading && (
++        <div style={{ textAlign: "center", padding: "20px" }}>
++          در حال بارگذاری دوره‌ها...
++        </div>
++      )}
+ 
+-        {!loading && error && (
+-          <div style={{ textAlign: "center", padding: "20px", color: "#c00" }}>
+-            {error}
+-          </div>
+-        )}
++      {!loading && error && (
++        <div style={{ textAlign: "center", padding: "20px", color: "#c00" }}>
++          {error}
++        </div>
++      )}
+ 
+-        {!loading && !error && courses.length === 0 && (
+-          <div style={{ textAlign: "center", padding: "20px" }}>
+-            هنوز در هیچ دوره‌ای ثبت‌نام نکرده‌اید.
+-          </div>
+-        )}
++      {!loading && !error && courses.length === 0 && (
++        <div style={{ textAlign: "center", padding: "20px" }}>
++          هنوز در هیچ دوره‌ای ثبت‌نام نکرده‌اید.
++        </div>
++      )}
+ 
+-        {courses.map((course) => (
+-          <CourseCard
+-            key={course.id}
+-            img={course.thumbnail || videoCover}
+-            title={course.title}
+-            desc={course.description}
+-            sessionsCount={course.video_count}
+-            teacherName={course.teacher_name}
+-            onClick={() => navigate(`/video/${course.id}`)}
+-          />
+-        ))}
+-      </div>
+-      
+-      <div className="relative top-[-20px]">          
+-        <ConsultationForm/>
+-        <ContactFooter/>
+-      </div>
++      {courses.map((course) => (
++        <CourseCard
++          key={course.id}
++          img={course.thumbnail || videoCover}
++          title={course.title}
++          desc={course.description}
++          sessionsCount={course.video_count}
++          teacherName={course.teacher_name}
++          onClick={() => navigate(`/video/${course.id}`)}
++        />
++      ))}
+ 
+-      {/* منوی پایین ثابت */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-      <BottomMenu
+-        gotoDashboard={gotoDashboard}
+-        gotoComingSoon={gotoComingSoon}
+-        gotoProfile={gotoProfile}
+-      />
++      <div className="w-full mt-4">
++        <ConsultationForm />
++        <ContactFooter />
+       </div>
+     </div>
+   );
+diff --git a/frontend/src/Pages/dashboard/StudentDash.jsx b/frontend/src/Pages/dashboard/StudentDash.jsx
+index bbf2488..264293e 100644
+--- a/frontend/src/Pages/dashboard/StudentDash.jsx
++++ b/frontend/src/Pages/dashboard/StudentDash.jsx
+@@ -1,9 +1,7 @@
+-import HeaderDash from "../../components/section/HeaderDash.jsx";
+ import WelcomeBox from "../../components/common/WelcomeBox.jsx";
+ import SearchBox from "../../components/common/SearchBox.jsx";
+ import SliderBox from "../../components/common/SliderBox.jsx";
+ import Card from "../../components/ui/Card.jsx";
+-import BottomMenu from "../../components/common/BottomMenu.jsx";
+ import VideoSymbol from "../../assets/VideoSymbol.webp";
+ import NoteSymbol from "../../assets/NoteSymbol.webp";
+ import GoldenPackage from "../../assets/GoldenPackage.webp";
+@@ -60,150 +58,71 @@ function DashboardSummary() {
+ }
+ 
+ export default function StudentDashboard() {
+-  const headerHeight = 150;
+-  const bottomMenuHeight = 90;
+   const navigate = useNavigate();
+ 
+   const gotoCourses = () => navigate("/student/courses");
+   const gotoComingSoon = () => navigate("/comingsoon");
+   // بنر اسلایدر به دوره‌ی خاصی وصل نیست، فعلاً می‌بریم لیست دوره‌ها
+   const gotoVideo = () => navigate("/student/courses");
+-  // صفحه‌ی پکیج‌ها هنوز رو روتر ثبت نشده (تو اولویت بعدیه)
+   const gotoStudentPack = () => navigate("/student/packages");
+ 
+   return (
+-    <div
+-      className="font-[byekan]"
+-      style={{
+-        width: "412px",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-        position: "relative",
+-        height: "100vh",
+-        overflow: "hidden",
+-      }}
+-    >
+-      {/* fixed header (includes WelcomeBox) */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          top: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          height: headerHeight + "px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <HeaderDash />
+-        <div style={{ width: "100%" }}>
+-          <div style={{ width: "412px", margin: "0 auto" }}>
+-            <WelcomeBox />
+-          </div>
+-        </div>
++    <div className="font-[byekan] flex flex-col items-center pb-4">
++      <div className="w-full">
++        <WelcomeBox />
+       </div>
+ 
+-      {/* scrollable middle region */}
+-      <div
+-        style={{
+-          position: "absolute",
+-          top: headerHeight + "px",
+-          bottom: bottomMenuHeight + "px",
+-          left: 0,
+-          right: 0,
+-          overflowY: "auto",
+-        }}
+-      >
+-        <div className="flex flex-col items-center">
+-          {/* Dashboard summary (XP / tasks / courses) */}
+-          <div className="w-[348px] mt-4">
+-            <DashboardSummary />
+-          </div>
++      {/* Dashboard summary (XP / tasks / courses) */}
++      <div className="w-[90%] max-w-[348px] mt-4">
++        <DashboardSummary />
++      </div>
+ 
+-          {/* slider */}
+-          <div className="mt-5">
+-            <SliderBox onClick={gotoVideo} />
+-          </div>
++      {/* slider */}
++      <div className="mt-5 w-full flex justify-center">
++        <SliderBox onClick={gotoVideo} />
++      </div>
+ 
+-          {/* search box */}
+-          <div style={{ marginTop: "8.97px" }} className="mt-6 w-[348px]">
+-            <SearchBox />
+-          </div>
++      {/* search box */}
++      <div className="mt-6 w-[90%] max-w-[348px]">
++        <SearchBox />
++      </div>
+ 
+-          {/* golden package */}
+-          <div
+-            className="font-[byekan] mt-10 w-[348px] h-[100px] rounded-[12px] bg-[#C90BBCC9] shadow-[10px_10px_10px_2px_rgba(0,0,0,0.25)] flex items-center justify-center px-4 cursor-pointer text-center relative"
+-            style={{ marginTop: "52px" }}
+-            onClick={gotoStudentPack}
+-          >
+-            <div>
+-              <p className="text-[21px] text-[#FEF9FE] font-bold">
+-                پکیج‌های طلایی
+-              </p>
+-            </div>
+-            <img src={GoldenPackage} alt="Golden Package" />
+-          </div>
++      {/* golden package */}
++      <div
++        className="font-[byekan] mt-10 w-[90%] max-w-[348px] h-[100px] rounded-[12px] bg-[#C90BBCC9] shadow-[10px_10px_10px_2px_rgba(0,0,0,0.25)] flex items-center justify-center px-4 cursor-pointer text-center relative"
++        onClick={gotoStudentPack}
++      >
++        <div>
++          <p className="text-[21px] text-[#FEF9FE] font-bold">
++            پکیج‌های طلایی
++          </p>
++        </div>
++        <img src={GoldenPackage} alt="Golden Package" />
++      </div>
+ 
+-          {/* cards */}
+-          <div
+-            className="relative w-full min-h-[220px] mt-10"
+-            style={{ marginTop: "12px" }}
+-          >
+-            <Card
+-              title="ویدیو آموزشی"
+-              style={{
+-                position: "absolute",
+-                top: "40px",
+-                left: "32px",
+-                cursor: "pointer",
+-              }}
+-              onClick={gotoCourses}
+-            />
+-            <Card
+-              title="نمونه سوال"
+-              style={{
+-                position: "absolute",
+-                top: "40px",
+-                left: "250px",
+-                cursor: "pointer",
+-              }}
+-              onClick={gotoComingSoon}
+-            />
+-            <img
+-              src={VideoSymbol}
+-              alt="Video"
+-              className="absolute top-[-10px] left-[34px] w-[130px] h-[112px] pointer-events-none"
+-            />
+-            <img
+-              src={NoteSymbol}
+-              alt="Note"
+-              className="absolute top-[5px] left-[264px] w-[105px] h-[88px] pointer-events-none"
+-            />
+-          </div>
+-          <div className="relative top-[127.33px]">
+-            <ConsultationForm />
+-            <ContactFooter />
+-          </div>
++      {/* cards */}
++      <div className="w-[90%] max-w-[348px] mt-6 flex items-start justify-between gap-3">
++        <div className="relative">
++          <img
++            src={VideoSymbol}
++            alt=""
++            className="absolute -top-3 left-1/2 -translate-x-1/2 w-[80px] h-[70px] pointer-events-none z-10"
++          />
++          <Card title="ویدیو آموزشی" onClick={gotoCourses} fontSize="16px" />
++        </div>
++        <div className="relative">
++          <img
++            src={NoteSymbol}
++            alt=""
++            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[65px] h-[55px] pointer-events-none z-10"
++          />
++          <Card title="نمونه سوال" onClick={gotoComingSoon} fontSize="16px" />
+         </div>
+       </div>
+ 
+-      {/* fixed footer */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          zIndex: 30,
+-          background: "#FEF9FE",
+-          height: bottomMenuHeight + "px",
+-        }}
+-      >
+-        <BottomMenu />
++      <div className="w-full mt-8">
++        <ConsultationForm />
++        <ContactFooter />
+       </div>
+     </div>
+   );
+diff --git a/frontend/src/Pages/public/ComingSoon.jsx b/frontend/src/Pages/public/ComingSoon.jsx
+index 8c7c4a8..c561eb0 100644
+--- a/frontend/src/Pages/public/ComingSoon.jsx
++++ b/frontend/src/Pages/public/ComingSoon.jsx
+@@ -1,40 +1,24 @@
++import AppShell from "../../components/layout/AppShell";
+ import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+-import BottomMenu from "../../components/common/BottomMenu";
+ 
+-export default function ComingSoon({ gotoDashboard }) {
++export default function ComingSoon() {
+   return (
+-    <div className="relative w-[412px] h-[917px] mx-auto bg-[#FEF9FE] font-[BYekan] flex flex-col items-center justify-center">
+-      {/* لوگو */}
+-      <img
+-        src={LogoRiaziNovin}
+-        alt="logo"
+-        className="w-[202px] h-[140px] mb-8"
+-      />
++    <AppShell>
++      <div className="flex flex-col items-center justify-center text-center px-4 py-10 min-h-[70vh]">
++        <img
++          src={LogoRiaziNovin}
++          alt="logo"
++          className="w-[160px] h-auto mb-8"
++        />
+ 
+-      {/* تیتر */}
+-      <h1 className="text-[32px] font-bold text-[#080609] text-center mb-4">
+-        comming soon!
+-      </h1>
++        <h1 className="text-[26px] font-bold text-[#080609] mb-4">
++          به‌زودی...
++        </h1>
+ 
+-      {/* توضیح */}
+-      <p className="text-[16px] text-center text-[#545454] mb-6 px-4">
+-        این بخش در حال آماده‌سازی است. لطفاً بعداً دوباره بررسی کنید
+-      </p>
+-
+-      {/* منوی پایین ثابت */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: "50%",
+-          transform: "translateX(-50%)",
+-          width: "412px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <BottomMenu gotoDashboard={gotoDashboard} />
++        <p className="text-[15px] text-[#545454]">
++          این بخش در حال آماده‌سازی است. لطفاً بعداً دوباره بررسی کنید.
++        </p>
+       </div>
+-    </div>
++    </AppShell>
+   );
+ }
+diff --git a/frontend/src/Pages/public/VideoPage.jsx b/frontend/src/Pages/public/VideoPage.jsx
+index 5487397..0593cec 100644
+--- a/frontend/src/Pages/public/VideoPage.jsx
++++ b/frontend/src/Pages/public/VideoPage.jsx
+@@ -1,7 +1,6 @@
+ import { useState, useEffect } from "react";
+ import { useParams, useNavigate } from "react-router-dom";
+-import HeaderDash from "../../components/section/HeaderDash";
+-import BottomMenu from "../../components/common/BottomMenu";
++import AppShell from "../../components/layout/AppShell";
+ import ErrorBox from "../../components/common/ErrorBox";
+ import api from "../../services/api";
+ 
+@@ -15,11 +14,7 @@ import download from "../../assets/download.webp";
+ import ConsultationForm from "../../components/common/ConsultationForm.jsx";
+ import ContactFooter from "../../components/section/ContactFooter.jsx";
+ 
+-export default function VideoPage({
+-  gotoDashboard,
+-  gotoComingSoon,
+-  gotoProfile,
+-}) {
++export default function VideoPage() {
+   const { courseId } = useParams();
+   const navigate = useNavigate();
+ 
+@@ -27,8 +22,6 @@ export default function VideoPage({
+   const [loading, setLoading] = useState(true);
+   const [currentVideo, setCurrentVideo] = useState(null);
+   const [error, setError] = useState("");
+-  const headerHeight = 70;
+-  const bottomMenuHeight = 90;
+ 
+   useEffect(() => {
+     // اگه توکن نداریم اصلا سمت بک‌اند نریم، مستقیم بفرستیم لاگین
+@@ -77,54 +70,17 @@ export default function VideoPage({
+   }
+ 
+   return (
+-    <div
+-      className="font-[BYekan]"
+-      style={{
+-        width: "412px",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-        position: "relative",
+-        height: "100vh",
+-        overflow: "hidden",
+-      }}
+-    >
++    <AppShell>
+       {error && <ErrorBox message={error} onClose={() => setError("")} />}
+ 
+-      {/* Header */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          top: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          height: `${headerHeight}px`,
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <HeaderDash />
+-      </div>
+-
+-      {/* Scroll Content */}
+-      <div
+-        style={{
+-          position: "absolute",
+-          top: `${headerHeight}px`,
+-          bottom: `${bottomMenuHeight}px`,
+-          left: 0,
+-          right: 0,
+-          overflowY: "auto",
+-          textAlign: "right",
+-        }}
+-      >
++      <div style={{ textAlign: "right" }}>
+         
+         <div style={{ direction: "rtl", textAlign: "right" }}>
+         {/* باکس ویدیو */}
+         <div
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             height: "190px",
+             margin: "0 auto",
+             position: "relative",
+@@ -138,9 +94,7 @@ export default function VideoPage({
+               src={currentVideo}
+               controls
+               autoPlay
+-              width="348px"
+-              height="190px"
+-              style={{ border: "none", borderRadius: "8px", background: "#000" }}
++              style={{ width: "100%", height: "100%", border: "none", borderRadius: "8px", background: "#000" }}
+             />
+           ) : (
+             <>
+@@ -175,7 +129,8 @@ export default function VideoPage({
+         {/* ادامه متن‌ها و توضیحات */}
+         <h2
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "20px auto 10px auto",
+             fontSize: "20px",
+             fontWeight: "bold",
+@@ -187,7 +142,8 @@ export default function VideoPage({
+ 
+         <div
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "0 auto",
+             display: "flex",
+             alignItems: "center",
+@@ -201,7 +157,8 @@ export default function VideoPage({
+ 
+         <p
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "15px auto",
+             fontSize: "15px",
+             color: "#C90BBCC9",
+@@ -213,7 +170,8 @@ export default function VideoPage({
+ 
+         <p
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "15px auto",
+             fontSize: "14px",
+             color: "#333",
+@@ -245,7 +203,8 @@ export default function VideoPage({
+ 
+         <div
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "80px auto 5px auto",
+             display: "flex",
+             alignItems: "center",
+@@ -262,7 +221,8 @@ export default function VideoPage({
+ 
+         <div
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             height: "1px",
+             background: "#080609",
+             margin: "0px auto 10px auto",
+@@ -271,7 +231,8 @@ export default function VideoPage({
+ 
+         <div
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "0 auto 20px auto",
+             display: "flex",
+             alignItems: "center",
+@@ -286,7 +247,8 @@ export default function VideoPage({
+ 
+         <h3
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "30px auto 10px auto",
+             fontSize: "24px",
+             fontWeight: "bold",
+@@ -299,7 +261,8 @@ export default function VideoPage({
+ 
+         <div
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "0 auto 10px auto",
+             display: "flex",
+             justifyContent: "flex-start",
+@@ -315,7 +278,8 @@ export default function VideoPage({
+         {/* لیست جلسات */}
+         <div
+           style={{
+-            width: "348px",
++            width: "90%",
++            maxWidth: "348px",
+             margin: "0 auto",
+             borderRadius: "8px",
+             overflow: "hidden",
+@@ -377,33 +341,12 @@ export default function VideoPage({
+             </div>
+           ))}
+         </div>
+-        </div>
+-        <div className="relative top-[180px]">          
++        <div>
+           <ConsultationForm/>
+           <ContactFooter/>
+         </div>
+       </div>
+-
+-      {/* Bottom menu */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          zIndex: 30,
+-          background: "#FEF9FE",
+-          height: `${bottomMenuHeight}px`,
+-        }}
+-      >
+-      <BottomMenu
+-        gotoDashboard={gotoDashboard}
+-        gotoComingSoon={gotoComingSoon}
+-        gotoProfile={gotoProfile}
+-      />
+       </div>
+-    </div>
++    </AppShell>
+   );
+ }
+diff --git a/frontend/src/Pages/teacher/TeacherDash.jsx b/frontend/src/Pages/teacher/TeacherDash.jsx
+index b46ffcf..6dfd27a 100644
+--- a/frontend/src/Pages/teacher/TeacherDash.jsx
++++ b/frontend/src/Pages/teacher/TeacherDash.jsx
+@@ -44,7 +44,7 @@ export default function TeacherDashboard() {
+   return (
+     <div style={{ direction: "rtl" }}>
+       {/* عنوان و خوش‌آمد */}
+-      <div className="w-[348px] mx-auto mt-[16px]">
++      <div className="w-[90%] max-w-[348px] mx-auto mt-[16px]">
+         <h2
+           style={{
+             fontSize: "22px",
+@@ -60,7 +60,7 @@ export default function TeacherDashboard() {
+       </div>
+ 
+       {/* کارت‌های آماری */}
+-      <div className="w-[348px] mx-auto mt-[16px] flex gap-2">
++      <div className="w-[90%] max-w-[348px] mx-auto mt-[16px] flex gap-2">
+         {stats.map((s) => (
+           <div
+             key={s.label}
+@@ -83,7 +83,7 @@ export default function TeacherDashboard() {
+       {/* دکمه‌ی ساخت دوره‌ی جدید */}
+       <button
+         onClick={() => navigate("/teacher/create")}
+-        className="w-[348px] mx-auto mt-[16px] h-[44px] rounded-full font-bold text-black text-[15px] flex items-center justify-center"
++        className="w-[90%] max-w-[348px] mx-auto mt-[16px] h-[44px] rounded-full font-bold text-black text-[15px] flex items-center justify-center"
+         style={{
+           display: "flex",
+           background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+@@ -96,7 +96,7 @@ export default function TeacherDashboard() {
+       {/* دکمه‌ی ساخت پکیج جدید */}
+       <button
+         onClick={() => navigate("/teacher/create-package")}
+-        className="w-[348px] mx-auto mt-[10px] h-[44px] rounded-full font-bold text-white text-[15px] flex items-center justify-center"
++        className="w-[90%] max-w-[348px] mx-auto mt-[10px] h-[44px] rounded-full font-bold text-white text-[15px] flex items-center justify-center"
+         style={{
+           display: "flex",
+           background: "#C90BBC",
+@@ -108,7 +108,7 @@ export default function TeacherDashboard() {
+ 
+       {/* عنوان لیست دوره‌ها */}
+       <h3
+-        className="w-[348px] mx-auto"
++        className="w-[90%] max-w-[348px] mx-auto"
+         style={{
+           marginTop: "28px",
+           marginBottom: "10px",
+@@ -121,18 +121,18 @@ export default function TeacherDashboard() {
+       </h3>
+ 
+       {loading && (
+-        <div className="w-[348px] mx-auto text-sm text-[#C90BBCC9]">
++        <div className="w-[90%] max-w-[348px] mx-auto text-sm text-[#C90BBCC9]">
+           در حال بارگذاری...
+         </div>
+       )}
+ 
+       {error && (
+-        <div className="w-[348px] mx-auto text-sm text-red-600">{error}</div>
++        <div className="w-[90%] max-w-[348px] mx-auto text-sm text-red-600">{error}</div>
+       )}
+ 
+       {!loading && !error && totalCourses === 0 && (
+         <div
+-          className="w-[348px] mx-auto rounded-[10px] text-center"
++          className="w-[90%] max-w-[348px] mx-auto rounded-[10px] text-center"
+           style={{
+             padding: "24px 12px",
+             backgroundColor: "#F5C6F0",
+@@ -145,7 +145,7 @@ export default function TeacherDashboard() {
+       )}
+ 
+       {!loading && !error && totalCourses > 0 && (
+-        <div className="w-[348px] mx-auto flex flex-col gap-2 mb-[16px]">
++        <div className="w-[90%] max-w-[348px] mx-auto flex flex-col gap-2 mb-[16px]">
+           {courses.map((c) => (
+             <div
+               key={c.id}
+diff --git a/frontend/src/Pages/teacher/createCourse.jsx b/frontend/src/Pages/teacher/createCourse.jsx
+index aea6c9d..41af333 100644
+--- a/frontend/src/Pages/teacher/createCourse.jsx
++++ b/frontend/src/Pages/teacher/createCourse.jsx
+@@ -1,6 +1,4 @@
+ import { useState } from "react";
+-import HeaderDash from "../../components/section/HeaderDash";
+-import BottomMenu from "../../components/common/BottomMenu";
+ import guguli from "../../assets/guguliVideo.svg";
+ import upload from "../../assets/upload.webp";
+ import pen from "../../assets/editPen.webp";
+@@ -12,14 +10,7 @@ const COURSE_TYPES = [
+   { value: "sample_questions", label: "نمونه سوال" },
+ ];
+ 
+-export default function CreateCourse({
+-  gotoDashboard,
+-  gotoComingSoon,
+-  gotoProfile,
+-}) {
+-  const headerHeight = 70;
+-  const bottomMenuHeight = 90;
+-
++export default function CreateCourse() {
+   // ---- فیلدهای فرم (دقیقا مطابق چیزی که create_course تو بک‌اند می‌خواد) ----
+   const [coverFile, setCoverFile] = useState(null);
+   const [coverPreview, setCoverPreview] = useState(null);
+@@ -109,49 +100,12 @@ export default function CreateCourse({
+   };
+ 
+   return (
+-    <div
+-      className="font-[byekan]"
+-      style={{
+-        width: "412px",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-        height: "100vh",
+-        overflow: "hidden",
+-        position: "relative",
+-      }}
+-    >
+-      {/* Header */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          top: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          height: headerHeight + "px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <HeaderDash />
+-      </div>
+-
+-      {/* Scrollable content */}
+-      <div
+-        style={{
+-          position: "absolute",
+-          top: headerHeight + "px",
+-          bottom: bottomMenuHeight + "px",
+-          overflowY: "auto",
+-          width: "100%",
+-        }}
+-      >
+-        <div style={{ direction: "rtl" }}>
++    <div className="font-[byekan]">
++      <div style={{ direction: "rtl" }}>
+           {/* ------------------ بخش کاور دوره ------------------ */}
+-          <div className="w-[348px] mx-auto mt-[1px]">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[1px]">
+             <div
+-              className="relative w-[348px] h-[172px] rounded-[8px] overflow-hidden"
++              className="relative w-[90%] max-w-[348px] h-[172px] rounded-[8px] overflow-hidden"
+               style={{ backgroundColor: "#080609A3" }}
+             >
+               {coverPreview && (
+@@ -170,7 +124,7 @@ export default function CreateCourse({
+ 
+             <label
+               htmlFor="cover-upload"
+-              className="w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
++              className="w-[90%] max-w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
+               style={{ direction: "rtl" }}
+             >
+               <img src={upload} alt="upload" />
+@@ -187,7 +141,7 @@ export default function CreateCourse({
+           </div>
+ 
+           {/* عنوان دوره */}
+-          <div className="w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
+             <img src={pen} alt="pen" />
+             <input
+               type="text"
+@@ -211,7 +165,7 @@ export default function CreateCourse({
+               توضیحات در مورد دوره:
+             </p>
+           </div>
+-          <div className="w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
+             <img src={pen} alt="pen" />
+             <textarea
+               className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[12px] font-[byekan] focus:outline-none"
+@@ -223,7 +177,7 @@ export default function CreateCourse({
+           </div>
+ 
+           {/* نوع دوره */}
+-          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+             <span>📌</span>
+             <span>نوع دوره:</span>
+             <select
+@@ -240,7 +194,7 @@ export default function CreateCourse({
+           </div>
+ 
+           {/* پایه تحصیلی */}
+-          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+             <span>🎓</span>
+             <span>پایه:</span>
+             <input
+@@ -253,7 +207,7 @@ export default function CreateCourse({
+           </div>
+ 
+           {/* درس */}
+-          <div className="w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-[#333] flex items-center gap-2">
+             <span>📚</span>
+             <span>درس:</span>
+             <input
+@@ -266,7 +220,7 @@ export default function CreateCourse({
+           </div>
+ 
+           {formError && (
+-            <div className="w-[348px] mx-auto mt-[12px] text-sm text-red-600">
++            <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-red-600">
+               {formError}
+             </div>
+           )}
+@@ -276,13 +230,13 @@ export default function CreateCourse({
+             <button
+               onClick={handleSaveCourse}
+               disabled={saving}
+-              className="w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
++              className="w-[90%] max-w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
+               style={{ display: "flex" }}
+             >
+               {saving ? "در حال ذخیره..." : "ذخیره دوره"}
+             </button>
+           ) : (
+-            <div className="w-[348px] mx-auto mt-[16px] text-sm text-green-700">
++            <div className="w-[90%] max-w-[348px] mx-auto mt-[16px] text-sm text-green-700">
+               دوره ذخیره شد ✅ حالا می‌تونی جلسات ویدیویی اضافه کنی.
+             </div>
+           )}
+@@ -302,7 +256,7 @@ export default function CreateCourse({
+ 
+           {/* لیست جلسات اضافه‌شده */}
+           {videos.length > 0 && (
+-            <div className="w-[348px] mx-auto mb-[10px] text-sm text-[#333]">
++            <div className="w-[90%] max-w-[348px] mx-auto mb-[10px] text-sm text-[#333]">
+               {videos.map((v) => (
+                 <div key={v.order} className="flex justify-between py-1 border-b border-[#eee]">
+                   <span>جلسه {v.order}</span>
+@@ -314,7 +268,7 @@ export default function CreateCourse({
+ 
+           {/* سطر اضافه کردن جلسه ویدیویی */}
+           <div
+-            className="w-[348px] mx-auto mt-[20px] flex items-start justify-start border border-[#080609] rounded-[8px] px-3 py-2 bg-[#E5A6E6]"
++            className="w-[90%] max-w-[348px] mx-auto mt-[20px] flex items-start justify-start border border-[#080609] rounded-[8px] px-3 py-2 bg-[#E5A6E6]"
+             style={{ direction: "rtl", opacity: courseId ? 1 : 0.5 }}
+           >
+             <span
+@@ -338,27 +292,5 @@ export default function CreateCourse({
+           />
+         </div>
+       </div>
+-
+-      {/* Bottom Menu */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          zIndex: 30,
+-          background: "#FEF9FE",
+-          height: bottomMenuHeight + "px",
+-        }}
+-      >
+-        <BottomMenu
+-          gotoDashboard={gotoDashboard}
+-          gotoComingSoon={gotoComingSoon}
+-          gotoProfile={gotoProfile}
+-        />
+-      </div>
+-    </div>
+   );
+ }
+\ No newline at end of file
+diff --git a/frontend/src/Pages/teacher/createPackage.jsx b/frontend/src/Pages/teacher/createPackage.jsx
+index 5619f6d..e34d4ed 100644
+--- a/frontend/src/Pages/teacher/createPackage.jsx
++++ b/frontend/src/Pages/teacher/createPackage.jsx
+@@ -1,7 +1,5 @@
+ import { useState, useEffect } from "react";
+ import { useNavigate } from "react-router-dom";
+-import HeaderDash from "../../components/section/HeaderDash";
+-import BottomMenu from "../../components/common/BottomMenu";
+ import guguli from "../../assets/guguliVideo.svg";
+ import upload from "../../assets/upload.webp";
+ import pen from "../../assets/editPen.webp";
+@@ -9,8 +7,6 @@ import api from "../../services/api";
+ 
+ export default function CreatePackage() {
+   const navigate = useNavigate();
+-  const headerHeight = 70;
+-  const bottomMenuHeight = 90;
+ 
+   const [coverFile, setCoverFile] = useState(null);
+   const [coverPreview, setCoverPreview] = useState(null);
+@@ -91,49 +87,12 @@ export default function CreatePackage() {
+   };
+ 
+   return (
+-    <div
+-      className="font-[byekan]"
+-      style={{
+-        width: "412px",
+-        margin: "0 auto",
+-        background: "#FEF9FE",
+-        height: "100vh",
+-        overflow: "hidden",
+-        position: "relative",
+-      }}
+-    >
+-      {/* Header */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          top: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          height: headerHeight + "px",
+-          background: "#FEF9FE",
+-          zIndex: 20,
+-        }}
+-      >
+-        <HeaderDash />
+-      </div>
+-
+-      {/* Scrollable content */}
+-      <div
+-        style={{
+-          position: "absolute",
+-          top: headerHeight + "px",
+-          bottom: bottomMenuHeight + "px",
+-          overflowY: "auto",
+-          width: "100%",
+-        }}
+-      >
+-        <div style={{ direction: "rtl" }}>
++    <div className="font-[byekan]">
++      <div style={{ direction: "rtl" }}>
+           {/* کاور پکیج */}
+-          <div className="w-[348px] mx-auto mt-[1px]">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[1px]">
+             <div
+-              className="relative w-[348px] h-[172px] rounded-[8px] overflow-hidden"
++              className="relative w-[90%] max-w-[348px] h-[172px] rounded-[8px] overflow-hidden"
+               style={{ backgroundColor: "#080609A3" }}
+             >
+               {coverPreview && (
+@@ -152,7 +111,7 @@ export default function CreatePackage() {
+ 
+             <label
+               htmlFor="cover-upload"
+-              className="w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
++              className="w-[90%] max-w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
+               style={{ direction: "rtl" }}
+             >
+               <img src={upload} alt="upload" />
+@@ -169,7 +128,7 @@ export default function CreatePackage() {
+           </div>
+ 
+           {/* عنوان پکیج */}
+-          <div className="w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
+             <img src={pen} alt="pen" />
+             <input
+               type="text"
+@@ -193,7 +152,7 @@ export default function CreatePackage() {
+               توضیحات در مورد پکیج:
+             </p>
+           </div>
+-          <div className="w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
++          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
+             <img src={pen} alt="pen" />
+             <textarea
+               className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[12px] font-[byekan] focus:outline-none"
+@@ -218,7 +177,7 @@ export default function CreatePackage() {
+               قیمت پکیج (تومان):
+             </p>
+           </div>
+-          <div className="w-[348px] mx-auto flex items-center rounded-[8px] px-2">
++          <div className="w-[90%] max-w-[348px] mx-auto flex items-center rounded-[8px] px-2">
+             <img src={pen} alt="pen" />
+             <input
+               type="number"
+@@ -248,20 +207,20 @@ export default function CreatePackage() {
+           </h3>
+ 
+           {loadingCourses && (
+-            <div className="w-[348px] mx-auto text-sm text-[#555]">
++            <div className="w-[90%] max-w-[348px] mx-auto text-sm text-[#555]">
+               در حال بارگذاری دوره‌های شما...
+             </div>
+           )}
+ 
+           {!loadingCourses && myCourses.length === 0 && (
+-            <div className="w-[348px] mx-auto text-sm text-[#555]">
++            <div className="w-[90%] max-w-[348px] mx-auto text-sm text-[#555]">
+               هنوز هیچ دوره‌ای نساختی. اول از داشبورد یه دوره بساز، بعد
+               می‌تونی توی پکیج بذاریش.
+             </div>
+           )}
+ 
+           {!loadingCourses && myCourses.length > 0 && (
+-            <div className="w-[348px] mx-auto mb-[10px]">
++            <div className="w-[90%] max-w-[348px] mx-auto mb-[10px]">
+               {myCourses.map((course) => (
+                 <label
+                   key={course.id}
+@@ -280,20 +239,20 @@ export default function CreatePackage() {
+           )}
+ 
+           {formError && (
+-            <div className="w-[348px] mx-auto mt-[12px] text-sm text-red-600">
++            <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-red-600">
+               {formError}
+             </div>
+           )}
+ 
+           {success ? (
+-            <div className="w-[348px] mx-auto mt-[16px] text-sm text-green-700">
++            <div className="w-[90%] max-w-[348px] mx-auto mt-[16px] text-sm text-green-700">
+               پکیج با موفقیت ساخته شد ✅
+             </div>
+           ) : (
+             <button
+               onClick={handleSavePackage}
+               disabled={saving}
+-              className="w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
++              className="w-[90%] max-w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
+               style={{ display: "flex" }}
+             >
+               {saving ? "در حال ذخیره..." : "ذخیره پکیج"}
+@@ -303,31 +262,13 @@ export default function CreatePackage() {
+           {success && (
+             <button
+               onClick={() => navigate("/teacher")}
+-              className="w-[348px] mx-auto mt-[12px] h-[40px] rounded-[8px] bg-[#C90BBC] text-white text-sm font-bold flex items-center justify-center"
++              className="w-[90%] max-w-[348px] mx-auto mt-[12px] h-[40px] rounded-[8px] bg-[#C90BBC] text-white text-sm font-bold flex items-center justify-center"
+               style={{ display: "flex" }}
+             >
+               بازگشت به داشبورد
+             </button>
+           )}
+         </div>
+-      </div>
+-
+-      {/* Bottom Menu */}
+-      <div
+-        style={{
+-          position: "fixed",
+-          bottom: 0,
+-          left: 0,
+-          right: 0,
+-          margin: "0 auto",
+-          width: "412px",
+-          zIndex: 30,
+-          background: "#FEF9FE",
+-          height: bottomMenuHeight + "px",
+-        }}
+-      >
+-        <BottomMenu />
+-      </div>
+     </div>
+   );
+ }
+diff --git a/frontend/src/components/common/CourseCard.jsx b/frontend/src/components/common/CourseCard.jsx
+index 8e67df7..a9cb2e6 100644
+--- a/frontend/src/components/common/CourseCard.jsx
++++ b/frontend/src/components/common/CourseCard.jsx
+@@ -10,13 +10,14 @@ export default function CourseCard({
+     <div
+       onClick={onClick} // کلیک روی کل کارت
+       style={{
+-        width: "348px",
++        width: "90%",
++        maxWidth: "348px",
+         height: "276px",
+         background: "#E5A6E6",
+         borderRadius: "48px",
+         display: "flex",
+         flexDirection: "column",
+-        margin: "-8px 32px 15px auto",
++        margin: "0 auto 15px auto",
+         overflow: "hidden",
+         cursor: "pointer",
+       }}
+diff --git a/frontend/src/components/common/PackageCard.jsx b/frontend/src/components/common/PackageCard.jsx
+index 2851fe8..8f5bf90 100644
+--- a/frontend/src/components/common/PackageCard.jsx
++++ b/frontend/src/components/common/PackageCard.jsx
+@@ -11,13 +11,14 @@ export default function PackageCard({
+     <div
+       onClick={onClick}
+       style={{
+-        width: "348px",
++        width: "90%",
++        maxWidth: "348px",
+         height: "276px",
+         background: "#E5A6E6",
+         borderRadius: "48px",
+         display: "flex",
+         flexDirection: "column",
+-        margin: "-8px 32px 15px auto",
++        margin: "0 auto 15px auto",
+         overflow: "hidden",
+         cursor: "pointer",
+       }}
+diff --git a/frontend/src/components/layout/AppShell.jsx b/frontend/src/components/layout/AppShell.jsx
+new file mode 100644
+index 0000000..4715fd1
+--- /dev/null
++++ b/frontend/src/components/layout/AppShell.jsx
+@@ -0,0 +1,61 @@
++import HeaderDash from "../section/HeaderDash";
++import BottomMenu from "../common/BottomMenu";
++
++/**
++ * پوسته‌ی مشترک همه‌ی صفحات داخلی (داشبورد، دوره‌ها، پکیج‌ها، پروفایل...).
++ *
++ * به‌جای اینکه هر صفحه خودش هدر/فوتر رو با position:fixed و محاسبه‌ی
++ * دستی ارتفاع (headerHeight + bottomMenuHeight) پیاده کنه — که هم تکراریه
++ * هم با هر تغییر اندازه‌ی صفحه راحت به‌هم می‌ریزه — این کامپوننت با یه
++ * flex column ساده مدیریتش می‌کنه: هدر و فوتر ارتفاع طبیعی خودشون رو
++ * می‌گیرن (flex-shrink-0)، محتوا هرچقدر فضای باقی‌مونده هست رو پر می‌کنه
++ * و خودش اسکرول می‌شه (flex-1 + overflow-y-auto).
++ *
++ * عرض هم به‌جای هاردکد 412px، `w-full max-w-[412px]` هست: رو گوشی‌های
++ * باریک‌تر از 412 (خیلی از اندرویدها 360-390 هستن) جمع می‌شه و اورفلو
++ * افقی نمی‌ده؛ رو صفحه‌ی بزرگ‌تر (دسکتاپ) هم از 412 بیشتر کش نمیاد و
++ * وسط صفحه می‌مونه.
++ *
++ * showHeader/showBottomMenu برای صفحاتی مثل ComingSoon یا خطاها که
++ * نمی‌خوان منوی پایین داشته باشن.
++ */
++export default function AppShell({
++  children,
++  showHeader = true,
++  showBottomMenu = true,
++  headerHeight = 70,
++  bottomMenuHeight = 90,
++}) {
++  return (
++    <div
++      className="font-[byekan] mx-auto w-full max-w-[412px] bg-[#FEF9FE]"
++      style={{
++        minHeight: "100dvh",
++        display: "flex",
++        flexDirection: "column",
++      }}
++    >
++      {showHeader && (
++        <div
++          className="relative w-full flex-shrink-0"
++          style={{ height: `${headerHeight}px` }}
++        >
++          <HeaderDash />
++        </div>
++      )}
++
++      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full">
++        {children}
++      </div>
++
++      {showBottomMenu && (
++        <div
++          className="w-full flex-shrink-0"
++          style={{ height: `${bottomMenuHeight}px` }}
++        >
++          <BottomMenu />
++        </div>
++      )}
++    </div>
++  );
++}
+diff --git a/frontend/src/components/section/BottomWave.jsx b/frontend/src/components/section/BottomWave.jsx
+deleted file mode 100644
+index ae15a51..0000000
+--- a/frontend/src/components/section/BottomWave.jsx
++++ /dev/null
+@@ -1,83 +0,0 @@
+-import { useState } from "react";
+-import { useNavigate, useLocation } from "react-router-dom";
+-
+-import ActiveHome from "../../assets/ActiveHome.svg";
+-import ActiveProfile from "../../assets/ActiveProfile.png";
+-import ActiveCourse from "../../assets/myCourses.svg";
+-import ActiveShop from "../../assets/ActiveShop.svg";
+-
+-import DeActiveHome from "../../assets/DeActiveHome.svg";
+-import DeActiveProfileCheck from "../../assets/DeActiveProfileCheck.svg";
+-import DeActiveShop from "../../assets/DeActiveShop.svg";
+-import DeActiveCourses from "../../assets/DeActiveCourses.svg";
+-
+-// این کامپوننت الان خودش با useNavigate مسیر رو عوض می‌کنه،
+-// دیگه نیازی به gotoDashboard/gotoComingSoon/gotoProfile از بیرون نیست.
+-export default function BottomMenu() {
+-  const navigate = useNavigate();
+-  const location = useLocation();
+-
+-  const menuItems = [
+-    {
+-      text: "خانه",
+-      icon: DeActiveHome,
+-      activeIcon: ActiveHome,
+-      size: 24,
+-      path: "/comingsoon",
+-    },
+-    {
+-      text: "دوره های من",
+-      icon: DeActiveCourses,
+-      activeIcon: ActiveCourse,
+-      size: 24,
+-      path: "/teacher",
+-    },
+-    {
+-      text: "فروشگاه",
+-      icon: DeActiveShop,
+-      activeIcon: ActiveShop,
+-      size: 20,
+-      path: "/comingsoon",
+-    },
+-    {
+-      text: "پروفایل",
+-      icon: DeActiveProfileCheck,
+-      activeIcon: ActiveProfile,
+-      size: 24,
+-      path: "/comingsoon",
+-    },
+-  ];
+-
+-  return (
+-    <div className="flex justify-center items-center h-full">
+-      <div className="w-[300px] flex justify-between items-end pb-2">
+-        {menuItems.map((item, i) => {
+-          const isActive = location.pathname === item.path;
+-
+-          return (
+-            <div
+-              key={i}
+-              onClick={() => navigate(item.path)}
+-              className="flex flex-col items-center cursor-pointer"
+-            >
+-              <img
+-                src={isActive ? item.activeIcon : item.icon}
+-                style={{ width: `${item.size}px` }}
+-                className="mt-1"
+-                alt={item.text}
+-              />
+-
+-              <p
+-                className={`text-[11px] mt-1 ${
+-                  isActive ? "text-[#00C0D9] font-bold" : "text-[#C90BBCC9]"
+-                }`}
+-              >
+-                {item.text}
+-              </p>
+-            </div>
+-          );
+-        })}
+-      </div>
+-    </div>
+-  );
+-}
+diff --git a/frontend/src/components/section/HeaderDash.jsx b/frontend/src/components/section/HeaderDash.jsx
+index 38d46b0..31bd80a 100644
+--- a/frontend/src/components/section/HeaderDash.jsx
++++ b/frontend/src/components/section/HeaderDash.jsx
+@@ -1,44 +1,22 @@
+ import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
+ import Bell from "../../assets/Bell.webp";
+ import cart from "../../assets/cart.svg";
++
++// قبلاً هر آیکون با left:"XXXpx" ثابت جاگذاری می‌شد که فقط رو عرض دقیق
++// 412px درست می‌ایستاد؛ رو گوشی‌های باریک‌تر آیکون‌ها از صفحه بیرون
++// می‌زدن. با flex + justify-between خودش رو هر عرضی جا می‌شه.
+ export default function HeaderDash() {
+   return (
+-    <div className="absolute w-full" style={{ top: "0px" }}>
+-      {/* لوگو */}
+-      <img
+-        src={LogoRiaziNovin}
+-        style={{
+-          width: "125px",
+-          height: "70px",
+-          position: "absolute",
+-          top: "4px",
+-          left: "147px",
+-        }}
+-      />
++    <div className="w-full h-full flex items-center justify-between px-4">
++      <img src={cart} alt="سبد خرید" style={{ width: "24px", height: "auto" }} />
+ 
+-      {/* آیکون زنگوله */}
+       <img
+-        src={Bell}
+-        style={{
+-          width: "32px",
+-          height: "36px",
+-          position: "absolute",
+-          top: "17px",
+-          left: "336px",
+-        }}
++        src={LogoRiaziNovin}
++        alt="ریاضی نوین"
++        style={{ width: "100px", height: "auto" }}
+       />
+ 
+-      {/* آیکون سبدخرید */}
+-      <img
+-        src={cart}
+-        style={{
+-          width: "27.33px",
+-          height: "21.29px",
+-          position: "absolute",
+-          top: "29px",
+-          left: "47px",
+-        }}
+-      />
++      <img src={Bell} alt="اعلان‌ها" style={{ width: "26px", height: "auto" }} />
+     </div>
+   );
+ }
+diff --git a/frontend/src/contexts/AuthContext.jsx b/frontend/src/contexts/AuthContext.jsx
+index c2b8e37..12cb1e6 100644
+--- a/frontend/src/contexts/AuthContext.jsx
++++ b/frontend/src/contexts/AuthContext.jsx
+@@ -115,6 +115,46 @@ export function AuthProvider({ children }) {
+     }
+   }
+ 
++  // credentials: { phone_email, otp, action, role, first_name?, last_name? }
++  async function verifyOtp(payload) {
++    setLoading(true);
++    try {
++      const res = await api.post("/verify-otp/", payload);
++
++      const token = res?.data?.tokens?.access;
++      if (!token) throw new Error("توکنی از سرور دریافت نشد");
++
++      localStorage.setItem("access_token", token);
++      const refreshToken = res?.data?.tokens?.refresh;
++      if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
++      setAuthToken(token);
++
++      const me = await api.get("/me/");
++      const profile = me.data;
++      setUser(profile);
++      const resolvedRole = profile?.role || res?.data?.role || null;
++      setRole(resolvedRole);
++      setIsAuthenticated(true);
++      localStorage.setItem(
++        "auth",
++        JSON.stringify({
++          isAuthenticated: true,
++          user: profile,
++          role: resolvedRole,
++        }),
++      );
++
++      const dest = ROLE_ROUTES[resolvedRole] || "/unauthorized";
++      navigate(dest, { replace: true });
++      return profile;
++    } catch (err) {
++      clearAuthState();
++      throw err;
++    } finally {
++      setLoading(false);
++    }
++  }
++
+   function logout() {
+     clearAuthState();
+     navigate("/login", { replace: true });
+@@ -137,6 +177,7 @@ export function AuthProvider({ children }) {
+     role,
+     loading,
+     login,
++    verifyOtp,
+     logout,
+     getCurrentUser,
+   };
+diff --git a/frontend/src/layout/StudentLayout.jsx b/frontend/src/layout/StudentLayout.jsx
+index 022441c..9ee2cb1 100644
+--- a/frontend/src/layout/StudentLayout.jsx
++++ b/frontend/src/layout/StudentLayout.jsx
+@@ -1,7 +1,10 @@
+ import { Outlet } from "react-router-dom";
++import AppShell from "../components/layout/AppShell";
+ 
+-// هر صفحه‌ی دانش‌آموز (StudentDash, StudentCourses, PackagesList, Profile, ...)
+-// خودش کامل HeaderDash + BottomMenu + عرض/ارتفاع صفحه رو مدیریت می‌کنه.
+ export default function StudentLayout() {
+-  return <Outlet />;
++  return (
++    <AppShell>
++      <Outlet />
++    </AppShell>
++  );
+ }
+diff --git a/frontend/src/layout/TeacherLayout.jsx b/frontend/src/layout/TeacherLayout.jsx
+index 46b9510..a870878 100644
+--- a/frontend/src/layout/TeacherLayout.jsx
++++ b/frontend/src/layout/TeacherLayout.jsx
+@@ -1,8 +1,10 @@
+ import { Outlet } from "react-router-dom";
++import AppShell from "../components/layout/AppShell";
+ 
+-// هر صفحه‌ی معلم (TeacherDash, createCourse, createPackage) خودش کامل
+-// HeaderDash + BottomMenu + عرض/ارتفاع صفحه رو مدیریت می‌کنه. این لایه
+-// اگه همون‌ها رو دوباره اینجا رندر کنه، هدر و منو دوبار روی هم میان.
+ export default function TeacherLayout() {
+-  return <Outlet />;
++  return (
++    <AppShell>
++      <Outlet />
++    </AppShell>
++  );
+ }
+diff --git a/frontend/src/routes/AppRoutes.jsx b/frontend/src/routes/AppRoutes.jsx
+index ac4d0a4..84647f5 100644
+--- a/frontend/src/routes/AppRoutes.jsx
++++ b/frontend/src/routes/AppRoutes.jsx
+@@ -6,7 +6,7 @@ import Login from "../Pages/auth/Login.jsx";
+ import Home from "../Pages/public/Home.jsx";
+ import OTP from "../Pages/auth/OTP.jsx";
+ import SignUp from "../Pages/auth/SignUp.jsx";
+-import PasswordIN from "../Pages/auth/PasswordIN.jsx";
++import PasswordIN from "../Pages/auth/passwordIN.jsx";
+ import VideoPage from "../Pages/public/VideoPage.jsx";
+ import ComingSoon from "../Pages/public/ComingSoon.jsx";
+ import Unauthorized from "../Pages/public/Unauthorized.jsx";

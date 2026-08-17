@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import HeaderDash from "../../components/section/HeaderDash";
-import BottomMenu from "../../components/common/BottomMenu";
+import AppShell from "../../components/layout/AppShell";
 
 const STATUS_CONTENT = {
   success: {
@@ -29,7 +28,6 @@ const STATUS_CONTENT = {
 export default function PaymentResult() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const headerHeight = 70;
 
   const status = searchParams.get("status") || "error";
   const packageId = searchParams.get("package");
@@ -46,36 +44,11 @@ export default function PaymentResult() {
   }, [navigate]);
 
   return (
-    <div
-      className="font-[BYekan]"
-      style={{
-        width: "412px",
-        overflow: "hidden",
-        position: "relative",
-        margin: "0 auto",
-        background: "#FEF9FE",
-        minHeight: "100vh",
-      }}
-    >
+    <AppShell>
       <div
         style={{
-          position: "fixed",
-          top: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "412px",
-          height: `${headerHeight}px`,
-          zIndex: 10,
-          background: "#FEF9FE",
-        }}
-      >
-        <HeaderDash />
-      </div>
-
-      <div
-        style={{
-          paddingTop: "120px",
-          paddingBottom: "110px",
+          paddingTop: "60px",
+          paddingBottom: "20px",
           direction: "rtl",
           textAlign: "center",
         }}
@@ -101,7 +74,16 @@ export default function PaymentResult() {
           </p>
         )}
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "280px", margin: "20px auto 0 auto" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            width: "90%",
+            maxWidth: "280px",
+            margin: "20px auto 0 auto",
+          }}
+        >
           {status === "success" && packageId && (
             <button
               onClick={() => {
@@ -159,20 +141,6 @@ export default function PaymentResult() {
           </button>
         </div>
       </div>
-
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "412px",
-          background: "#FEF9FE",
-          zIndex: 20,
-        }}
-      >
-        <BottomMenu />
-      </div>
-    </div>
+    </AppShell>
   );
 }

@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
 import Guy from "../../assets/Guy.webp";
 import TopWave from "../../components/section/TopWave.jsx";
-import BottomWave from "../../components/section/BottomWave.jsx";
 import ErrorBox from "../../components/common/ErrorBox.jsx";
 import { BACKEND_ORIGIN } from "../../config.js";
 import { useAuth } from "../../contexts/AuthContext.jsx";
@@ -77,8 +76,8 @@ export default function PasswordIN() {
       navigate("/otp", {
         state: {
           phone_email,
-          role: data.role,
-          data,
+          role: data.role || "student",
+          fromPage: "login",
         },
       });
     } catch (err) {
@@ -90,61 +89,50 @@ export default function PasswordIN() {
   };
 
   return (
-    <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden font-[BYekan] bg-[#FEF9FE]">
+    <div className="relative w-full max-w-[412px] mx-auto bg-[#FEF9FE] font-[BYekan]">
       <TopWave />
       {error && <ErrorBox message={error} onClose={() => setError(null)} />}
 
-      <img
-        src={LogoRiaziNovin}
-        alt="logo"
-        className="absolute left-[105px] top-[177px] w-[202px] h-[140px]"
-      />
+      <div className="flex flex-col items-center px-6 pb-10" dir="rtl">
+        <img src={LogoRiaziNovin} alt="logo" className="w-[150px] h-auto mt-2 mb-6" />
 
-      <h2 className="absolute left-[105px] top-[353px] w-[202px] h-[60px] text-[31px] font-bold text-[#080609] text-center leading-[100%]">
-        ورود با رمز عبور
-      </h2>
+        <h2 className="text-[24px] font-bold text-[#080609] text-center mb-6">
+          ورود با رمز عبور
+        </h2>
 
-      <div className="absolute left-[88px] top-[433px] w-[235px] h-[46px] flex items-center bg-[#F5C6F0] border-none rounded-[24px] px-3">
-        <input
-          type="password"
-          placeholder="رمز عبور"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
-          style={{ padding: "4px 10px" }}
-        />
-      </div>
+        <div className="w-full max-w-[235px] h-[46px] flex items-center bg-[#F5C6F0] border-none rounded-full px-3 mb-4">
+          <input
+            type="password"
+            placeholder="رمز عبور"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="flex-1 text-right text-[16px] font-[BYekan] bg-transparent border-none focus:outline-none"
+            style={{ padding: "4px 10px" }}
+          />
+        </div>
 
-      <button
-        onClick={handleLogin}
-        disabled={loading}
-        className="absolute left-[89px] top-[487px] w-[234px] h-[44px] rounded-[18224px] font-[BYekan] font-bold text-black text-[16px] leading-[100%] text-center"
-        style={{
-          direction: "rtl",
-          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
-          border: "none",
-        }}
-      >
-        {loading ? "در حال بررسی..." : "ورود"}
-      </button>
-      {/* لینک ورود با کد تایید > */}
-      <div className="absolute left-[240px] top-[569px] w-[130px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
+        <button
+          onClick={handleLogin}
+          disabled={loading}
+          className="w-full max-w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-black text-[16px] text-center mb-4"
+          style={{
+            direction: "rtl",
+            background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+            border: "none",
+          }}
+        >
+          {loading ? "در حال بررسی..." : "ورود"}
+        </button>
+
         <p
-          className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline"
+          className="text-right text-[#00C0D9] text-sm cursor-pointer hover:underline mb-6"
           style={{ direction: "rtl" }}
           onClick={handleGoToOTP}
         >
           ورود با کد تایید &gt;
         </p>
-      </div>
-      <img
-        src={Guy}
-        alt="Guy"
-        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] z-20 object-contain"
-      />
 
-      <div className="absolute top-[715px] bottom-0 left-0 w-full">
-        <BottomWave />
+        <img src={Guy} alt="Guy" className="w-[180px] h-auto object-contain" />
       </div>
     </div>
   );

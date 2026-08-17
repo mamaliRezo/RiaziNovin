@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderDash from "../../components/section/HeaderDash";
-import BottomMenu from "../../components/common/BottomMenu";
 import guguli from "../../assets/guguliVideo.svg";
 import upload from "../../assets/upload.webp";
 import pen from "../../assets/editPen.webp";
@@ -9,8 +7,6 @@ import api from "../../services/api";
 
 export default function CreatePackage() {
   const navigate = useNavigate();
-  const headerHeight = 70;
-  const bottomMenuHeight = 90;
 
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
@@ -91,49 +87,12 @@ export default function CreatePackage() {
   };
 
   return (
-    <div
-      className="font-[byekan]"
-      style={{
-        width: "412px",
-        margin: "0 auto",
-        background: "#FEF9FE",
-        height: "100vh",
-        overflow: "hidden",
-        position: "relative",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          height: headerHeight + "px",
-          background: "#FEF9FE",
-          zIndex: 20,
-        }}
-      >
-        <HeaderDash />
-      </div>
-
-      {/* Scrollable content */}
-      <div
-        style={{
-          position: "absolute",
-          top: headerHeight + "px",
-          bottom: bottomMenuHeight + "px",
-          overflowY: "auto",
-          width: "100%",
-        }}
-      >
-        <div style={{ direction: "rtl" }}>
+    <div className="font-[byekan]">
+      <div style={{ direction: "rtl" }}>
           {/* کاور پکیج */}
-          <div className="w-[348px] mx-auto mt-[1px]">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[1px]">
             <div
-              className="relative w-[348px] h-[172px] rounded-[8px] overflow-hidden"
+              className="relative w-[90%] max-w-[348px] h-[172px] rounded-[8px] overflow-hidden"
               style={{ backgroundColor: "#080609A3" }}
             >
               {coverPreview && (
@@ -152,7 +111,7 @@ export default function CreatePackage() {
 
             <label
               htmlFor="cover-upload"
-              className="w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
+              className="w-[90%] max-w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
               style={{ direction: "rtl" }}
             >
               <img src={upload} alt="upload" />
@@ -169,7 +128,7 @@ export default function CreatePackage() {
           </div>
 
           {/* عنوان پکیج */}
-          <div className="w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
             <img src={pen} alt="pen" />
             <input
               type="text"
@@ -193,7 +152,7 @@ export default function CreatePackage() {
               توضیحات در مورد پکیج:
             </p>
           </div>
-          <div className="w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
+          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
             <img src={pen} alt="pen" />
             <textarea
               className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[12px] font-[byekan] focus:outline-none"
@@ -218,7 +177,7 @@ export default function CreatePackage() {
               قیمت پکیج (تومان):
             </p>
           </div>
-          <div className="w-[348px] mx-auto flex items-center rounded-[8px] px-2">
+          <div className="w-[90%] max-w-[348px] mx-auto flex items-center rounded-[8px] px-2">
             <img src={pen} alt="pen" />
             <input
               type="number"
@@ -248,20 +207,20 @@ export default function CreatePackage() {
           </h3>
 
           {loadingCourses && (
-            <div className="w-[348px] mx-auto text-sm text-[#555]">
+            <div className="w-[90%] max-w-[348px] mx-auto text-sm text-[#555]">
               در حال بارگذاری دوره‌های شما...
             </div>
           )}
 
           {!loadingCourses && myCourses.length === 0 && (
-            <div className="w-[348px] mx-auto text-sm text-[#555]">
+            <div className="w-[90%] max-w-[348px] mx-auto text-sm text-[#555]">
               هنوز هیچ دوره‌ای نساختی. اول از داشبورد یه دوره بساز، بعد
               می‌تونی توی پکیج بذاریش.
             </div>
           )}
 
           {!loadingCourses && myCourses.length > 0 && (
-            <div className="w-[348px] mx-auto mb-[10px]">
+            <div className="w-[90%] max-w-[348px] mx-auto mb-[10px]">
               {myCourses.map((course) => (
                 <label
                   key={course.id}
@@ -280,20 +239,20 @@ export default function CreatePackage() {
           )}
 
           {formError && (
-            <div className="w-[348px] mx-auto mt-[12px] text-sm text-red-600">
+            <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-red-600">
               {formError}
             </div>
           )}
 
           {success ? (
-            <div className="w-[348px] mx-auto mt-[16px] text-sm text-green-700">
+            <div className="w-[90%] max-w-[348px] mx-auto mt-[16px] text-sm text-green-700">
               پکیج با موفقیت ساخته شد ✅
             </div>
           ) : (
             <button
               onClick={handleSavePackage}
               disabled={saving}
-              className="w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
+              className="w-[90%] max-w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
               style={{ display: "flex" }}
             >
               {saving ? "در حال ذخیره..." : "ذخیره پکیج"}
@@ -303,31 +262,13 @@ export default function CreatePackage() {
           {success && (
             <button
               onClick={() => navigate("/teacher")}
-              className="w-[348px] mx-auto mt-[12px] h-[40px] rounded-[8px] bg-[#C90BBC] text-white text-sm font-bold flex items-center justify-center"
+              className="w-[90%] max-w-[348px] mx-auto mt-[12px] h-[40px] rounded-[8px] bg-[#C90BBC] text-white text-sm font-bold flex items-center justify-center"
               style={{ display: "flex" }}
             >
               بازگشت به داشبورد
             </button>
           )}
         </div>
-      </div>
-
-      {/* Bottom Menu */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          zIndex: 30,
-          background: "#FEF9FE",
-          height: bottomMenuHeight + "px",
-        }}
-      >
-        <BottomMenu />
-      </div>
     </div>
   );
 }

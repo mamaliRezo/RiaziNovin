@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderDash from "../../components/section/HeaderDash";
-import BottomMenu from "../../components/common/BottomMenu";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../services/api";
 
@@ -12,8 +10,6 @@ import logOut from "../../assets/exit logo.svg";
 export default function Profile() {
   const navigate = useNavigate();
   const { role, logout } = useAuth();
-  const headerHeight = 70;
-  const bottomMenuHeight = 90;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -117,44 +113,9 @@ export default function Profile() {
   }
 
   return (
-    <div
-      className="font-[byekan]"
-      style={{
-        width: "412px",
-        margin: "0 auto",
-        background: "#FEF9FE",
-        height: "100vh",
-        overflow: "hidden",
-        position: "relative",
-      }}
-    >
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          height: headerHeight + "px",
-          background: "#FEF9FE",
-          zIndex: 20,
-        }}
-      >
-        <HeaderDash />
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          top: headerHeight + "px",
-          bottom: bottomMenuHeight + "px",
-          overflowY: "auto",
-          width: "100%",
-        }}
-      >
-        <div dir="rtl" style={{ padding: "16px" }}>
-          <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center gap-3">
+    <div className="font-[byekan]">
+      <div dir="rtl" style={{ padding: "16px" }}>
+        <div className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center gap-3">
             <img src={profile} alt="پروفایل" className="w-12 h-12" />
             <div className="flex-1">
               <p className="text-[14px] font-bold">پروفایل کاربری</p>
@@ -172,18 +133,18 @@ export default function Profile() {
           {!loading && (
             <>
               {message && (
-                <div className="w-[348px] mx-auto mb-3 text-[13px] text-green-700">
+                <div className="w-[90%] max-w-[348px] mx-auto mb-3 text-[13px] text-green-700">
                   {message}
                 </div>
               )}
               {error && (
-                <div className="w-[348px] mx-auto mb-3 text-[13px] text-red-600">
+                <div className="w-[90%] max-w-[348px] mx-auto mb-3 text-[13px] text-red-600">
                   {error}
                 </div>
               )}
 
               {/* رمز عبور */}
-              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+              <div className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
                 <p className="text-[13px] font-bold mb-2">رمز عبور</p>
                 {!showPasswordForm ? (
                   <button
@@ -224,7 +185,7 @@ export default function Profile() {
               </div>
 
               {/* اطلاعات تکمیلی */}
-              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+              <div className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
                 <p className="text-[13px] font-bold mb-1">اطلاعات تکمیلی</p>
                 <p className="text-[11px] text-[#666] mb-3 leading-[1.8]">
                   برای تکمیل اطلاعات پروفایل خود، لطفا کد ملی و تاریخ تولد
@@ -270,7 +231,7 @@ export default function Profile() {
               </div>
 
               {/* اطلاعات تحصیلی */}
-              <div className="rounded-[8px] w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
+              <div className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-4 shadow-[4px_4px_12px_rgba(0,0,0,0.15)]">
                 <p className="text-[13px] font-bold mb-1">اطلاعات تحصیلی</p>
                 <p className="text-[11px] text-[#666] mb-3 leading-[1.8]">
                   لطفا قبل از ادامه‌ی کار با پنل کاربری‌تان، این اطلاعات را
@@ -327,7 +288,7 @@ export default function Profile() {
               {/* خروج */}
               <div
                 onClick={handleLogout}
-                className="rounded-[8px] w-[348px] mx-auto p-4 mb-6 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 cursor-pointer"
+                className="rounded-[8px] w-[90%] max-w-[348px] mx-auto p-4 mb-6 shadow-[4px_4px_12px_rgba(0,0,0,0.15)] flex items-center justify-center gap-2 cursor-pointer"
               >
                 <img src={logOut} alt="خروج" className="w-5 h-5" />
                 <p className="text-[13px] font-bold">خروج از حساب کاربری</p>
@@ -335,23 +296,6 @@ export default function Profile() {
             </>
           )}
         </div>
-      </div>
-
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          margin: "0 auto",
-          width: "412px",
-          zIndex: 30,
-          background: "#FEF9FE",
-          height: bottomMenuHeight + "px",
-        }}
-      >
-        <BottomMenu />
-      </div>
     </div>
   );
 }

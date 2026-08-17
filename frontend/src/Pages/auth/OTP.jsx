@@ -1,18 +1,25 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
 import Guy from "../../assets/Guy.webp";
 import TopWave from "../../components/section/TopWave.jsx";
-import BottomWave from "../../components/section/BottomWave.jsx";
 import ErrorBox from "../../components/common/ErrorBox.jsx";
 import { BACKEND_ORIGIN } from "../../config.js";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
-export default function OTP({
-  phone_email,
-  role,
-  onVerified,
-  fromPage,
-  onToPassword,
-}) {
+export default function OTP() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { verifyOtp } = useAuth();
+
+  // اینا همه از صفحه‌ی قبل (Login یا SignUp) با navigate state میان،
+  // نه به‌عنوان prop مستقیم (چون AppRoutes بدون prop رندرش می‌کنه)
+  const phone_email = location.state?.phone_email || "";
+  const role = location.state?.role || "student";
+  const fromPage = location.state?.fromPage || "login";
+  const first_name = location.state?.first_name || "";
+  const last_name = location.state?.last_name || "";
+
   const [timeLeft, setTimeLeft] = useState(120);
   const [otpValues, setOtpValues] = useState(["", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
@@ -38,39 +45,28 @@ export default function OTP({
   async function submitOTP() {
     if (!otpComplete) return;
 
+    if (!phone_email) {
+      setError("شماره تلفن مشخص نیست، لطفا از اول شروع کنید");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch(`${BACKEND}/api/verify-otp/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone_email,
-          otp: otpCode,
-          action: fromPage === "signup" ? "signup" : "login",
-          role: role || "student",
-        }),
+      await verifyOtp({
+        phone_email,
+        otp: otpCode,
+        action: fromPage === "signup" ? "signup" : "login",
+        role,
+        first_name,
+        last_name,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message || "خطا");
-        setLoading(false);
-        return;
-      }
-
-      if (data.access) {
-        localStorage.setItem("access_token", data.access);
-      }
-      if (data.refresh) {
-        localStorage.setItem("refresh_token", data.refresh);
-      }
-
-      onVerified();
-    } catch {
-      setError("مشکل در اتصال به سرور");
+      // verifyOtp خودش بر اساس نقش به داشبورد درست هدایت می‌کنه
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || "کد اشتباه یا منقضی شده است"
+      );
     }
 
     setLoading(false);
@@ -85,121 +81,108 @@ export default function OTP({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         phone_email,
-        role: role || "student",
+        role,
       }),
     });
   }
 
   return (
-    <div className="relative w-[412px] h-[917px] mx-auto overflow-hidden bg-[#FEF9FE] font-[BYekan]">
-      {error && <ErrorBox message={error} onClose={() => setError(null)} />}
+    <div className="relative w-full max-w-[412px] mx-auto bg-[#FEF9FE] font-[BYekan]">
       <TopWave />
-      <img
-        src={LogoRiaziNovin}
-        alt="logo"
-        className="absolute left-[105px] top-[177px] w-[202px] h-[140px]"
-      />
+      {error && <ErrorBox message={error} onClose={() => setError(null)} />}
 
-      <h2 className="absolute left-[32px] top-[313px] w-[348px] text-center font-bold text-[26px] text-[#080609]">
-        کد فعال سازی را وارد کنید
-      </h2>
+      <div className="flex flex-col items-center px-6 pb-10" dir="rtl">
+        <img src={LogoRiaziNovin} alt="logo" className="w-[150px] h-auto mt-2 mb-6" />
 
-      {fromPage === "login" && (
-        <p className="absolute left-[32px] top-[377px] w-[347px] text-center text-[#545454] text-[16px]">
-          کد تایید ارسال شده را وارد کنید
-        </p>
-      )}
+        <h2 className="text-center font-bold text-[22px] text-[#080609] mb-2">
+          کد فعال سازی را وارد کنید
+        </h2>
 
-      {fromPage === "signup" && (
-        <p className="absolute left-[32px] top-[377px] w-[347px] text-center text-[#545454] text-[16px]">
-          برای ثبت نام کد تایید را وارد کنید
-        </p>
-      )}
+        {fromPage === "login" && (
+          <p className="text-center text-[#545454] text-[14px] mb-6">
+            کد تایید ارسال شده را وارد کنید
+          </p>
+        )}
 
-      <div className="absolute left-[32px] top-[433px] w-[348px] flex justify-between">
-        {otpValues.map((val, idx) => (
-          <input
-            key={idx}
-            id={`otp-${idx}`}
-            maxLength={1}
-            value={val}
-            type="text"
-            onChange={(e) => {
-              const v = e.target.value.replace(/[^0-9]/g, "");
-              const newOtp = [...otpValues];
+        {fromPage === "signup" && (
+          <p className="text-center text-[#545454] text-[14px] mb-6">
+            برای ثبت نام کد تایید را وارد کنید
+          </p>
+        )}
 
-              if (v) {
-                newOtp[idx] = v[0];
-                setOtpValues(newOtp);
-                if (idx < 4) document.getElementById(`otp-${idx + 1}`)?.focus();
-              } else {
-                newOtp[idx] = "";
-                setOtpValues(newOtp);
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Backspace" && !otpValues[idx] && idx > 0) {
+        <div className="w-full max-w-[348px] flex justify-between mb-4" dir="ltr">
+          {otpValues.map((val, idx) => (
+            <input
+              key={idx}
+              id={`otp-${idx}`}
+              maxLength={1}
+              value={val}
+              type="text"
+              onChange={(e) => {
+                const v = e.target.value.replace(/[^0-9]/g, "");
                 const newOtp = [...otpValues];
-                newOtp[idx - 1] = "";
-                setOtpValues(newOtp);
-                document.getElementById(`otp-${idx - 1}`)?.focus();
-              }
-            }}
-            style={{ border: "none" }}
-            className="w-[57px] h-[52px] text-center text-[24px] bg-[#F5C6F0] rounded-[19px] focus:outline-none"
-          />
-        ))}
-      </div>
 
-      {timeLeft > 0 ? (
-        <div className="absolute left-[105px] top-[497px] w-[202px] text-center text-[13px] text-[#2C0528]">
-          تا دریافت مجدد کد {formatTime(timeLeft)}
+                if (v) {
+                  newOtp[idx] = v[0];
+                  setOtpValues(newOtp);
+                  if (idx < 4) document.getElementById(`otp-${idx + 1}`)?.focus();
+                } else {
+                  newOtp[idx] = "";
+                  setOtpValues(newOtp);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Backspace" && !otpValues[idx] && idx > 0) {
+                  const newOtp = [...otpValues];
+                  newOtp[idx - 1] = "";
+                  setOtpValues(newOtp);
+                  document.getElementById(`otp-${idx - 1}`)?.focus();
+                }
+              }}
+              style={{ border: "none" }}
+              className="w-[15%] max-w-[57px] h-[52px] text-center text-[22px] bg-[#F5C6F0] rounded-[19px] focus:outline-none"
+            />
+          ))}
         </div>
-      ) : (
-        <div
-          onClick={resendOTP}
-          className="absolute left-[105px] top-[497px] w-[202px] text-center text-[#00C0D9] text-[13px] cursor-pointer hover:underline"
+
+        {timeLeft > 0 ? (
+          <div className="text-center text-[13px] text-[#2C0528] mb-6">
+            تا دریافت مجدد کد {formatTime(timeLeft)}
+          </div>
+        ) : (
+          <div
+            onClick={resendOTP}
+            className="text-center text-[#00C0D9] text-[13px] cursor-pointer hover:underline mb-6"
+          >
+            ارسال مجدد کد
+          </div>
+        )}
+
+        <button
+          onClick={submitOTP}
+          disabled={!otpComplete || loading}
+          className="w-full max-w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-[16px] mb-4"
+          style={{
+            direction: "rtl",
+            background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+            border: "none",
+            opacity: !otpComplete ? 0.5 : 1,
+            cursor: !otpComplete ? "not-allowed" : "pointer",
+          }}
         >
-          ارسال مجدد کد
-        </div>
-      )}
+          {loading ? "در حال بررسی..." : "ورود"}
+        </button>
 
-      <button
-        onClick={submitOTP}
-        disabled={!otpComplete || loading}
-        className="absolute left-[89px] top-[529px] w-[234px] h-[44px] rounded-full font-[BYekan] font-bold text-[16px]"
-        style={{
-          direction: "rtl",
-          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
-          border: "none",
-          opacity: !otpComplete ? 0.5 : 1,
-          cursor: !otpComplete ? "not-allowed" : "pointer",
-        }}
-      >
-        {loading ? "در حال بررسی..." : "ورود"}
-      </button>
-
-      {/* لینک  شرطی  > */}
-      <div className="absolute left-[250px] top-[585px] w-[130px] h-[20px] text-[13px] leading-[100%] cursor-pointer">
         {fromPage === "login" && (
           <p
-            className="text-right text-[#00C0D9] text-sm cursor-pointer mt-1 hover:underline"
-            style={{ direction: "rtl" }}
-            onClick={onToPassword}
+            className="text-[#00C0D9] text-sm cursor-pointer hover:underline mb-6"
+            onClick={() => navigate("/password", { state: { phone_email, role } })}
           >
             ورود با رمز عبور &gt;
           </p>
         )}
-      </div>
 
-      <img
-        src={Guy}
-        alt="Guy"
-        className="absolute left-[105px] top-[619px] w-[275px] h-[275px] z-20"
-      />
-
-      <div className="absolute top-[715px] bottom-0 left-0 w-full">
-        <BottomWave />
+        <img src={Guy} alt="Guy" className="w-[180px] h-auto object-contain" />
       </div>
     </div>
   );

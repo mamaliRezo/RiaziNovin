@@ -1,44 +1,22 @@
 import LogoRiaziNovin from "../../assets/logoRiazinovin.webp";
 import Bell from "../../assets/Bell.webp";
 import cart from "../../assets/cart.svg";
+
+// قبلاً هر آیکون با left:"XXXpx" ثابت جاگذاری می‌شد که فقط رو عرض دقیق
+// 412px درست می‌ایستاد؛ رو گوشی‌های باریک‌تر آیکون‌ها از صفحه بیرون
+// می‌زدن. با flex + justify-between خودش رو هر عرضی جا می‌شه.
 export default function HeaderDash() {
   return (
-    <div className="absolute w-full" style={{ top: "0px" }}>
-      {/* لوگو */}
+    <div className="w-full h-full flex items-center justify-between px-4">
+      <img src={cart} alt="سبد خرید" style={{ width: "24px", height: "auto" }} />
+
       <img
         src={LogoRiaziNovin}
-        style={{
-          width: "125px",
-          height: "70px",
-          position: "absolute",
-          top: "4px",
-          left: "147px",
-        }}
+        alt="ریاضی نوین"
+        style={{ width: "100px", height: "auto" }}
       />
 
-      {/* آیکون زنگوله */}
-      <img
-        src={Bell}
-        style={{
-          width: "32px",
-          height: "36px",
-          position: "absolute",
-          top: "17px",
-          left: "336px",
-        }}
-      />
-
-      {/* آیکون سبدخرید */}
-      <img
-        src={cart}
-        style={{
-          width: "27.33px",
-          height: "21.29px",
-          position: "absolute",
-          top: "29px",
-          left: "47px",
-        }}
-      />
+      <img src={Bell} alt="اعلان‌ها" style={{ width: "26px", height: "auto" }} />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import { resolveMediaUrl } from "../../utils/resolveMedia";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
+import PackageCard from "../../components/common/PackageCard.jsx";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import ROLE_ROUTES from "../../config/roleRoutes";
 
@@ -130,17 +131,25 @@ export default function Home() {
           چرا <span style={{ color: "#C90BBC" }}>ریاضی نوین</span>؟
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {VALUE_PROPS.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-[24px] p-6 text-center"
-              style={{ background: "#E5A6E6" }}
-            >
-              <img src={item.icon} alt="" className="w-14 h-14 mx-auto mb-4" />
-              <h3 className="font-bold text-[16px] mb-2">{item.title}</h3>
-              <p className="text-[13px] leading-[1.8] text-[#333]">{item.desc}</p>
-            </div>
-          ))}
+          {VALUE_PROPS.map((item, i) => {
+            const accents = [
+              { bg: "#DDF3EC", text: "#0F6E56" },
+              { bg: "#FFF3D6", text: "#8A5A00" },
+              { bg: "#EDEAFB", text: "#3C3489" },
+            ];
+            const a = accents[i % accents.length];
+            return (
+              <div
+                key={item.title}
+                className="rounded-[24px] p-6 text-center"
+                style={{ background: a.bg }}
+              >
+                <img src={item.icon} alt="" className="w-14 h-14 mx-auto mb-4" />
+                <h3 className="font-bold text-[16px] mb-2" style={{ color: a.text }}>{item.title}</h3>
+                <p className="text-[13px] leading-[1.8]" style={{ color: a.text, opacity: 0.85 }}>{item.desc}</p>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -189,33 +198,17 @@ export default function Home() {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {packages.map((pkg) => (
-            <div
+          {packages.map((pkg, i) => (
+            <PackageCard
               key={pkg.id}
+              index={i}
+              img={resolveMediaUrl(pkg.thumbnail) || goldenPackage}
+              title={pkg.title}
+              teacherName={pkg.teacher_name}
+              coursesCount={pkg.courses_count}
+              price={pkg.price}
               onClick={() => navigate("/login")}
-              className="rounded-[20px] overflow-hidden cursor-pointer"
-              style={{ background: "#E5A6E6" }}
-            >
-              <img
-                src={resolveMediaUrl(pkg.thumbnail) || goldenPackage}
-                alt={pkg.title}
-                className="w-full h-[140px] object-cover"
-              />
-              <div className="p-4">
-                <h3 className="font-bold text-[15px] mb-1">{pkg.title}</h3>
-                <p className="text-[12px] text-[#333] mb-3">
-                  مدرس: {pkg.teacher_name} — {pkg.courses_count} دوره
-                </p>
-                <div
-                  className="font-bold text-[15px]"
-                  style={{ color: pkg.price > 0 ? "#C90BBC" : "#0a8f3c" }}
-                >
-                  {pkg.price > 0
-                    ? `${Number(pkg.price).toLocaleString("fa-IR")} تومان`
-                    : "رایگان"}
-                </div>
-              </div>
-            </div>
+            />
           ))}
         </div>
       </section>

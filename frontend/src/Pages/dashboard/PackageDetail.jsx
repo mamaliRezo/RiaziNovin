@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import HeaderDash from "../../components/section/HeaderDash";
-import BottomMenu from "../../components/common/BottomMenu";
 import ErrorBox from "../../components/common/ErrorBox";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
@@ -13,7 +11,6 @@ import { resolveMediaUrl } from "../../utils/resolveMedia";
 export default function PackageDetail() {
   const { packageId } = useParams();
   const navigate = useNavigate();
-  const headerHeight = 70;
 
   const [pkg, setPkg] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -85,37 +82,13 @@ export default function PackageDetail() {
   }
 
   return (
-    <div
-      className="font-[BYekan]"
-      style={{
-        width: "412px",
-        overflow: "hidden",
-        position: "relative",
-        margin: "0 auto",
-        background: "#FEF9FE",
-      }}
-    >
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "412px",
-          height: `${headerHeight}px`,
-          zIndex: 10,
-          background: "#FEF9FE",
-        }}
-      >
-        <HeaderDash />
-      </div>
-
+    <div className="font-[BYekan]">
       {error && <ErrorBox message={error} onClose={() => setError("")} />}
 
       <div
         style={{
-          paddingTop: "80px",
-          paddingBottom: "110px",
+          paddingTop: "16px",
+          paddingBottom: "16px",
           direction: "rtl",
           textAlign: "right",
         }}
@@ -231,7 +204,8 @@ export default function PackageDetail() {
 
             <div
               style={{
-                width: "348px",
+                width: "90%",
+                maxWidth: "348px",
                 height: "1px",
                 background: "#080609",
                 margin: "0 auto 16px auto",
@@ -273,23 +247,9 @@ export default function PackageDetail() {
         )}
       </div>
 
-      <div className="relative top-[-20px]">
+      <div className="w-full mt-2">
         <ConsultationForm />
         <ContactFooter />
-      </div>
-
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "412px",
-          background: "#FEF9FE",
-          zIndex: 20,
-        }}
-      >
-        <BottomMenu />
       </div>
     </div>
   );

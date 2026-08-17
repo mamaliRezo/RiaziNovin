@@ -1,60 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useNavItems } from "../../hooks/useNavItems";
 
-import ActiveHome from "../../assets/ActiveHome.svg";
-import ActiveProfile from "../../assets/ActiveProfile.png";
-import ActiveCourse from "../../assets/myCourses.svg";
-import ActiveShop from "../../assets/ActiveShop.svg";
-
-import DeActiveHome from "../../assets/DeActiveHome.svg";
-import DeActiveProfileCheck from "../../assets/DeActiveProfileCheck.svg";
-import DeActiveShop from "../../assets/DeActiveShop.svg";
-import DeActiveCourses from "../../assets/DeActiveCourses.svg";
-
-// این کامپوننت خودکفاست: خودش با useNavigate جابه‌جا می‌شه و دیگه
-// به gotoDashboard/gotoComingSoon/gotoProfile ای که هیچ‌جا پاس داده نمی‌شدن نیاز نداره.
+// این کامپوننت فقط رو موبایل/تبلت دیده می‌شه (md:hidden از AppShell میاد)؛
+// رو دسکتاپ به‌جاش Sidebar.jsx هست.
 export default function BottomMenu() {
   const navigate = useNavigate();
   const location = useLocation();
-  const auth = useAuth();
-  const role = auth?.role;
-
-  const homePath = role === "teacher" ? "/teacher" : "/student";
-  const coursesPath = role === "teacher" ? "/teacher" : "/student/courses";
-  const profilePath = role === "teacher" ? "/teacher/profile" : "/student/profile";
-  // فروشگاه یعنی مرور/خرید پکیج‌ها؛ برای معلم فعلاً همون داشبورده (از اونجا پکیج می‌سازه)
-  const shopPath = role === "teacher" ? "/teacher" : "/student/packages";
-
-  const menuItems = [
-    {
-      text: "خانه",
-      icon: DeActiveHome,
-      activeIcon: ActiveHome,
-      size: 24,
-      path: homePath,
-    },
-    {
-      text: "دوره های من",
-      icon: DeActiveCourses,
-      activeIcon: ActiveCourse,
-      size: 24,
-      path: coursesPath,
-    },
-    {
-      text: "فروشگاه",
-      icon: DeActiveShop,
-      activeIcon: ActiveShop,
-      size: 20,
-      path: shopPath,
-    },
-    {
-      text: "پروفایل",
-      icon: DeActiveProfileCheck,
-      activeIcon: ActiveProfile,
-      size: 24,
-      path: profilePath,
-    },
-  ];
+  const menuItems = useNavItems();
 
   return (
     <div className="flex justify-center items-center h-full">

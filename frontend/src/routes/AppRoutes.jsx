@@ -6,7 +6,7 @@ import Login from "../Pages/auth/Login.jsx";
 import Home from "../Pages/public/Home.jsx";
 import OTP from "../Pages/auth/OTP.jsx";
 import SignUp from "../Pages/auth/SignUp.jsx";
-import PasswordIN from "../Pages/auth/PasswordIN.jsx";
+import PasswordIN from "../Pages/auth/passwordIN.jsx";
 import VideoPage from "../Pages/public/VideoPage.jsx";
 import ComingSoon from "../Pages/public/ComingSoon.jsx";
 import Unauthorized from "../Pages/public/Unauthorized.jsx";
