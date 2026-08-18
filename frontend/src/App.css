@@ -1,46 +1,53 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+html {
+  scroll-behavior: smooth;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+body {
+  margin: 0;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(201, 11, 188, 0.12),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(0, 192, 217, 0.12),
+      transparent 25%
+    ),
+    #fef9fe;
+  color: #080609;
+  font-family: "BYekan", "Tahoma", sans-serif;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+* {
+  box-sizing: border-box;
 }
 
-.card {
-  padding: 2em;
+img {
+  display: block;
+  max-width: 100%;
 }
 
-.read-the-docs {
-  color: #888;
+button,
+a {
+  transition: all 0.2s ease;
 }
+
+button:hover,
+a:hover {
+  transform: translateY(-1px);
+}
+
 .search-box::placeholder {
-  color: #C90BBCC9; 
+  color: #c90bbcc9;
 }
 
+::selection {
+  background: rgba(201, 11, 188, 0.18);
+}
