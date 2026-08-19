@@ -114,7 +114,8 @@ export default function Home() {
             </button>
             <button
               onClick={() => navigate("/signup")}
-              className="px-3 py-1.5 rounded-full bg-[#C90BBC] text-white text-[11px] font-bold shadow-[0_8px_16px_rgba(201,11,188,0.16)] md:px-4 md:py-2 md:text-[12px]"
+              className="px-3 py-1.5 rounded-full text-white text-[11px] font-bold shadow-[0_8px_16px_rgba(201,11,188,0.16)] md:px-4 md:py-2 md:text-[12px]"
+              style={{ background: "linear-gradient(135deg, #C90BBC 0%, #E55CCB 100%)" }}
             >
               ثبت‌نام
             </button>

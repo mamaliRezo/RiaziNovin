@@ -27,3 +27,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Patch files (delivered separately, not part of the repo)
+*.patch

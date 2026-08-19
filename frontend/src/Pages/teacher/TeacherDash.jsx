@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
+import { CARD_THEMES } from "../../styles/theme.js";
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
@@ -14,14 +15,11 @@ export default function TeacherDashboard() {
       setLoading(true);
       try {
         const res = await api.get("/my-created-courses/");
-        if (!mounted) return;
-        setCourses(res.data?.data || []);
+        if (mounted) setCourses(res.data?.data || []);
       } catch (e) {
-        if (!mounted) return;
-        setError(e?.response?.data?.message || "خطا در دریافت اطلاعات داشبورد");
+        if (mounted) setError(e?.response?.data?.message || "خطا در دریافت اطلاعات داشبورد");
       } finally {
-        if (!mounted) return;
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
     load();
@@ -36,9 +34,9 @@ export default function TeacherDashboard() {
   const totalVideos = courses.reduce((sum, c) => sum + (c.video_count || 0), 0);
 
   const stats = [
-    { label: "دوره‌ها", value: totalCourses, bg: "#DDF3EC", text: "#0F6E56" },
-    { label: "دانش‌آموزان", value: totalStudents, bg: "#EDEAFB", text: "#3C3489" },
-    { label: "جلسات", value: totalVideos, bg: "#FFF3D6", text: "#8A5A00" },
+    { label: "دوره‌ها", value: totalCourses, theme: CARD_THEMES[0] },
+    { label: "دانش‌آموزان", value: totalStudents, theme: CARD_THEMES[1] },
+    { label: "جلسات", value: totalVideos, theme: CARD_THEMES[3] },
   ];
 
   return (
@@ -66,16 +64,16 @@ export default function TeacherDashboard() {
             key={s.label}
             className="flex-1 rounded-[16px] flex flex-col items-center justify-center"
             style={{
-              backgroundColor: s.bg,
+              backgroundColor: s.theme.soft,
               height: "80px",
             }}
           >
             <div
-              style={{ fontSize: "22px", fontWeight: "bold", color: s.text }}
+              style={{ fontSize: "22px", fontWeight: "bold", color: s.theme.text }}
             >
               {loading ? "…" : s.value}
             </div>
-            <div style={{ fontSize: "12px", color: s.text, opacity: 0.85 }}>{s.label}</div>
+            <div style={{ fontSize: "12px", color: s.theme.text, opacity: 0.85 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -83,10 +81,11 @@ export default function TeacherDashboard() {
       {/* دکمه‌ی ساخت دوره‌ی جدید */}
       <button
         onClick={() => navigate("/teacher/create")}
-        className="w-[90%] max-w-[348px] mx-auto mt-[16px] h-[44px] rounded-full font-bold text-black text-[15px] flex items-center justify-center"
+        className="w-[90%] max-w-[348px] mx-auto mt-[16px] h-[46px] rounded-full font-bold text-black text-[15px] flex items-center justify-center"
         style={{
           display: "flex",
-          background: "linear-gradient(154.2deg, #FFCA28 18.04%, #997918 86%)",
+          background: "linear-gradient(135deg, #FFD668 0%, #F5941F 100%)",
+          boxShadow: "0 10px 20px rgba(245,148,31,0.3)",
           border: "none",
         }}
       >
@@ -96,10 +95,11 @@ export default function TeacherDashboard() {
       {/* دکمه‌ی ساخت پکیج جدید */}
       <button
         onClick={() => navigate("/teacher/create-package")}
-        className="w-[90%] max-w-[348px] mx-auto mt-[10px] h-[44px] rounded-full font-bold text-white text-[15px] flex items-center justify-center"
+        className="w-[90%] max-w-[348px] mx-auto mt-[10px] h-[46px] rounded-full font-bold text-white text-[15px] flex items-center justify-center"
         style={{
           display: "flex",
-          background: "#C90BBC",
+          background: "linear-gradient(135deg, #E356D6 0%, #8E0786 100%)",
+          boxShadow: "0 10px 20px rgba(142,7,134,0.3)",
           border: "none",
         }}
       >

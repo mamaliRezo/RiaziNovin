@@ -7,6 +7,7 @@ import NoteSymbol from "../../assets/NoteSymbol.webp";
 import GoldenPackage from "../../assets/GoldenPackage.webp";
 import ConsultationForm from "../../components/common/ConsultationForm.jsx";
 import ContactFooter from "../../components/section/ContactFooter.jsx";
+import { CARD_THEMES, GRADIENTS } from "../../styles/theme.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getStudentDashboard } from "../../services/api";
@@ -39,9 +40,9 @@ function DashboardSummary() {
   if (error) return <div className="text-center text-[13px] text-red-500">{error}</div>;
 
   const stats = [
-    { label: "امتیاز", value: "—", bg: "#FFF3D6", text: "#8A5A00" },
-    { label: "تمرین‌ها", value: "—", bg: "#DDF3EC", text: "#0F6E56" },
-    { label: "دوره‌ها", value: coursesCount, bg: "#EDEAFB", text: "#3C3489" },
+    { label: "امتیاز", value: "—", theme: CARD_THEMES[3] },
+    { label: "تمرین‌ها", value: "—", theme: CARD_THEMES[2] },
+    { label: "دوره‌ها", value: coursesCount, theme: CARD_THEMES[0] },
   ];
 
   return (
@@ -50,12 +51,12 @@ function DashboardSummary() {
         <div
           key={s.label}
           className="rounded-[16px] py-3 text-center"
-          style={{ background: s.bg }}
+          style={{ background: s.theme.soft }}
         >
-          <div className="text-[12px]" style={{ color: s.text, opacity: 0.8 }}>
+          <div className="text-[12px]" style={{ color: s.theme.text, opacity: 0.85 }}>
             {s.label}
           </div>
-          <div className="text-[20px] font-bold" style={{ color: s.text }}>
+          <div className="text-[20px] font-bold" style={{ color: s.theme.text }}>
             {s.value}
           </div>
         </div>
@@ -75,7 +76,7 @@ export default function StudentDashboard() {
 
   return (
     <div className="font-[byekan] flex flex-col items-center pb-4">
-      <div className="w-full">
+      <div className="w-full pt-4">
         <WelcomeBox />
       </div>
 
@@ -96,16 +97,30 @@ export default function StudentDashboard() {
 
       {/* golden package */}
       <div
-        className="font-[byekan] mt-10 w-[90%] max-w-[348px] md:max-w-full h-[100px] rounded-[16px] flex items-center justify-center px-4 cursor-pointer text-center relative"
-        style={{ background: "linear-gradient(90deg, #FFCA28, #F5941F)" }}
+        className="font-[byekan] mt-10 w-[90%] max-w-[348px] md:max-w-full h-[100px] rounded-[20px] flex items-center justify-center px-4 cursor-pointer text-center relative overflow-hidden"
+        style={{
+          background: GRADIENTS.gold,
+          boxShadow: "0 10px 24px rgba(245,148,31,0.35)",
+        }}
         onClick={gotoStudentPack}
       >
-        <div>
-          <p className="text-[21px] text-white font-bold">
+        <div
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            width: "140px",
+            height: "140px",
+            background: "rgba(255,255,255,0.25)",
+            filter: "blur(10px)",
+            top: "-50px",
+            left: "-30px",
+          }}
+        />
+        <div className="relative z-10">
+          <p className="text-[21px] text-white font-bold" style={{ textShadow: "0 2px 6px rgba(0,0,0,0.15)" }}>
             پکیج‌های طلایی
           </p>
         </div>
-        <img src={GoldenPackage} alt="Golden Package" />
+        <img src={GoldenPackage} alt="Golden Package" className="relative z-10" />
       </div>
 
       {/* cards */}
@@ -116,7 +131,12 @@ export default function StudentDashboard() {
             alt=""
             className="absolute -top-3 left-1/2 -translate-x-1/2 w-[80px] h-[70px] pointer-events-none z-10"
           />
-          <Card title="ویدیو آموزشی" onClick={gotoCourses} fontSize="16px" style={{ background: "#0F6E56" }} />
+          <Card
+            title="ویدیو آموزشی"
+            onClick={gotoCourses}
+            fontSize="16px"
+            style={{ background: CARD_THEMES[0].gradient, boxShadow: "0 8px 18px rgba(11,147,168,0.3)" }}
+          />
         </div>
         <div className="relative">
           <img
@@ -124,7 +144,12 @@ export default function StudentDashboard() {
             alt=""
             className="absolute -top-2 left-1/2 -translate-x-1/2 w-[65px] h-[55px] pointer-events-none z-10"
           />
-          <Card title="نمونه سوال" onClick={gotoComingSoon} fontSize="16px" style={{ background: "#3C3489" }} />
+          <Card
+            title="نمونه سوال"
+            onClick={gotoComingSoon}
+            fontSize="16px"
+            style={{ background: CARD_THEMES[1].gradient, boxShadow: "0 8px 18px rgba(91,79,224,0.3)" }}
+          />
         </div>
       </div>
 

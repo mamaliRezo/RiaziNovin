@@ -1,39 +1,40 @@
 import ProfileAvatar from "../../assets/ProfileAvatar.svg";
-export default function WelcomeBox() {
-  return (
-    <div>
-      {/* آواتار */}
-      <img
-        src={ProfileAvatar}
-        style={{
-          width: "57px",
-          height: "60px",
-          position: "absolute",
-          top: "85px",
-          left: "323px",
-          borderRadius: "50%",
-        }}
-      />
+import { useAuth } from "../../contexts/AuthContext";
+import { BRAND } from "../../styles/theme";
 
-      {/* متن خوش آمد */}
-      <p
+export default function WelcomeBox() {
+  const { user } = useAuth();
+  const firstName = user?.first_name || "دوست عزیز";
+
+  return (
+    <div dir="rtl" className="flex items-center gap-3 px-4 md:px-0">
+      <div
+        className="flex-shrink-0"
         style={{
-          direction: "rtl",
-          width: "129px",
-          height: "36px",
-          position: "absolute",
-          top: "93px",
-          left: "178px",
-          fontFamily: "BYekan",
-          fontWeight: 700,
-          fontSize: "13px",
-          lineHeight: "100%",
-          textAlign: "right",
+          padding: "2px",
+          borderRadius: "50%",
+          background: `linear-gradient(135deg, ${BRAND.orange}, ${BRAND.magenta})`,
         }}
       >
-        سلام محمد
+        <img
+          src={ProfileAvatar}
+          alt="پروفایل"
+          style={{
+            width: "52px",
+            height: "52px",
+            borderRadius: "50%",
+            border: "2px solid #FEF9FE",
+            display: "block",
+          }}
+        />
+      </div>
+
+      <p style={{ fontFamily: "BYekan", fontWeight: 700, fontSize: "15px", margin: 0, lineHeight: 1.6 }}>
+        سلام {firstName} 👋
         <br />
-        خوش اومدی!
+        <span style={{ fontWeight: 400, fontSize: "13px", color: "#6B6470" }}>
+          خوش اومدی، امروز چی یاد می‌گیریم؟
+        </span>
       </p>
     </div>
   );
