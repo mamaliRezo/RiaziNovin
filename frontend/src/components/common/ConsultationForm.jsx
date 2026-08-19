@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TitleMD, BodyText } from "../ui/Typography.jsx";
 import logo from "../../assets/logo.webp";
+import { GRADIENTS } from "../../styles/theme.js";
 
 export default function ConsultationForm() {
   const [name, setName] = useState("");
@@ -15,54 +16,52 @@ export default function ConsultationForm() {
   };
 
   return (
-    <div className="relative w-full h-[121.65px] bg-[#E5A6E6] px-6 py-5 my-5 rounded-xl box-border font-[byekan]">
-      {/* لوگو بالا–چپ، بیرون باکس */}
-      <div className="absolute top-0 left-3 -translate-y-[45%] z-10">
-        <img src={logo} alt="logo" />
+    <div
+      dir="rtl"
+      className="relative w-full px-6 py-6 my-6 rounded-[20px] box-border font-[byekan] overflow-hidden"
+      style={{ background: GRADIENTS.hero }}
+    >
+      <div className="absolute top-0 right-6 -translate-y-1/2 z-10">
+        <img src={logo} alt="logo" className="w-[46px] h-[46px] rounded-full bg-white p-1.5 shadow-[0_4px_10px_rgba(26,21,35,0.15)]" />
       </div>
 
-      {/* عنوان و توضیح با فاصله از لبه */}
-      <div className="text-right">
-        <TitleMD className="text-Black">جهت دریافت مشاوره رایگان</TitleMD>
-        <BodyText className="text-Black text-[8px] mt-1">
+      <div className="text-right pt-3">
+        <TitleMD className="text-[#1A1523]">جهت دریافت مشاوره رایگان</TitleMD>
+        <BodyText className="text-[#5B5563] text-[12px] mt-1">
           فرم زیر را پر کنید تا کارشناسان ما با شما تماس بگیرند
         </BodyText>
       </div>
 
-      {/* فرم افقی */}
-<form onSubmit={handleSubmit} className="flex items-center gap-[10px] justify-end">
-  <button
-    type="submit"
-    className="shrink-0 w-[80px] h-[19.62px] bg-[#00C0D9A3] text-Black rounded-[8px] text-[9px] font-[byekan] font-bold hover:bg-Accent transition-colors border-none"
-  >
-    مشاوره می‌خواهم
-  </button>
-
-  <input
-    type="tel"
-    placeholder="شماره تماس"
-    value={phone}
-    onChange={(e) => setPhone(e.target.value)}
-    className="w-[129px] h-[20px] rounded-[8px] px-2 text-[9px] text-right font-[byekan] bg-[#FEF9FE] border-none"
-    required
-  />
-
-  <input
-    type="text"
-    placeholder="نام و نام خانوادگی"
-    value={name}
-    onChange={(e) => setName(e.target.value)}
-    className="w-[129px] h-[20px] rounded-[8px] px-2 text-[9px] text-right font-[byekan] bg-[#FEF9FE] border-none"
-    required
-  />
-</form>
-
-
-      {/* پیام موفقیت */}
-      {submitted && (
-        <p className="text-green-700 text-[9px] mt-3 text-right">
-          اطلاعات شما با موفقیت ثبت شد.
+      {submitted ? (
+        <p className="text-[#0F9D6C] text-[13px] font-bold mt-4 text-right">
+          ✅ اطلاعات شما ثبت شد، به‌زودی باهاتون تماس می‌گیریم.
         </p>
+      ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-4">
+          <input
+            type="text"
+            placeholder="نام و نام خانوادگی"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="flex-1 h-[38px] rounded-[10px] px-3 text-[13px] text-right font-[byekan] bg-white border border-transparent focus:outline-none focus:border-[#C90BBC] transition-colors"
+            required
+          />
+          <input
+            type="tel"
+            placeholder="شماره تماس"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="flex-1 h-[38px] rounded-[10px] px-3 text-[13px] text-right font-[byekan] bg-white border border-transparent focus:outline-none focus:border-[#C90BBC] transition-colors"
+            required
+          />
+          <button
+            type="submit"
+            className="shrink-0 h-[38px] px-5 text-white rounded-[10px] text-[13px] font-bold border-none"
+            style={{ background: GRADIENTS.magenta, boxShadow: "0 6px 14px rgba(142,7,134,0.25)" }}
+          >
+            مشاوره می‌خواهم
+          </button>
+        </form>
       )}
     </div>
   );

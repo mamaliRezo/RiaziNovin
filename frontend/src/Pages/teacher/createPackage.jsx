@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import guguli from "../../assets/guguliVideo.svg";
 import upload from "../../assets/upload.webp";
-import pen from "../../assets/editPen.webp";
 import api from "../../services/api";
+import { GRADIENTS, CARD_THEMES } from "../../styles/theme.js";
+
+const inputClass =
+  "w-full h-[38px] rounded-[10px] text-[13px] px-3 border border-[#E5E0EA] bg-[#FAF8FB] focus:outline-none focus:border-[#C90BBC] transition-colors font-[byekan]";
 
 export default function CreatePackage() {
   const navigate = useNavigate();
@@ -78,29 +81,28 @@ export default function CreatePackage() {
       });
       setSuccess(true);
     } catch (err) {
-      setFormError(
-        err?.response?.data?.message || "خطا در ذخیره‌ی پکیج. دوباره تلاش کن."
-      );
+      setFormError(err?.response?.data?.message || "خطا در ذخیره‌ی پکیج. دوباره تلاش کن.");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="font-[byekan]">
-      <div style={{ direction: "rtl" }}>
-          {/* کاور پکیج */}
-          <div className="w-[90%] max-w-[348px] mx-auto mt-[1px]">
+    <div className="font-[byekan]" dir="rtl">
+      <h2 className="w-[90%] max-w-[348px] lg:max-w-none lg:w-full mx-auto lg:mx-0 mb-4 text-[20px] font-bold text-[#1A1523]">
+        ساخت پکیج جدید
+      </h2>
+
+      <div className="lg:flex lg:gap-6 lg:items-start">
+        {/* ستون کاور */}
+        <div className="w-[90%] max-w-[348px] mx-auto lg:mx-0 lg:w-[320px] lg:flex-shrink-0">
+          <div className="lg:sticky lg:top-6">
             <div
-              className="relative w-[90%] max-w-[348px] h-[172px] rounded-[8px] overflow-hidden"
-              style={{ backgroundColor: "#080609A3" }}
+              className="relative w-full h-[190px] rounded-[16px] overflow-hidden"
+              style={{ background: "#EDE8F0" }}
             >
               {coverPreview && (
-                <img
-                  src={coverPreview}
-                  alt="Package Cover"
-                  className="w-full h-full object-cover"
-                />
+                <img src={coverPreview} alt="Package Cover" className="w-full h-full object-cover" />
               )}
               <img
                 src={guguli}
@@ -111,164 +113,126 @@ export default function CreatePackage() {
 
             <label
               htmlFor="cover-upload"
-              className="w-[90%] max-w-[348px] h-[20px] rounded-[8px] bg-[#00C0D9A3] text-white text-[12px] cursor-pointer flex items-center justify-start px-2 mt-[0px]"
-              style={{ direction: "rtl" }}
+              className="w-full h-[38px] rounded-[10px] text-white text-[12px] cursor-pointer flex items-center justify-center gap-2 mt-3"
+              style={{ background: GRADIENTS.teal }}
             >
-              <img src={upload} alt="upload" />
-              <span className="ml-2">تصویر کاور پکیج</span>
+              <img src={upload} alt="upload" style={{ width: "14px" }} />
+              <span>تصویر کاور پکیج</span>
             </label>
 
-            <input
-              id="cover-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleCoverChange}
-            />
+            <input id="cover-upload" type="file" accept="image/*" className="hidden" onChange={handleCoverChange} />
           </div>
+        </div>
 
-          {/* عنوان پکیج */}
-          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-center rounded-[8px] px-2">
-            <img src={pen} alt="pen" />
+        {/* فرم اصلی */}
+        <div className="w-[90%] max-w-[348px] mx-auto lg:mx-0 lg:flex-1 lg:min-w-0 mt-5 lg:mt-0">
+          <div className="rounded-[20px] p-5 bg-white shadow-[0_4px_16px_rgba(26,21,35,0.08)]">
+            <label className="text-[11px] font-bold block mb-1">عنوان پکیج</label>
             <input
               type="text"
-              className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[19.42px] font-[byekan] focus:outline-none"
-              placeholder="عنوان پکیج"
+              className={`${inputClass} mb-3`}
+              placeholder="مثلاً پکیج طلایی ریاضی ششم"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-          </div>
 
-          <div className="text-right">
-            <p
-              style={{
-                width: "348px",
-                margin: "15px auto",
-                fontSize: "15px",
-                color: "#C90BBCC9",
-                lineHeight: "22px",
-              }}
-            >
-              توضیحات در مورد پکیج:
-            </p>
-          </div>
-          <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] flex items-start rounded-[8px] px-2">
-            <img src={pen} alt="pen" />
+            <label className="text-[11px] font-bold block mb-1">توضیحات پکیج</label>
             <textarea
-              className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[12px] font-[byekan] focus:outline-none"
+              className={`${inputClass} mb-3`}
+              style={{ height: "90px", paddingTop: "8px" }}
               rows={4}
               placeholder="توضیحات پکیج..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-          </div>
 
-          {/* قیمت پکیج */}
-          <div className="text-right">
-            <p
-              style={{
-                width: "348px",
-                margin: "15px auto 8px auto",
-                fontSize: "15px",
-                color: "#C90BBCC9",
-                lineHeight: "22px",
-              }}
-            >
-              قیمت پکیج (تومان):
-            </p>
-          </div>
-          <div className="w-[90%] max-w-[348px] mx-auto flex items-center rounded-[8px] px-2">
-            <img src={pen} alt="pen" />
+            <label className="text-[11px] font-bold block mb-1">قیمت پکیج (تومان)</label>
             <input
               type="number"
               min="0"
               step="1000"
-              className="flex-1 p-2 text-sm bg-[#FEF9FE] border-none text-[15px] font-[byekan] focus:outline-none"
+              className={inputClass}
               placeholder="مثلاً 150000 — برای رایگان خالی بذار یا صفر بزن"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              dir="ltr"
-              style={{ textAlign: "right" }}
             />
+
+            {formError && (
+              <div className="mt-3 text-[13px] text-red-600">{formError}</div>
+            )}
+
+            {success ? (
+              <div
+                className="mt-4 text-[13px] font-bold rounded-[12px] px-4 py-3"
+                style={{ background: CARD_THEMES[0].soft, color: CARD_THEMES[0].text }}
+              >
+                پکیج با موفقیت ساخته شد ✅
+              </div>
+            ) : (
+              <button
+                onClick={handleSavePackage}
+                disabled={saving}
+                className="w-full mt-4 h-[46px] rounded-full text-white text-sm font-bold flex items-center justify-center"
+                style={{ background: GRADIENTS.magenta, boxShadow: "0 10px 20px rgba(142,7,134,0.3)", border: "none" }}
+              >
+                {saving ? "در حال ذخیره..." : "ذخیره پکیج"}
+              </button>
+            )}
+
+            {success && (
+              <button
+                onClick={() => navigate("/teacher")}
+                className="w-full mt-3 h-[46px] rounded-full text-[#C90BBC] text-sm font-bold flex items-center justify-center"
+                style={{ border: "1.5px solid #C90BBC", background: "transparent" }}
+              >
+                بازگشت به داشبورد
+              </button>
+            )}
           </div>
 
           {/* انتخاب دوره‌ها */}
-          <h3
-            style={{
-              width: "348px",
-              margin: "30px auto 10px auto",
-              fontSize: "18px",
-              fontWeight: "bold",
-              textAlign: "right",
-              color: "#00A7D1",
-            }}
-          >
-            دوره‌های داخل پکیج
-          </h3>
+          <div className="rounded-[20px] p-5 bg-white shadow-[0_4px_16px_rgba(26,21,35,0.08)] mt-4">
+            <h3 className="text-[15px] font-bold mb-3 text-[#1A1523]">دوره‌های داخل پکیج</h3>
 
-          {loadingCourses && (
-            <div className="w-[90%] max-w-[348px] mx-auto text-sm text-[#555]">
-              در حال بارگذاری دوره‌های شما...
-            </div>
-          )}
+            {loadingCourses && (
+              <div className="text-sm text-[#8B8794]">در حال بارگذاری دوره‌های شما...</div>
+            )}
 
-          {!loadingCourses && myCourses.length === 0 && (
-            <div className="w-[90%] max-w-[348px] mx-auto text-sm text-[#555]">
-              هنوز هیچ دوره‌ای نساختی. اول از داشبورد یه دوره بساز، بعد
-              می‌تونی توی پکیج بذاریش.
-            </div>
-          )}
+            {!loadingCourses && myCourses.length === 0 && (
+              <div className="text-sm text-[#8B8794]">
+                هنوز هیچ دوره‌ای نساختی. اول از داشبورد یه دوره بساز، بعد می‌تونی توی پکیج بذاریش.
+              </div>
+            )}
 
-          {!loadingCourses && myCourses.length > 0 && (
-            <div className="w-[90%] max-w-[348px] mx-auto mb-[10px]">
-              {myCourses.map((course) => (
-                <label
-                  key={course.id}
-                  className="flex items-center justify-between py-2 border-b border-[#eee] text-sm"
-                  style={{ cursor: "pointer" }}
-                >
-                  <span>{course.title}</span>
-                  <input
-                    type="checkbox"
-                    checked={selectedCourseIds.includes(course.id)}
-                    onChange={() => toggleCourse(course.id)}
-                  />
-                </label>
-              ))}
-            </div>
-          )}
-
-          {formError && (
-            <div className="w-[90%] max-w-[348px] mx-auto mt-[12px] text-sm text-red-600">
-              {formError}
-            </div>
-          )}
-
-          {success ? (
-            <div className="w-[90%] max-w-[348px] mx-auto mt-[16px] text-sm text-green-700">
-              پکیج با موفقیت ساخته شد ✅
-            </div>
-          ) : (
-            <button
-              onClick={handleSavePackage}
-              disabled={saving}
-              className="w-[90%] max-w-[348px] mx-auto mt-[16px] h-[40px] rounded-[8px] bg-[#00C0D9] text-white text-sm font-bold flex items-center justify-center"
-              style={{ display: "flex" }}
-            >
-              {saving ? "در حال ذخیره..." : "ذخیره پکیج"}
-            </button>
-          )}
-
-          {success && (
-            <button
-              onClick={() => navigate("/teacher")}
-              className="w-[90%] max-w-[348px] mx-auto mt-[12px] h-[40px] rounded-[8px] bg-[#C90BBC] text-white text-sm font-bold flex items-center justify-center"
-              style={{ display: "flex" }}
-            >
-              بازگشت به داشبورد
-            </button>
-          )}
+            {!loadingCourses && myCourses.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {myCourses.map((course, i) => {
+                  const selected = selectedCourseIds.includes(course.id);
+                  const theme = CARD_THEMES[i % CARD_THEMES.length];
+                  return (
+                    <label
+                      key={course.id}
+                      className="flex items-center justify-between px-3 py-2.5 rounded-[10px] text-[13px] cursor-pointer transition-colors"
+                      style={{
+                        background: selected ? theme.soft : "#FAF8FB",
+                        color: selected ? theme.text : "#3F3A47",
+                        border: `1.5px solid ${selected ? theme.text : "transparent"}`,
+                      }}
+                    >
+                      <span className={selected ? "font-bold" : ""}>{course.title}</span>
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => toggleCourse(course.id)}
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
+      </div>
     </div>
   );
 }
