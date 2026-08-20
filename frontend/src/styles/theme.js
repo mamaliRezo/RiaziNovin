@@ -52,6 +52,20 @@ export const GRADIENTS = {
   hero: "linear-gradient(135deg, #FCE9FC 0%, #E3FBF6 50%, #FFF6E0 100%)",
 };
 
+// نسخه‌ی پرانرژی‌تر همون ۴ تم، برای بج‌های آیکون و المان‌های تزئینی
+// (لندینگ‌پیج) که باید چشم رو بگیرن، نه فقط زمینه‌ی نرم کارت باشن.
+export const VIBRANT_THEMES = [
+  { gradient: "linear-gradient(135deg, #22D3B8 0%, #0891A3 100%)", glow: "rgba(8,145,163,0.35)" },
+  { gradient: "linear-gradient(135deg, #A78BFA 0%, #6D28D9 100%)", glow: "rgba(109,40,217,0.35)" },
+  { gradient: "linear-gradient(135deg, #FF8A65 0%, #E64A19 100%)", glow: "rgba(230,74,25,0.35)" },
+  { gradient: "linear-gradient(135deg, #FFD54F 0%, #F5941F 100%)", glow: "rgba(245,148,31,0.35)" },
+  { gradient: "linear-gradient(135deg, #F472B6 0%, #C90BBC 100%)", glow: "rgba(201,11,188,0.35)" },
+];
+
+// یه پس‌زمینه‌ی نقطه‌چین ظریف برای بخش‌های تیره/گرادینتی، به‌جای رنگ تخت خالی
+export const DOT_PATTERN =
+  "radial-gradient(rgba(255,255,255,0.18) 1.5px, transparent 1.5px)";
+
 export function themeFor(index) {
   return CARD_THEMES[index % CARD_THEMES.length];
 }

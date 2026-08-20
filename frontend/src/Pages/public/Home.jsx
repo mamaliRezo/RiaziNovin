@@ -14,6 +14,7 @@ import videoSymbol from "../../assets/VideoSymbol.webp";
 import noteSymbol from "../../assets/NoteSymbol.webp";
 import gameSymbol from "../../assets/GameSymbol.webp";
 import goldenPackage from "../../assets/GoldenPackage.webp";
+import { VIBRANT_THEMES, DOT_PATTERN } from "../../styles/theme.js";
 
 const VALUE_PROPS = [
   {
@@ -168,13 +169,14 @@ export default function Home() {
               <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:justify-center md:justify-start md:gap-3">
                 <button
                   onClick={() => navigate("/signup")}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-full text-white font-bold text-[13px] md:text-[14px] md:px-6 md:py-3 shadow-[0_16px_32px_rgba(201,11,188,0.28)]"
+                  className="group w-full sm:w-auto px-5 py-2.5 rounded-full text-white font-bold text-[13px] md:text-[14px] md:px-6 md:py-3 shadow-[0_16px_32px_rgba(201,11,188,0.28)] transition-transform hover:scale-105 flex items-center justify-center gap-1.5"
                   style={{
                     background:
                       "linear-gradient(135deg, #C90BBC 0%, #E55CCB 100%)",
                   }}
                 >
                   شروع رایگان
+                  <span className="transition-transform group-hover:-translate-x-1">←</span>
                 </button>
                 <button
                   onClick={() => navigate("/login")}
@@ -206,13 +208,43 @@ export default function Home() {
             </div>
 
             <div className="flex-1 flex justify-center relative w-full md:w-auto">
-              <div className="absolute left-2 top-6 h-14 w-14 rounded-full bg-[#FFE7A8] blur-2xl opacity-75 md:left-4 md:top-10 md:h-20 md:w-20 md:opacity-80" />
-              <div className="absolute right-4 bottom-6 h-14 w-14 rounded-full bg-[#D7F5FF] blur-2xl opacity-75 md:right-8 md:bottom-10 md:h-20 md:w-20 md:opacity-80" />
+              <div className="absolute left-2 top-6 h-14 w-14 rounded-full bg-[#FFE7A8] blur-2xl opacity-75 md:left-4 md:top-10 md:h-20 md:w-20 md:opacity-80 animate-pulse" />
+              <div className="absolute right-4 bottom-6 h-14 w-14 rounded-full bg-[#D7F5FF] blur-2xl opacity-75 md:right-8 md:bottom-10 md:h-20 md:w-20 md:opacity-80 animate-pulse" style={{ animationDelay: "1s" }} />
+              <div className="absolute right-10 top-2 h-10 w-10 rounded-full blur-xl opacity-60 md:h-16 md:w-16" style={{ background: "#F4C9F2" }} />
+
               <img
                 src={guy}
                 alt="دانش‌آموز"
                 className="relative w-[200px] md:w-[320px] drop-shadow-[0_16px_28px_rgba(60,31,56,0.16)]"
               />
+
+              {/* بج شناور روی تصویر، حس محصول مدرن‌تری می‌ده */}
+              <div
+                className="absolute -left-2 top-4 md:left-0 md:top-8 flex items-center gap-2 rounded-2xl bg-white/95 backdrop-blur-sm px-3 py-2 shadow-[0_12px_28px_rgba(60,31,56,0.16)] border border-white"
+                style={{ animation: "float 3.5s ease-in-out infinite" }}
+              >
+                <span className="text-[16px]">⭐️</span>
+                <div className="text-right leading-tight">
+                  <div className="text-[12px] font-bold text-[#080609]">۴.۹ از ۵</div>
+                  <div className="text-[9px] text-[#8B8794]">رضایت والدین</div>
+                </div>
+              </div>
+
+              <div
+                className="absolute -right-2 bottom-8 md:right-0 md:bottom-14 flex items-center gap-2 rounded-2xl bg-white/95 backdrop-blur-sm px-3 py-2 shadow-[0_12px_28px_rgba(60,31,56,0.16)] border border-white"
+                style={{ animation: "float 3.5s ease-in-out infinite 1.2s" }}
+              >
+                <span
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-[13px]"
+                  style={{ background: VIBRANT_THEMES[0].gradient }}
+                >
+                  ✓
+                </span>
+                <div className="text-right leading-tight">
+                  <div className="text-[11px] font-bold text-[#080609]">جلسه ۸</div>
+                  <div className="text-[9px] text-[#8B8794]">تکمیل شد</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -231,47 +263,25 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-4">
           {VALUE_PROPS.map((item, i) => {
-            const accents = [
-              {
-                bg: "linear-gradient(135deg, #ECFFF8 0%, #D7F5EC 100%)",
-                text: "#0F6E56",
-                glow: "rgba(15,110,86,0.12)",
-              },
-              {
-                bg: "linear-gradient(135deg, #FFF9EB 0%, #FFE8C0 100%)",
-                text: "#8A5A00",
-                glow: "rgba(138,90,0,0.12)",
-              },
-              {
-                bg: "linear-gradient(135deg, #F6F1FF 0%, #E6DCFF 100%)",
-                text: "#3C3489",
-                glow: "rgba(60,52,137,0.12)",
-              },
-            ];
-            const a = accents[i % accents.length];
+            const v = VIBRANT_THEMES[i % VIBRANT_THEMES.length];
             return (
               <div
                 key={item.title}
-                className="rounded-[24px] md:rounded-[22px] p-5 md:p-4 text-center shadow-[0_16px_32px_rgba(93,58,91,0.07)] border border-white/60 md:shadow-[0_12px_24px_rgba(93,58,91,0.06)]"
-                style={{ background: a.bg, boxShadow: `0 16px 32px ${a.glow}` }}
+                className="relative rounded-[24px] md:rounded-[22px] p-5 md:p-4 text-center bg-white border border-[#F1EAF0] transition-transform hover:-translate-y-1"
+                style={{ boxShadow: `0 16px 32px rgba(93,58,91,0.07)` }}
               >
-                <div className="mx-auto mb-3 md:mb-2.5 flex h-14 w-14 md:h-12 md:w-12 items-center justify-center rounded-[18px] md:rounded-[16px] bg-white/70 p-2 md:p-2 shadow-sm">
-                  <img
-                    src={item.icon}
-                    alt=""
-                    className="w-8 h-8 md:w-7 md:h-7"
-                  />
-                </div>
-                <h3
-                  className="font-bold text-[16px] md:text-[15px] mb-2 md:mb-1.5"
-                  style={{ color: a.text }}
+                <div
+                  className="mx-auto mb-3 md:mb-2.5 flex h-16 w-16 md:h-14 md:w-14 items-center justify-center rounded-[20px] md:rounded-[18px]"
+                  style={{ background: v.gradient, boxShadow: `0 10px 22px ${v.glow}` }}
                 >
+                  <div className="flex h-10 w-10 md:h-9 md:w-9 items-center justify-center rounded-full bg-white/90">
+                    <img src={item.icon} alt="" className="w-6 h-6 md:w-5 md:h-5" />
+                  </div>
+                </div>
+                <h3 className="font-bold text-[16px] md:text-[15px] mb-2 md:mb-1.5 text-[#080609]">
                   {item.title}
                 </h3>
-                <p
-                  className="text-[12px] md:text-[12px] leading-[1.8] md:leading-[1.75]"
-                  style={{ color: a.text, opacity: 0.9 }}
-                >
+                <p className="text-[12px] md:text-[12px] leading-[1.8] md:leading-[1.75] text-[#6B6470]">
                   {item.desc}
                 </p>
               </div>
@@ -302,15 +312,15 @@ export default function Home() {
               title: "پیشرفت واقعی",
               text: "می‌تونی در هر زمان دوباره درس‌ها را ببینی و جلو بروی.",
             },
-          ].map((step) => (
+          ].map((step, i) => (
             <div
               key={step.number}
-              className="relative rounded-[24px] md:rounded-[22px] border border-[#F3D5F5] bg-white p-5 md:p-4 text-center shadow-[0_16px_32px_rgba(201,11,188,0.05)] md:shadow-[0_12px_24px_rgba(201,11,188,0.04)]"
+              className="relative rounded-[24px] md:rounded-[22px] border border-[#F3D5F5] bg-white p-5 md:p-4 text-center shadow-[0_16px_32px_rgba(201,11,188,0.05)] md:shadow-[0_12px_24px_rgba(201,11,188,0.04)] transition-transform hover:-translate-y-1"
             >
               <div
                 className="absolute -top-4 md:-top-3.5 right-5 md:right-4 h-10 w-10 md:h-9 md:w-9 rounded-full border-4 border-white flex items-center justify-center text-[17px] md:text-[15px] font-bold text-white shadow-lg"
                 style={{
-                  background: "linear-gradient(135deg, #C90BBC, #F5941F)",
+                  background: VIBRANT_THEMES[i % VIBRANT_THEMES.length].gradient,
                 }}
               >
                 {step.number}
@@ -328,20 +338,50 @@ export default function Home() {
 
       {/* تصویر کلاس */}
       <section
-        className="w-full py-8 md:py-10"
+        className="relative w-full py-8 md:py-14 overflow-hidden"
         style={{ background: "linear-gradient(135deg, #3a2a5c, #4b2f6b)" }}
       >
-        <div className="max-w-5xl mx-auto px-5 flex flex-col md:flex-row items-center gap-5 md:gap-8">
-          <img
-            src={classroomSlide}
-            alt="کلاس ریاضی نوین"
-            className="rounded-[18px] md:rounded-[16px] w-full md:w-[360px]"
-          />
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{ backgroundImage: DOT_PATTERN, backgroundSize: "18px 18px" }}
+        />
+        <div
+          className="absolute -left-10 -top-10 h-40 w-40 rounded-full blur-3xl opacity-30"
+          style={{ background: "#F5941F" }}
+        />
+        <div
+          className="absolute -right-10 -bottom-10 h-40 w-40 rounded-full blur-3xl opacity-30"
+          style={{ background: "#22D3B8" }}
+        />
+
+        <div className="relative max-w-5xl mx-auto px-5 flex flex-col md:flex-row items-center gap-5 md:gap-10">
+          <div className="relative">
+            <img
+              src={classroomSlide}
+              alt="کلاس ریاضی نوین"
+              className="rounded-[20px] md:rounded-[22px] w-full md:w-[380px] shadow-[0_24px_60px_rgba(0,0,0,0.35)]"
+            />
+            <div
+              className="absolute -bottom-4 -right-4 hidden md:flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 shadow-[0_16px_32px_rgba(0,0,0,0.25)]"
+            >
+              <span
+                className="flex h-8 w-8 items-center justify-center rounded-full text-white text-[14px]"
+                style={{ background: VIBRANT_THEMES[1].gradient }}
+              >
+                ▶
+              </span>
+              <div className="text-right leading-tight">
+                <div className="text-[12px] font-bold text-[#080609]">پخش زنده</div>
+                <div className="text-[9px] text-[#8B8794]">در هر لحظه</div>
+              </div>
+            </div>
+          </div>
+
           <div className="text-center md:text-right text-white">
-            <h2 className="text-[18px] md:text-[20px] font-bold mb-2.5 md:mb-2">
+            <h2 className="text-[18px] md:text-[22px] font-bold mb-2.5 md:mb-3">
               مثل یه کلاس واقعی، فقط راحت‌تر
             </h2>
-            <p className="text-[12px] md:text-[13px] leading-[1.8] md:leading-[1.85] max-w-md mx-auto md:mx-0">
+            <p className="text-[12px] md:text-[14px] leading-[1.8] md:leading-[1.9] max-w-md mx-auto md:mx-0 text-[#E5DCF0]">
               هر وقت وقت داشتین، از هر جایی، دانش‌آموز می‌تونه درس رو ببینه،
               تمرین کنه، و اگه چیزی جا موند، دوباره برگرده و مرور کنه.
             </p>
@@ -350,8 +390,13 @@ export default function Home() {
       </section>
 
       <section id="packages" className="max-w-6xl mx-auto px-5 py-8 md:py-12">
-        <div className="flex items-center justify-center gap-2 mb-7 md:mb-6">
-          <img src={goldenPackage} alt="" className="w-8 h-8 md:w-7 md:h-7" />
+        <div className="flex items-center justify-center gap-2.5 mb-7 md:mb-6">
+          <div
+            className="flex h-11 w-11 md:h-10 md:w-10 items-center justify-center rounded-2xl"
+            style={{ background: VIBRANT_THEMES[3].gradient, boxShadow: `0 10px 20px ${VIBRANT_THEMES[3].glow}` }}
+          >
+            <img src={goldenPackage} alt="" className="w-6 h-6 md:w-5 md:h-5" />
+          </div>
           <h2 className="text-[22px] md:text-[28px] font-bold text-center">
             پکیج‌های آموزشی
           </h2>
@@ -397,7 +442,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row justify-center gap-2.5 md:gap-3">
             <button
               onClick={() => navigate("/signup")}
-              className="px-6 md:px-8 py-3 md:py-3.5 rounded-full text-white font-bold text-[13px] md:text-[14px] shadow-[0_14px_28px_rgba(201,11,188,0.24)] md:shadow-[0_12px_24px_rgba(201,11,188,0.20)]"
+              className="px-6 md:px-8 py-3 md:py-3.5 rounded-full text-white font-bold text-[13px] md:text-[14px] shadow-[0_14px_28px_rgba(201,11,188,0.24)] md:shadow-[0_12px_24px_rgba(201,11,188,0.20)] transition-transform hover:scale-105"
               style={{
                 background: "linear-gradient(135deg, #C90BBC 0%, #E55CCB 100%)",
               }}

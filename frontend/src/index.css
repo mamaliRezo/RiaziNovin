@@ -46,3 +46,13 @@ textarea::placeholder {
   /* اعمال انیمیشن: مدت زمان 0.4 ثانیه با شتاب ease-out */
   animation: slideDown 0.4s ease-out forwards;
 }
+
+/* افکت شناور برای بج‌های تزئینی روی تصویر هیرو */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
