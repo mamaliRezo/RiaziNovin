@@ -389,44 +389,89 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="packages" className="max-w-6xl mx-auto px-5 py-8 md:py-12">
-        <div className="flex items-center justify-center gap-2.5 mb-7 md:mb-6">
-          <div
-            className="flex h-11 w-11 md:h-10 md:w-10 items-center justify-center rounded-2xl"
-            style={{ background: VIBRANT_THEMES[3].gradient, boxShadow: `0 10px 20px ${VIBRANT_THEMES[3].glow}` }}
-          >
-            <img src={goldenPackage} alt="" className="w-6 h-6 md:w-5 md:h-5" />
+      <section id="packages" className="relative px-5 py-10 md:py-16 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(180deg, #FDF3FC 0%, #FEF9FE 100%)" }}
+        />
+        <div
+          className="absolute left-[-60px] top-10 h-52 w-52 rounded-full blur-3xl opacity-40"
+          style={{ background: "#FFD668" }}
+        />
+        <div
+          className="absolute right-[-60px] bottom-0 h-52 w-52 rounded-full blur-3xl opacity-30"
+          style={{ background: "#22D3B8" }}
+        />
+
+        <div className="relative max-w-6xl mx-auto">
+          <div className="flex flex-col items-center gap-2.5 mb-8 md:mb-10 text-center">
+            <div
+              className="flex h-12 w-12 md:h-11 md:w-11 items-center justify-center rounded-2xl"
+              style={{ background: VIBRANT_THEMES[3].gradient, boxShadow: `0 12px 24px ${VIBRANT_THEMES[3].glow}` }}
+            >
+              <img src={goldenPackage} alt="" className="w-6 h-6 md:w-6 md:h-6" />
+            </div>
+            <h2 className="text-[22px] md:text-[30px] font-bold">
+              پکیج‌های <span style={{ color: "#C90BBC" }}>آموزشی</span>
+            </h2>
+            <p className="text-[12.5px] md:text-[14px] text-[#6B6470] max-w-md">
+              چند دوره‌ی مرتبط، یک‌جا و با قیمت بهتر — برای پیشرفت پیوسته
+            </p>
           </div>
-          <h2 className="text-[22px] md:text-[28px] font-bold text-center">
-            پکیج‌های آموزشی
-          </h2>
-        </div>
 
-        {loadingPackages && (
-          <p className="text-center text-[14px] text-[#666]">
-            در حال بارگذاری پکیج‌ها...
-          </p>
-        )}
+          {loadingPackages && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-[20px] overflow-hidden animate-pulse"
+                  style={{ background: "#fff", boxShadow: "0 2px 10px rgba(26,21,35,0.06)" }}
+                >
+                  <div style={{ height: "150px", background: "#F1EAF0" }} />
+                  <div className="p-4 flex flex-col gap-2">
+                    <div style={{ height: "14px", width: "70%", background: "#F1EAF0", borderRadius: "6px" }} />
+                    <div style={{ height: "11px", width: "50%", background: "#F1EAF0", borderRadius: "6px" }} />
+                    <div style={{ height: "24px", width: "40%", background: "#F1EAF0", borderRadius: "999px", marginTop: "8px" }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-        {!loadingPackages && packages.length === 0 && (
-          <p className="text-center text-[14px] text-[#666]">
-            به‌زودی پکیج‌های آموزشی اینجا نمایش داده می‌شن.
-          </p>
-        )}
+          {!loadingPackages && packages.length === 0 && (
+            <div
+              className="max-w-md mx-auto rounded-[24px] bg-white p-8 text-center"
+              style={{ boxShadow: "0 16px 40px rgba(93,58,91,0.08)" }}
+            >
+              <div
+                className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl"
+                style={{ background: VIBRANT_THEMES[3].gradient }}
+              >
+                <img src={goldenPackage} alt="" className="w-8 h-8" />
+              </div>
+              <p className="text-[15px] font-bold text-[#080609] mb-1.5">
+                پکیج‌ها به‌زودی اضافه می‌شن
+              </p>
+              <p className="text-[12.5px] text-[#8B8794]">
+                همین الان ثبت‌نام کن تا به‌محض آماده شدن پکیج‌ها بهت اطلاع بدیم.
+              </p>
+            </div>
+          )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {packages.map((pkg, i) => (
-            <PackageCard
-              key={pkg.id}
-              index={i}
-              img={resolveMediaUrl(pkg.thumbnail) || goldenPackage}
-              title={pkg.title}
-              teacherName={pkg.teacher_name}
-              coursesCount={pkg.courses_count}
-              price={pkg.price}
-              onClick={() => navigate("/login")}
-            />
-          ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {packages.map((pkg, i) => (
+              <PackageCard
+                key={pkg.id}
+                index={i}
+                img={resolveMediaUrl(pkg.thumbnail) || goldenPackage}
+                title={pkg.title}
+                teacherName={pkg.teacher_name}
+                coursesCount={pkg.courses_count}
+                price={pkg.price}
+                onClick={() => navigate("/login")}
+              />
+            ))}
+          </div>
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 import { themeFor } from "../../styles/theme";
+import goldenPackage from "../../assets/GoldenPackage.webp";
 
 export default function PackageCard({
   img,
@@ -15,13 +16,21 @@ export default function PackageCard({
   return (
     <div
       onClick={onClick}
-      className="group w-full flex flex-col overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-1"
+      className="group w-full flex flex-col overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1.5"
       style={{
-        background: theme.soft,
+        background: "#fff",
         borderRadius: "20px",
-        boxShadow: "0 2px 10px rgba(26,21,35,0.06)",
+        boxShadow: "0 4px 16px rgba(26,21,35,0.08)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "0 16px 32px rgba(26,21,35,0.14)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "0 4px 16px rgba(26,21,35,0.08)";
       }}
     >
+      <div style={{ height: "4px", background: theme.gradient }} />
+
       <div className="relative" style={{ height: "150px", width: "100%" }}>
         <img
           src={img}
@@ -39,7 +48,7 @@ export default function PackageCard({
             boxShadow: "0 4px 10px rgba(0,0,0,0.18)",
           }}
         >
-          <span style={{ fontSize: "16px" }}>📦</span>
+          <img src={goldenPackage} alt="" style={{ width: "18px", height: "18px" }} />
         </div>
       </div>
 
