@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBox from "../../components/common/SearchBox";
 import PackageCard from "../../components/common/PackageCard";
@@ -14,6 +14,7 @@ export default function PackagesList() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -33,9 +34,22 @@ export default function PackagesList() {
     };
   }, []);
 
+  const filteredPackages = useMemo(() => {
+    const q = query.trim();
+    if (!q) return packages;
+    return packages.filter(
+      (p) => p.title?.includes(q) || p.teacher_name?.includes(q)
+    );
+  }, [packages, query]);
+
   return (
     <div className="font-[BYekan] flex flex-col items-center pt-4 pb-4">
-      <SearchBox style={{ width: "90%", maxWidth: "480px", margin: "0 auto 20px auto" }} />
+      <SearchBox
+        style={{ width: "90%", maxWidth: "480px", margin: "0 auto 20px auto" }}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="جستجو در پکیج‌ها..."
+      />
 
       <h2
         style={{
@@ -68,9 +82,15 @@ export default function PackagesList() {
         </div>
       )}
 
-      {!loading && !error && packages.length > 0 && (
+      {!loading && !error && packages.length > 0 && filteredPackages.length === 0 && (
+        <div style={{ textAlign: "center", padding: "20px", color: "#8B8794" }}>
+          هیچ پکیجی با «{query}» پیدا نشد.
+        </div>
+      )}
+
+      {!loading && !error && filteredPackages.length > 0 && (
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 md:px-0">
-          {packages.map((pkg, i) => (
+          {filteredPackages.map((pkg, i) => (
             <PackageCard
               key={pkg.id}
               index={i}

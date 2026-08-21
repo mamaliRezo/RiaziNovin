@@ -1,8 +1,11 @@
-export default function SearchBox({ style }) {
+export default function SearchBox({ style, value, onChange, onKeyDown, placeholder = "جستجو..." }) {
   return (
     <input
       type="text"
-      placeholder="جستجو..."
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
       className="search-box"
       style={{
         direction: "rtl",

@@ -67,12 +67,19 @@ function DashboardSummary() {
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
+  const [dashSearch, setDashSearch] = useState("");
 
   const gotoCourses = () => navigate("/student/courses");
   const gotoComingSoon = () => navigate("/comingsoon");
   // بنر اسلایدر به دوره‌ی خاصی وصل نیست، فعلاً می‌بریم لیست دوره‌ها
   const gotoVideo = () => navigate("/student/courses");
   const gotoStudentPack = () => navigate("/student/packages");
+
+  function handleDashSearch(e) {
+    if (e.key === "Enter" && dashSearch.trim()) {
+      navigate(`/student/courses?q=${encodeURIComponent(dashSearch.trim())}`);
+    }
+  }
 
   return (
     <div className="font-[byekan] flex flex-col items-center pb-4">
@@ -92,7 +99,12 @@ export default function StudentDashboard() {
 
       {/* search box */}
       <div className="mt-6 w-[90%] max-w-[348px] md:max-w-[480px]">
-        <SearchBox />
+        <SearchBox
+          value={dashSearch}
+          onChange={(e) => setDashSearch(e.target.value)}
+          onKeyDown={handleDashSearch}
+          placeholder="جستجو در دوره‌ها... (Enter بزن)"
+        />
       </div>
 
       {/* golden package */}
